@@ -420,14 +420,24 @@ function renderGoals(){
       </div>
       <div class="progress-bar"><div class="progress-fill" style="width:${pct}%"></div></div>
       ${subs.map((s,i)=>`<div class="subtask">
-        <div class="todo-check ${s.done?'done':''}" style="width:18px;height:18px;flex-shrink:0" onclick="event.stopPropagation();toggleSub('${g.id}',${i})">
+        <div class="todo-check ${s.done?'done':''}" style="width:18px;height:18px;flex-shrink:0" onclick="toggleSub('${g.id}',${i})">
           ${s.done?'<i class="ti ti-check" style="font-size:11px"></i>':''}
         </div>
         <span style="flex:1;${s.done?'text-decoration:line-through;color:#aaa':''}">${esc(s.text)}</span>
-        <button class="btn btn-sm btn-danger" style="padding:2px 7px;font-size:11px;opacity:0.6" onclick="event.stopPropagation();deleteSub('${g.id}',${i})" title="刪除此子任務"><i class="ti ti-x" style="font-size:11px"></i></button>
+        <button class="sub-del-btn btn btn-sm btn-danger" style="padding:2px 7px;font-size:11px;opacity:0.6" data-gid="${g.id}" data-idx="${i}" title="刪除此子任務"><i class="ti ti-x" style="font-size:11px"></i></button>
       </div>`).join('')}
     </div>`;}).join('');
 }
+
+// 用事件委派處理子任務刪除，避免 onclick 衝突
+document.addEventListener('click',function(e){
+  const btn=e.target.closest('.sub-del-btn');
+  if(!btn)return;
+  e.stopPropagation();
+  const gid=btn.dataset.gid;
+  const idx=parseInt(btn.dataset.idx);
+  deleteSub(gid,idx);
+});
 
 async function deleteSub(gid,i){
   const g=goals.find(x=>x.id===gid);if(!g)return;
