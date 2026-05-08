@@ -67,10 +67,17 @@ input:focus,select:focus,textarea:focus{border-color:#555;box-shadow:0 0 0 2px r
 .cal-dot.high{background:#FAECE7;color:#993C1D}
 .cal-dot.mid{background:#FAEEDA;color:#854F0B}
 .cal-dot.low{background:#EAF3DE;color:#3B6D11}
-.goal-item{padding:12px;border:1px solid #e5e5e5;border-radius:8px;margin-bottom:8px}
-.progress-bar{height:4px;background:#f0f0f0;border-radius:2px;margin:8px 0}
+.goal-item{padding:14px;border:1px solid #e5e5e5;border-radius:10px;margin-bottom:10px}
+.progress-bar{height:4px;background:#f0f0f0;border-radius:2px;margin:8px 0 10px}
 .progress-fill{height:100%;background:#555;border-radius:2px;transition:width 0.3s}
-.subtask{display:flex;align-items:center;gap:8px;padding:4px 0;font-size:13px}
+/* subtask tree */
+.sub-row{display:flex;align-items:center;gap:6px;padding:4px 0}
+.sub-check{width:17px;height:17px;border-radius:4px;border:1.5px solid #bbb;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;background:#fff}
+.sub-check:hover{border-color:#555}
+.sub-check.done{background:#555;border-color:#555;color:#fff}
+.exp-btn{width:16px;height:16px;border:none;background:none;cursor:pointer;padding:0;color:#aaa;flex-shrink:0;display:flex;align-items:center;justify-content:center;border-radius:3px}
+.exp-btn:hover{background:#f0f0f0;color:#555}
+.add-child-form{display:none;margin:2px 0 4px;padding:6px 8px;background:#f9f9f8;border-radius:6px;border:1px dashed #ddd}
 .pomo-ring{width:160px;height:160px;margin:0 auto 16px;position:relative;display:flex;align-items:center;justify-content:center}
 .pomo-svg{position:absolute;top:0;left:0;transform:rotate(-90deg)}
 .pomo-time{font-size:32px;font-weight:500;line-height:1}
@@ -94,9 +101,7 @@ input:focus,select:focus,textarea:focus{border-color:#555;box-shadow:0 0 0 2px r
         <label class="form-label">你的名稱 <span style="color:#E24B4A">*</span></label>
         <input id="name-input" type="text" placeholder="例如：Alex">
       </div>
-      <button class="btn btn-primary" style="width:100%;justify-content:center" onclick="joinWorkspace()">
-        <i class="ti ti-arrow-right"></i> 進入工作區
-      </button>
+      <button class="btn btn-primary" style="width:100%;justify-content:center" onclick="joinWorkspace()"><i class="ti ti-arrow-right"></i> 進入工作區</button>
       <div id="setup-err" style="color:#E24B4A;font-size:12px;margin-top:10px;display:none"></div>
     </div>
   </div>
@@ -129,8 +134,7 @@ input:focus,select:focus,textarea:focus{border-color:#555;box-shadow:0 0 0 2px r
         <input id="f-text" type="text" placeholder="任務名稱 *" style="margin-bottom:8px">
         <div class="form-grid">
           <div><label class="form-label">優先級</label>
-            <select id="f-pri">
-              <option value="">未設定</option>
+            <select id="f-pri"><option value="">未設定</option>
               <option value="high">🔴 高優先</option>
               <option value="mid">🟡 中優先</option>
               <option value="low">🟢 低優先</option>
@@ -174,9 +178,7 @@ input:focus,select:focus,textarea:focus{border-color:#555;box-shadow:0 0 0 2px r
         <div class="cal-grid" id="cal-names"></div>
         <div class="cal-grid mt12" id="cal-days"></div>
       </div>
-      <div class="card mt12" id="cal-detail" style="display:none">
-        <div id="cal-detail-content"></div>
-      </div>
+      <div class="card mt12" id="cal-detail" style="display:none"><div id="cal-detail-content"></div></div>
     </div>
 
     <!-- GOALS -->
@@ -185,8 +187,10 @@ input:focus,select:focus,textarea:focus{border-color:#555;box-shadow:0 0 0 2px r
         <div style="font-weight:500;margin-bottom:10px" id="goal-form-title">新增目標</div>
         <input id="f-gname" type="text" placeholder="目標名稱 *" style="margin-bottom:8px">
         <div style="margin-bottom:8px"><label class="form-label">截止日期</label><input id="f-gdate" type="date"></div>
-        <div style="margin-bottom:12px"><label class="form-label">子任務（每行一項）</label>
-          <textarea id="f-gsub" rows="6" placeholder="子任務 1&#10;子任務 2&#10;子任務 3" style="min-height:120px;resize:vertical"></textarea></div>
+        <div style="margin-bottom:12px">
+          <label class="form-label">第一層子任務（每行一項，子子任務可在建立後點 + 新增）</label>
+          <textarea id="f-gsub" rows="5" placeholder="子任務 1&#10;子任務 2&#10;子任務 3" style="min-height:100px;resize:vertical"></textarea>
+        </div>
         <div style="display:flex;gap:8px;justify-content:flex-end">
           <button type="button" class="btn btn-sm" id="goal-cancel-btn">取消</button>
           <button type="button" class="btn btn-primary btn-sm" id="goal-save-btn"><i class="ti ti-check"></i> 儲存目標</button>
@@ -196,7 +200,7 @@ input:focus,select:focus,textarea:focus{border-color:#555;box-shadow:0 0 0 2px r
         <span style="font-size:15px;font-weight:500">目標清單</span>
         <button class="btn btn-primary" onclick="openGoalForm(null)"><i class="ti ti-plus"></i> 新增目標</button>
       </div>
-      <div class="card"><div id="goal-list"></div></div>
+      <div id="goal-list"></div>
     </div>
 
     <!-- TIMER -->
@@ -368,32 +372,211 @@ function updateStats(){
   const hd=document.getElementById('h-today');if(hd)hd.textContent=td;
 }
 
+// ========== GOAL HELPERS ==========
+function mkSub(text){return{id:uid(),text,done:false,expanded:false,children:[]};}
+
+// Navigate to node by path array e.g. [0,1,2]
+function getNode(subs,path){
+  let arr=subs,node=null;
+  for(let i=0;i<path.length;i++){node=arr[path[i]];if(i<path.length-1)arr=node.children||[];}
+  return node;
+}
+
+// Get parent array and index
+function getParent(subs,path){
+  if(path.length===1)return{arr:subs,idx:path[0]};
+  const parent=getNode(subs,path.slice(0,-1));
+  if(!parent.children)parent.children=[];
+  return{arr:parent.children,idx:path[path.length-1]};
+}
+
+// Count all tasks at all levels
+function countAll(subs){
+  let t=0,d=0;
+  function w(items){for(const s of(items||[])){t++;if(s.done)d++;w(s.children);}}
+  w(subs);return{t,d};
+}
+
+async function saveGoalSubs(gid){
+  const g=goals.find(x=>x.id===gid);if(!g)return;
+  setSyncStatus('syncing');
+  try{await sbUpdate('goals',gid,{subs:g.subs});setSyncStatus('ok');}
+  catch(e){setSyncStatus('err');}
+}
+
+// Render subtask tree recursively (max 3 levels: 0,1,2)
+function renderSubTree(subs,gid,pathArr,level){
+  if(!subs||!subs.length)return'';
+  const COLORS=['#555','#777','#999'];
+  return subs.map((s,i)=>{
+    const p=[...pathArr,i];
+    const ps=p.join('-');
+    const hasKids=s.children&&s.children.length>0;
+    const expanded=s.expanded===true;
+    const pad=level*22;
+    const canAddChild=level<2; // max level 2 means 3 levels total (0,1,2)
+    return `<div class="sub-node" data-gid="${gid}" data-path="${ps}">
+      <div class="sub-row" style="padding-left:${pad}px">
+        <div style="width:16px;height:16px;flex-shrink:0;display:flex;align-items:center;justify-content:center">
+          ${hasKids?`<button class="exp-btn" data-gid="${gid}" data-path="${ps}" title="${expanded?'收合':'展開'}">
+            <i class="ti ti-chevron-${expanded?'down':'right'}" style="font-size:11px"></i>
+          </button>`:''}
+        </div>
+        <div class="sub-check${s.done?' done':''}" style="width:17px;height:17px;border-color:${COLORS[level]}" data-sub-toggle data-gid="${gid}" data-path="${ps}">
+          ${s.done?`<i class="ti ti-check" style="font-size:10px"></i>`:''}
+        </div>
+        <span style="flex:1;font-size:13px;color:${s.done?'#aaa':'#222'};${s.done?'text-decoration:line-through':''}">${esc(s.text)}</span>
+        ${canAddChild?`<button class="add-kid-btn btn" style="padding:1px 6px;font-size:11px;border-color:#ddd;color:#888" data-gid="${gid}" data-path="${ps}" title="新增子任務">
+          <i class="ti ti-plus" style="font-size:11px"></i>
+        </button>`:''}
+        <button class="sub-del-btn btn btn-danger" style="padding:1px 6px;font-size:11px;opacity:0.7" data-gid="${gid}" data-path="${ps}" title="刪除">
+          <i class="ti ti-x" style="font-size:11px"></i>
+        </button>
+      </div>
+      <div class="add-child-form" id="acf-${gid}-${ps.replace(/-/g,'_')}" style="display:none;padding-left:${pad+38}px;padding:6px 0 6px ${pad+38}px">
+        <div style="display:flex;gap:6px;align-items:center">
+          <input class="kid-input" type="text" placeholder="輸入子任務名稱..." style="flex:1;padding:5px 8px;font-size:12px">
+          <button class="confirm-kid btn btn-primary btn-sm" data-gid="${gid}" data-path="${ps}" style="padding:4px 10px">新增</button>
+          <button class="cancel-kid btn btn-sm" data-gid="${gid}" data-path="${ps}" style="padding:4px 10px">取消</button>
+        </div>
+      </div>
+      ${hasKids&&expanded?`<div>${renderSubTree(s.children,gid,p,level+1)}</div>`:''}
+    </div>`;
+  }).join('');
+}
+
+function renderGoals(){
+  const el=document.getElementById('goal-list');if(!el)return;
+  if(!goals.length){el.innerHTML='<div class="empty"><i class="ti ti-target" style="font-size:32px;display:block;margin-bottom:8px"></i>尚無目標</div>';return;}
+  el.innerHTML=goals.map(g=>{
+    const subs=g.subs||[];
+    const{t,d}=countAll(subs);
+    const pct=t?Math.round(d/t*100):0;
+    return `<div class="goal-item">
+      <div class="row-between" style="margin-bottom:8px">
+        <div style="font-weight:500;font-size:15px">${esc(g.name)}</div>
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+          ${g.created_by?`<span style="font-size:11px;color:#aaa">by ${esc(g.created_by)}</span>`:''}
+          ${g.date?`<span style="font-size:12px;color:#888">${g.date}</span>`:''}
+          <span style="font-size:13px;font-weight:600;color:#555">${pct}%</span>
+          <button class="btn btn-sm" onclick="openGoalForm('${g.id}')"><i class="ti ti-edit" style="font-size:12px"></i> 編輯</button>
+          <button class="btn btn-sm btn-danger" data-delg="${g.id}" data-confirm="0" onclick="deleteGoal('${g.id}')"><i class="ti ti-trash" style="font-size:12px"></i></button>
+        </div>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" style="width:${pct}%"></div></div>
+      <div>${renderSubTree(subs,g.id,[],0)}</div>
+    </div>`;
+  }).join('');
+}
+
+// ========== GOAL EVENTS (event delegation) ==========
+document.addEventListener('click',function(e){
+  // expand/collapse
+  const expBtn=e.target.closest('.exp-btn');
+  if(expBtn){
+    const gid=expBtn.dataset.gid,path=expBtn.dataset.path.split('-').map(Number);
+    const g=goals.find(x=>x.id===gid);if(!g)return;
+    const node=getNode(g.subs,path);node.expanded=!node.expanded;
+    renderGoals();return;
+  }
+  // toggle subtask done
+  const tog=e.target.closest('[data-sub-toggle]');
+  if(tog){
+    const gid=tog.dataset.gid,path=tog.dataset.path.split('-').map(Number);
+    const g=goals.find(x=>x.id===gid);if(!g)return;
+    const node=getNode(g.subs,path);node.done=!node.done;
+    renderGoals();saveGoalSubs(gid);return;
+  }
+  // delete subtask
+  const delSub=e.target.closest('.sub-del-btn');
+  if(delSub){
+    const gid=delSub.dataset.gid,path=delSub.dataset.path.split('-').map(Number);
+    const g=goals.find(x=>x.id===gid);if(!g)return;
+    const{arr,idx}=getParent(g.subs,path);arr.splice(idx,1);
+    renderGoals();saveGoalSubs(gid);return;
+  }
+  // show add child form
+  const addKid=e.target.closest('.add-kid-btn');
+  if(addKid){
+    const gid=addKid.dataset.gid,ps=addKid.dataset.path;
+    const fid=`acf-${gid}-${ps.replace(/-/g,'_')}`;
+    const form=document.getElementById(fid);
+    if(!form)return;
+    const isOpen=form.style.display!=='none';
+    // close all other open forms first
+    document.querySelectorAll('.add-child-form').forEach(f=>f.style.display='none');
+    if(!isOpen){form.style.display='block';form.querySelector('.kid-input').focus();}
+    return;
+  }
+  // confirm add child
+  const confirmKid=e.target.closest('.confirm-kid');
+  if(confirmKid){
+    const gid=confirmKid.dataset.gid,ps=confirmKid.dataset.path;
+    const path=ps.split('-').map(Number);
+    const fid=`acf-${gid}-${ps.replace(/-/g,'_')}`;
+    const form=document.getElementById(fid);
+    const text=form?form.querySelector('.kid-input').value.trim():'';
+    if(!text)return;
+    const g=goals.find(x=>x.id===gid);if(!g)return;
+    const node=getNode(g.subs,path);
+    if(!node.children)node.children=[];
+    node.children.push(mkSub(text));
+    node.expanded=true;
+    renderGoals();saveGoalSubs(gid);return;
+  }
+  // cancel add child
+  const cancelKid=e.target.closest('.cancel-kid');
+  if(cancelKid){
+    const gid=cancelKid.dataset.gid,ps=cancelKid.dataset.path;
+    const fid=`acf-${gid}-${ps.replace(/-/g,'_')}`;
+    const form=document.getElementById(fid);
+    if(form)form.style.display='none';return;
+  }
+});
+
+// Enter key in child input
+document.addEventListener('keydown',function(e){
+  if(e.key==='Enter'&&e.target.classList.contains('kid-input')){
+    const form=e.target.closest('.add-child-form');
+    if(!form)return;
+    const btn=form.querySelector('.confirm-kid');if(btn)btn.click();
+  }
+});
+
 function openGoalForm(id){
   editGoalId=id;
   const form=document.getElementById('goal-add-form');form.style.display='block';
-  document.getElementById('goal-form-title').textContent=id?'編輯目標':'新增目標';
-  if(id){const g=goals.find(x=>x.id===id)||{};document.getElementById('f-gname').value=g.name||'';document.getElementById('f-gdate').value=g.date||'';document.getElementById('f-gsub').value=(g.subs||[]).map(s=>s.text).join('\n');}
-  else{document.getElementById('f-gname').value='';document.getElementById('f-gdate').value='';document.getElementById('f-gsub').value='';}
+  document.getElementById('goal-form-title').textContent=id?'編輯目標（第一層子任務）':'新增目標';
+  if(id){const g=goals.find(x=>x.id===id)||{};
+    document.getElementById('f-gname').value=g.name||'';
+    document.getElementById('f-gdate').value=g.date||'';
+    document.getElementById('f-gsub').value=(g.subs||[]).map(s=>s.text).join('\n');
+  }else{document.getElementById('f-gname').value='';document.getElementById('f-gdate').value='';document.getElementById('f-gsub').value='';}
   const sb=document.getElementById('goal-save-btn'),cb=document.getElementById('goal-cancel-btn');
   const ns=sb.cloneNode(true),nc=cb.cloneNode(true);
   sb.parentNode.replaceChild(ns,sb);cb.parentNode.replaceChild(nc,cb);
-  ns.addEventListener('click',e=>{e.preventDefault();saveGoal();});
-  nc.addEventListener('click',e=>{e.preventDefault();form.style.display='none';editGoalId=null;});
+  ns.addEventListener('click',e=>{e.preventDefault();e.stopPropagation();saveGoal();});
+  nc.addEventListener('click',e=>{e.preventDefault();e.stopPropagation();form.style.display='none';editGoalId=null;});
   document.getElementById('f-gname').focus();
+  form.scrollIntoView({behavior:'smooth',block:'nearest'});
 }
 
 async function saveGoal(){
   const name=document.getElementById('f-gname').value.trim();if(!name)return;
-  const newSubs=document.getElementById('f-gsub').value.split('\n').map(s=>s.trim()).filter(Boolean);
+  const lines=document.getElementById('f-gsub').value.split('\n').map(s=>s.trim()).filter(Boolean);
   setSyncStatus('syncing');
   try{
     if(editGoalId){
       const g=goals.find(x=>x.id===editGoalId);
-      const merged=newSubs.map(s=>{const ex=(g.subs||[]).find(o=>o.text===s);return ex||{text:s,done:false};});
+      // merge: preserve existing sub (with children) if text matches, else create new
+      const merged=lines.map(txt=>{
+        const ex=(g.subs||[]).find(o=>o.text===txt);
+        return ex||mkSub(txt);
+      });
       await sbUpdate('goals',editGoalId,{name,date:document.getElementById('f-gdate').value||null,subs:merged});
       if(g){g.name=name;g.date=document.getElementById('f-gdate').value;g.subs=merged;}
-    } else {
-      const subs=newSubs.map(s=>({text:s,done:false}));
+    }else{
+      const subs=lines.map(mkSub);
       const rec=await sbInsert('goals',[{id:uid(),workspace:workspaceKey,name,date:document.getElementById('f-gdate').value||null,created_by:currentUser,subs}]);
       if(rec&&rec[0])goals.unshift(rec[0]);
     }
@@ -402,59 +585,18 @@ async function saveGoal(){
   document.getElementById('goal-add-form').style.display='none';editGoalId=null;renderGoals();
 }
 
-function renderGoals(){
-  const el=document.getElementById('goal-list');if(!el)return;
-  if(!goals.length){el.innerHTML='<div class="empty"><i class="ti ti-target" style="font-size:32px;display:block;margin-bottom:8px"></i>尚無目標</div>';return;}
-  el.innerHTML=goals.map(g=>{
-    const subs=g.subs||[];const pct=subs.length?Math.round(subs.filter(s=>s.done).length/subs.length*100):0;
-    return `<div class="goal-item">
-      <div class="row-between mb12" style="margin-bottom:8px">
-        <div style="font-weight:500">${esc(g.name)}</div>
-        <div style="display:flex;align-items:center;gap:8px">
-          ${g.created_by?`<span style="font-size:11px;color:#aaa">by ${esc(g.created_by)}</span>`:''}
-          ${g.date?`<span style="font-size:12px;color:#888">${g.date}</span>`:''}
-          <span style="font-size:13px;font-weight:500">${pct}%</span>
-          <button class="btn btn-sm" onclick="openGoalForm('${g.id}')"><i class="ti ti-edit" style="font-size:13px"></i> 編輯</button>
-          <button class="btn btn-sm btn-danger" data-delg="${g.id}" data-confirm="0" onclick="deleteGoal('${g.id}')"><i class="ti ti-trash" style="font-size:13px"></i></button>
-        </div>
-      </div>
-      <div class="progress-bar"><div class="progress-fill" style="width:${pct}%"></div></div>
-      ${subs.map((s,i)=>`<div class="subtask">
-        <div class="todo-check ${s.done?'done':''}" style="width:18px;height:18px;flex-shrink:0" onclick="toggleSub('${g.id}',${i})">
-          ${s.done?'<i class="ti ti-check" style="font-size:11px"></i>':''}
-        </div>
-        <span style="flex:1;${s.done?'text-decoration:line-through;color:#aaa':''}">${esc(s.text)}</span>
-        <button class="sub-del-btn btn btn-sm btn-danger" style="padding:2px 7px;font-size:11px;opacity:0.6" data-gid="${g.id}" data-idx="${i}" title="刪除此子任務"><i class="ti ti-x" style="font-size:11px"></i></button>
-      </div>`).join('')}
-    </div>`;}).join('');
-}
-
-// 用事件委派處理子任務刪除，避免 onclick 衝突
-document.addEventListener('click',function(e){
-  const btn=e.target.closest('.sub-del-btn');
-  if(!btn)return;
-  e.stopPropagation();
-  const gid=btn.dataset.gid;
-  const idx=parseInt(btn.dataset.idx);
-  deleteSub(gid,idx);
-});
-
-async function deleteSub(gid,i){
-  const g=goals.find(x=>x.id===gid);if(!g)return;
-  g.subs.splice(i,1);
-  renderGoals();
-  try{await sbUpdate('goals',gid,{subs:g.subs});setSyncStatus('ok');}
-  catch(e){setSyncStatus('err');loadAll();}
-}
-
-async function toggleSub(gid,i){const g=goals.find(x=>x.id===gid);if(!g)return;g.subs[i].done=!g.subs[i].done;renderGoals();try{await sbUpdate('goals',gid,{subs:g.subs});setSyncStatus('ok');}catch(e){g.subs[i].done=!g.subs[i].done;renderGoals();setSyncStatus('err');}}
-
 async function deleteGoal(id){
   const el=document.querySelector(`[data-delg="${id}"]`);if(!el)return;
-  if(el.dataset.confirm==='1'){goals=goals.filter(x=>x.id!==id);renderGoals();try{await sbDelete('goals',id);setSyncStatus('ok');}catch(e){setSyncStatus('err');loadAll();}}
-  else{el.dataset.confirm='1';el.innerHTML='<i class="ti ti-alert-triangle" style="font-size:13px"></i> 確認？';setTimeout(()=>{if(el){el.dataset.confirm='0';el.innerHTML='<i class="ti ti-trash" style="font-size:13px"></i>';}},2500);}
+  if(el.dataset.confirm==='1'){
+    goals=goals.filter(x=>x.id!==id);renderGoals();
+    try{await sbDelete('goals',id);setSyncStatus('ok');}catch(e){setSyncStatus('err');loadAll();}
+  }else{
+    el.dataset.confirm='1';el.innerHTML='<i class="ti ti-alert-triangle" style="font-size:12px"></i> 確認？';
+    setTimeout(()=>{if(el){el.dataset.confirm='0';el.innerHTML='<i class="ti ti-trash" style="font-size:12px"></i>';}},2500);
+  }
 }
 
+// ========== CALENDAR ==========
 function renderCal(){
   const y=calDate.getFullYear(),m=calDate.getMonth();
   const ct=document.getElementById('cal-title');if(!ct)return;
@@ -472,7 +614,7 @@ function renderCal(){
     </div>`;
   }
   document.getElementById('cal-days').innerHTML=html;
-  const mc={};todos.filter(t=>t.date&&!t.done).forEach(t=>{const p=t.date.split('-');if(p.length<2)return;const k=`${p[0]}-${p[1]}`;mc[k]=(mc[k]||0)+1;});
+  const mc={};todos.filter(t=>t.date&&!t.done).forEach(t=>{const pts=t.date.split('-');if(pts.length<2)return;const k=`${pts[0]}-${pts[1]}`;mc[k]=(mc[k]||0)+1;});
   const curKey=`${y}-${p2(m+1)}`;
   document.getElementById('cal-month-summary').innerHTML=Object.entries(mc).sort(([a],[b])=>a.localeCompare(b)).map(([key,count])=>{
     const[ky,km]=key.split('-');const isActive=key===curKey;
@@ -502,6 +644,7 @@ function showCalDay(ds){
 
 function switchToTodoAndAdd(ds){document.querySelector('.nav-btn').click();setTimeout(()=>{showTodoForm(null);setTimeout(()=>{const f=document.getElementById('f-date');if(f)f.value=ds;},50);},100);}
 
+// ========== POMODORO ==========
 const pomoModes={work:{sec:25*60,label:'專注時間'},short:{sec:5*60,label:'短暫休息'},long:{sec:15*60,label:'長時休息'}};
 function setPomoMode(m,el){pomoMode=m;resetPomo();document.querySelectorAll('#tab-timer .filter-btn').forEach(e=>e.classList.remove('active'));el.classList.add('active');}
 function updatePomoDisplay(){const pd=document.getElementById('pomo-display');if(!pd)return;pd.textContent=`${p2(Math.floor(pomoSeconds/60))}:${p2(pomoSeconds%60)}`;const circ=2*Math.PI*70,pct=(pomoModes[pomoMode].sec-pomoSeconds)/pomoModes[pomoMode].sec;document.getElementById('pomo-arc').setAttribute('stroke-dashoffset',circ*(1-pct));document.getElementById('pomo-status').textContent=pomoModes[pomoMode].label;}
