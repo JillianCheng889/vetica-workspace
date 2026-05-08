@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html lang="zh-TW">
 <head>
 <meta charset="UTF-8">
@@ -109,6 +108,7 @@ input:focus,select:focus,textarea:focus{border-color:#555;box-shadow:0 0 0 2px r
     <div class="logo">vetica <span>workspace</span></div>
     <div class="sync-bar"><div class="sync-dot" id="sync-dot"></div><span id="sync-lbl">連線中...</span></div>
     <button onclick="loadAll()" class="btn btn-sm" style="font-size:11px"><i class="ti ti-refresh"></i> 重新載入</button>
+    <button onclick="showBackupPanel()" class="btn btn-sm" style="font-size:11px;color:#BA7517;border-color:#BA7517"><i class="ti ti-database"></i> 備份還原</button>
     <div style="flex:1"></div>
     <div class="user-pill"><i class="ti ti-user" style="font-size:13px"></i><span id="cur-user"></span></div>
     <div class="stat-card" style="padding:6px 14px;display:inline-flex;gap:16px">
@@ -122,6 +122,43 @@ input:focus,select:focus,textarea:focus{border-color:#555;box-shadow:0 0 0 2px r
     <button class="nav-btn" data-tab="cal"><i class="ti ti-calendar"></i> 行事曆</button>
     <button class="nav-btn" data-tab="goal"><i class="ti ti-target"></i> 目標規劃</button>
     <button class="nav-btn" data-tab="timer"><i class="ti ti-clock"></i> 番茄鐘</button>
+  </div>
+
+  <!-- 備份還原面板 -->
+  <div id="backup-panel" style="display:none" class="inline-form">
+    <div class="row-between mb12">
+      <div style="font-weight:500;font-size:15px"><i class="ti ti-database"></i> 備份與還原</div>
+      <button onclick="$('backup-panel').style.display='none'" class="btn btn-sm"><i class="ti ti-x"></i></button>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px">
+      <div class="stat-card">
+        <div class="stat-label">目標數量</div>
+        <div class="stat-num" id="bk-goals">0</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">待辦數量</div>
+        <div class="stat-num" id="bk-todos">0</div>
+      </div>
+    </div>
+    <div style="margin-bottom:10px;font-size:13px;color:#666">
+      <strong>匯出</strong>：把目前所有資料下載為 JSON 檔案，可跨裝置備份。
+    </div>
+    <button onclick="exportJSON()" class="btn btn-primary" style="width:100%;justify-content:center;margin-bottom:12px">
+      <i class="ti ti-download"></i> 匯出 JSON 備份檔
+    </button>
+    <div style="margin-bottom:10px;font-size:13px;color:#666">
+      <strong>匯入</strong>：選擇之前匯出的 JSON 檔案還原資料。
+    </div>
+    <input type="file" id="import-file" accept=".json" style="margin-bottom:8px">
+    <button onclick="importJSON()" class="btn" style="width:100%;justify-content:center;border-color:#BA7517;color:#BA7517">
+      <i class="ti ti-upload"></i> 匯入 JSON 還原資料
+    </button>
+    <div id="import-status" style="display:none;margin-top:8px;font-size:13px;padding:8px 12px;border-radius:8px"></div>
+    <div style="margin-top:12px;padding-top:12px;border-top:1px solid #e5e5e5">
+      <div style="font-size:12px;color:#aaa;margin-bottom:6px">本機快取備份（僅限此裝置）</div>
+      <div id="bk-local-time" style="font-size:12px;color:#888;margin-bottom:6px"></div>
+      <button onclick="restoreFromBackup()" class="btn btn-sm" style="font-size:12px">從本機快取還原</button>
+    </div>
   </div>
 
   <div class="tab active" id="tab-todo">
@@ -291,6 +328,7 @@ async function loadAll(){
     todos=t||[];goals=g||[];
     setSyncStatus('ok');
     const ce=$('conn-err');if(ce)ce.style.display='none';
+    autoBackup(); // 每次成功載入就備份
   }catch(e){
     setSyncStatus('err');
     const ce=$('conn-err');if(ce){ce.style.display='block';ce.textContent='⚠️ 連線失敗：'+e.message;}
@@ -309,7 +347,49 @@ async function addSubAsTodo(text,date){
   }catch(e){console.error('addSubAsTodo',e);setSyncStatus('err');return false;}
 }
 
-async function saveGoalSubs(gid){
+// ── 自動備份到 localStorage ──────────────────────────────
+function autoBackup(){
+  try{
+    const backup={ts:Date.now(),todos:todos,goals:goals};
+    localStorage.setItem('vetica-backup',JSON.stringify(backup));
+  }catch(e){}
+}
+
+function getBackup(){
+  try{
+    const raw=localStorage.getItem('vetica-backup');
+    if(!raw)return null;
+    return JSON.parse(raw);
+  }catch(e){return null;}
+}
+
+function formatBackupTime(ts){
+  if(!ts)return'';
+  const d=new Date(ts);
+  return d.getFullYear()+'/'+p2(d.getMonth()+1)+'/'+p2(d.getDate())+' '+p2(d.getHours())+':'+p2(d.getMinutes());
+}
+
+async function restoreFromBackup(){
+  const bk=getBackup();
+  if(!bk){alert('找不到本地備份資料');return;}
+  if(!confirm('確定要從備份還原？\n備份時間：'+formatBackupTime(bk.ts)+'\n\n注意：這會覆蓋目前 Supabase 的資料！'))return;
+  setSyncStatus('syncing');
+  try{
+    // 還原 goals
+    for(const g of(bk.goals||[])){
+      try{await sbPatch('goals',g.id,{name:g.name,date:g.date,subs:g.subs,workspace:g.workspace});}
+      catch(e){await sbPost('goals',[g]);}
+    }
+    // 還原 todos
+    for(const t of(bk.todos||[])){
+      try{await sbPatch('todos',t.id,{text:t.text,done:t.done,priority:t.priority,member:t.member,date:t.date,note:t.note});}
+      catch(e){await sbPost('todos',[t]);}
+    }
+    setSyncStatus('ok');
+    alert('還原成功！共還原 '+( bk.goals||[]).length+' 個目標、'+(bk.todos||[]).length+' 筆待辦');
+    await loadAll();
+  }catch(e){setSyncStatus('err');alert('還原失敗：'+e.message);}
+}
   const g=goals.find(x=>x.id===gid);if(!g)return;
   try{await sbPatch('goals',gid,{subs:g.subs});setSyncStatus('ok');}
   catch(e){setSyncStatus('err');}
@@ -442,6 +522,14 @@ function renderSubTree(subs,gid,path,level){
     html+='<button class="btn btn-primary btn-sm confirm-kid" data-gid="'+gid+'" data-path="'+ps+'">新增</button>';
     html+='<button class="btn btn-sm cancel-kid" data-gid="'+gid+'" data-path="'+ps+'">取消</button>';
     html+='</div></div>';
+    // 編輯子任務表單
+    const editFormId='edf_'+gid+'_'+ps.replace(/-/g,'_');
+    html+='<div class="add-child-form" id="'+editFormId+'" style="padding-left:'+(level*22+38)+'px">';
+    html+='<div style="display:flex;gap:6px;align-items:center">';
+    html+='<input class="edit-sub-input" type="text" value="'+esc(s.text)+'" style="flex:1;padding:5px 8px;font-size:12px">';
+    html+='<button class="btn btn-primary btn-sm confirm-edit-sub" data-gid="'+gid+'" data-path="'+ps+'">儲存</button>';
+    html+='<button class="btn btn-sm cancel-edit-sub" data-gid="'+gid+'" data-path="'+ps+'">取消</button>';
+    html+='</div></div>';
     if(hasKids&&s.expanded){html+='<div>'+renderSubTree(s.children,gid,p,level+1)+'</div>';}
     html+='</div>';
   });
@@ -552,7 +640,39 @@ $('goal-list').addEventListener('click',async function(e){
     g.subs=normSubs(g.subs);const par=getParent(g.subs,path);par.arr.splice(par.idx,1);
     saveGoalSubs(gid);renderGoals();return;
   }
-  // add child
+  // 編輯子任務
+  const editSub=e.target.closest('[data-edit-sub]');
+  if(editSub){
+    const gid=editSub.dataset.editSub,ps=editSub.dataset.path;
+    const editFormId='edf_'+gid+'_'+ps.replace(/-/g,'_');
+    document.querySelectorAll('.add-child-form').forEach(f=>f.style.display='none');
+    const form=document.getElementById(editFormId);if(!form)return;
+    subEditing=true;form.style.display='block';
+    const inp=form.querySelector('.edit-sub-input');if(inp){inp.focus();inp.select();}
+    return;
+  }
+  // 確認編輯子任務
+  const confEditSub=e.target.closest('.confirm-edit-sub');
+  if(confEditSub){
+    const gid=confEditSub.dataset.gid,ps=confEditSub.dataset.path,path=ps.split('-').map(Number);
+    const editFormId='edf_'+gid+'_'+ps.replace(/-/g,'_');
+    const form=document.getElementById(editFormId);if(!form)return;
+    const newText=form.querySelector('.edit-sub-input').value.trim();if(!newText)return;
+    const g=goals.find(x=>x.id===gid);if(!g)return;
+    g.subs=normSubs(g.subs);
+    const node=getNode(g.subs,path);if(!node)return;
+    node.text=newText; // 只更新文字，children 完整保留
+    subEditing=false;saveGoalSubs(gid);renderGoals();return;
+  }
+  // 取消編輯子任務
+  const cancEditSub=e.target.closest('.cancel-edit-sub');
+  if(cancEditSub){
+    const gid=cancEditSub.dataset.gid,ps=cancEditSub.dataset.path;
+    const editFormId='edf_'+gid+'_'+ps.replace(/-/g,'_');
+    const form=document.getElementById(editFormId);if(form)form.style.display='none';
+    subEditing=false;return;
+  }
+  // 編輯子任務 Enter/Escape
   const addChild=e.target.closest('[data-add-child]');
   if(addChild){
     const gid=addChild.dataset.addChild,ps=addChild.dataset.path;
@@ -589,10 +709,16 @@ $('goal-list').addEventListener('click',async function(e){
 });
 
 document.addEventListener('keydown',e=>{
-  if(!e.target.classList.contains('kid-input'))return;
-  const form=e.target.closest('.add-child-form');if(!form)return;
-  if(e.key==='Enter'){const btn=form.querySelector('.confirm-kid');if(btn)btn.click();}
-  if(e.key==='Escape'){const btn=form.querySelector('.cancel-kid');if(btn)btn.click();}
+  if(e.target.classList.contains('kid-input')){
+    const form=e.target.closest('.add-child-form');if(!form)return;
+    if(e.key==='Enter'){const btn=form.querySelector('.confirm-kid');if(btn)btn.click();}
+    if(e.key==='Escape'){const btn=form.querySelector('.cancel-kid');if(btn)btn.click();}
+  }
+  if(e.target.classList.contains('edit-sub-input')){
+    const form=e.target.closest('.add-child-form');if(!form)return;
+    if(e.key==='Enter'){const btn=form.querySelector('.confirm-edit-sub');if(btn)btn.click();}
+    if(e.key==='Escape'){const btn=form.querySelector('.cancel-edit-sub');if(btn)btn.click();}
+  }
 });
 
 $('goal-add-btn').addEventListener('click',()=>openGoalForm(null));
@@ -706,6 +832,5 @@ document.querySelectorAll('[data-pomo]').forEach(btn=>{
 
 updatePomoDisplay();
 </script>
-
 </body>
 </html>
