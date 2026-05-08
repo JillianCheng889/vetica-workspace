@@ -426,8 +426,8 @@ function renderSubTree(subs,gid,pathArr,level){
           ${s.done?`<i class="ti ti-check" style="font-size:10px"></i>`:''}
         </div>
         <span style="flex:1;font-size:13px;color:${s.done?'#aaa':'#222'};${s.done?'text-decoration:line-through':''}">${esc(s.text)}</span>
-        ${canAddChild?`<button class="add-kid-btn btn" style="padding:1px 6px;font-size:11px;border-color:#ddd;color:#888" data-gid="${gid}" data-path="${ps}" title="新增子任務">
-          <i class="ti ti-plus" style="font-size:11px"></i>
+        ${canAddChild?`<button class="add-kid-btn" style="border:1px solid #aaa;border-radius:6px;background:#f5f5f3;cursor:pointer;padding:2px 8px;font-size:11px;color:#555;font-family:inherit;display:inline-flex;align-items:center;gap:3px;flex-shrink:0" data-gid="${gid}" data-path="${ps}" title="新增下層子任務">
+          <i class="ti ti-plus" style="font-size:11px"></i> 子任務
         </button>`:''}
         <button class="sub-del-btn btn btn-danger" style="padding:1px 6px;font-size:11px;opacity:0.7" data-gid="${gid}" data-path="${ps}" title="刪除">
           <i class="ti ti-x" style="font-size:11px"></i>
