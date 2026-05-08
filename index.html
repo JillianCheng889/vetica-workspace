@@ -492,7 +492,7 @@ function renderSubTree(subs,gid,path,level){
           ${s.done?'<i class="ti ti-check" style="font-size:10px"></i>':''}
         </div>
         <span style="flex:1;font-size:13px;${s.done?'text-decoration:line-through;color:#aaa':''}">${esc(s.text)}</span>
-        <button style="border:2px solid #639922;border-radius:6px;background:#f0f9ea;cursor:pointer;padding:3px 10px;font-size:11px;color:#639922;font-family:inherit;flex-shrink:0;font-weight:500" onclick="handleAddTodoSub(this,'${gid}','${ps}')" title="加入待辦事項">
+        <button class="btn-add-todo-sub" style="border:2px solid #639922;border-radius:6px;background:#f0f9ea;cursor:pointer;padding:3px 10px;font-size:11px;color:#639922;font-family:inherit;flex-shrink:0;font-weight:500" data-gid="${gid}" data-ps="${ps}">
           ＋ 待辦
         </button>
         ${canAdd?`<button style="border:1px solid #ccc;border-radius:6px;background:#f5f5f3;cursor:pointer;padding:2px 8px;font-size:11px;color:#555;font-family:inherit;flex-shrink:0" data-add-child="${gid}" data-path="${ps}">
@@ -531,7 +531,7 @@ function renderGoals(){
           ${g.created_by?`<span style="font-size:11px;color:#aaa">by ${esc(g.created_by)}</span>`:''}
           ${g.date?`<span style="font-size:12px;color:#888">${g.date}</span>`:''}
           <span style="font-size:13px;font-weight:600;color:#555">${pct}%</span>
-          <button class="btn btn-sm" style="color:#639922;border-color:#639922" onclick="handleBatchAddTodo(this,'${g.id}')" title="把所有未完成子任務加入待辦">
+          <button class="btn-batch-add-todo" style="color:#639922;border-color:#639922;border:1px solid #639922;border-radius:8px;background:transparent;cursor:pointer;font-size:12px;font-family:inherit;display:inline-flex;align-items:center;gap:4px;padding:5px 10px" data-gid="${g.id}">
             <i class="ti ti-list-check" style="font-size:12px"></i> 批次加入待辦
           </button>
           <button class="btn btn-sm" data-edit-goal="${g.id}"><i class="ti ti-edit" style="font-size:12px"></i> 編輯</button>
@@ -545,11 +545,11 @@ function renderGoals(){
 }
 
 $('goal-list').addEventListener('click', async e => {
-  // 單一子任務加入待辦
-  const addTodoSub=e.target.closest('[data-add-todo-sub]');
-  if(addTodoSub){
-    const gid=addTodoSub.dataset.addTodoSub;
-    const path=addTodoSub.dataset.path.split('-').map(Number);
+  // ＋ 待辦（單一子任務）
+  const addTodoBtn=e.target.closest('.btn-add-todo-sub');
+  if(addTodoBtn){
+    const gid=addTodoBtn.dataset.gid, ps=addTodoBtn.dataset.ps;
+    const path=ps.split('-').map(Number);
     const g=goals.find(x=>x.id===gid); if(!g) return;
     const subs=normSubs(g.subs);
     function buildPath(arr,p){
@@ -557,41 +557,38 @@ $('goal-list').addEventListener('click', async e => {
       if(p.length===1) return node.text;
       return node.text+' / '+buildPath(node.children||[],p.slice(1));
     }
-    const subPath=buildPath(subs,path);
-    const text=`${g.name} / ${subPath}`;
-    addTodoSub.innerHTML='⏳ 新增中...';
-    addTodoSub.disabled=true;
-    addSubAsTodo(text, g.date||null).then(ok=>{
-      if(ok){
-        addTodoSub.innerHTML='✓ 已加入';
-        addTodoSub.style.background='#639922';addTodoSub.style.color='#fff';
-      } else {
-        addTodoSub.innerHTML='✗ 失敗';
-        addTodoSub.style.background='#E24B4A';addTodoSub.style.color='#fff';
-      }
-      addTodoSub.disabled=false;
-      setTimeout(()=>{addTodoSub.innerHTML='＋ 待辦';addTodoSub.style.background='#f0f9ea';addTodoSub.style.color='#639922';},2000);
-    });
+    const text=g.name+' / '+buildPath(subs,path);
+    addTodoBtn.textContent='⏳...'; addTodoBtn.disabled=true;
+    const ok=await addSubAsTodo(text, g.date||null);
+    addTodoBtn.textContent=ok?'✓ 已加入':'✗ 失敗';
+    addTodoBtn.style.background=ok?'#639922':'#E24B4A';
+    addTodoBtn.style.color='#fff'; addTodoBtn.disabled=false;
+    setTimeout(()=>{addTodoBtn.textContent='＋ 待辦';addTodoBtn.style.background='#f0f9ea';addTodoBtn.style.color='#639922';},2000);
     return;
   }
   // 批次加入待辦
-  const batchAdd=e.target.closest('[data-batch-add]');
-  if(batchAdd){
-    const gid=batchAdd.dataset.batchAdd;
+  const batchBtn=e.target.closest('.btn-batch-add-todo');
+  if(batchBtn){
+    const gid=batchBtn.dataset.gid;
     const g=goals.find(x=>x.id===gid); if(!g) return;
     const subs=normSubs(g.subs);
-    let count=0;
-    function collectUndone(items,parentPath){
-      items.forEach(s=>{
-        const fp=parentPath?`${parentPath} / ${s.text}`:s.text;
-        if(!s.done){addSubAsTodo(`${g.name} / ${fp}`,g.date||null);count++;}
-        if(s.children&&s.children.length) collectUndone(s.children,fp);
+    const items=[];
+    function collect(arr,prefix){
+      arr.forEach(s=>{
+        const fp=prefix?prefix+' / '+s.text:s.text;
+        if(!s.done) items.push({text:g.name+' / '+fp,date:g.date||null});
+        if(s.children&&s.children.length) collect(s.children,fp);
       });
     }
-    collectUndone(subs,'');
-    batchAdd.innerHTML=`<i class="ti ti-check" style="font-size:12px"></i> 已加入 ${count} 項`;
-    batchAdd.style.background='#639922';batchAdd.style.color='#fff';batchAdd.style.borderColor='#639922';
-    setTimeout(()=>{batchAdd.innerHTML='<i class="ti ti-list-check" style="font-size:12px"></i> 批次加入待辦';batchAdd.style.background='transparent';batchAdd.style.color='#639922';},2500);
+    collect(subs,'');
+    if(!items.length){batchBtn.textContent='無未完成項目';setTimeout(()=>{batchBtn.innerHTML='<i class="ti ti-list-check" style="font-size:12px"></i> 批次加入待辦';},2000);return;}
+    batchBtn.textContent='⏳ 新增中...'; batchBtn.disabled=true;
+    const results=await Promise.all(items.map(item=>addSubAsTodo(item.text,item.date)));
+    const count=results.filter(Boolean).length;
+    batchBtn.innerHTML=`✓ 已加入 ${count} 項`;
+    batchBtn.style.background='#639922'; batchBtn.style.color='#fff'; batchBtn.style.borderColor='#639922';
+    batchBtn.disabled=false;
+    setTimeout(()=>{batchBtn.innerHTML='<i class="ti ti-list-check" style="font-size:12px"></i> 批次加入待辦';batchBtn.style.background='transparent';batchBtn.style.color='#639922';},2500);
     return;
   }
   // toggle goal expand
