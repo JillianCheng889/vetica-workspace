@@ -479,38 +479,30 @@ function countAll(subs){let t=0,d=0;const w=a=>{(a||[]).forEach(s=>{t++;if(s.don
 function renderSubTree(subs,gid,path,level){
   if(!subs||!subs.length) return '';
   return subs.map((s,i)=>{
-    const p=[...path,i], ps=p.join('-'), formId=`acf_${gid}_${ps.replace(/-/g,'_')}`;
+    const p=[...path,i], ps=p.join('-'), formId='acf_'+gid+'_'+ps.replace(/-/g,'_');
     const hasKids=s.children&&s.children.length>0, canAdd=level<2;
-    return `<div>
-      <div class="sub-row" style="padding-left:${level*22}px">
-        <div style="width:16px;flex-shrink:0;display:flex;align-items:center;justify-content:center">
-          ${hasKids?`<button style="border:none;background:none;cursor:pointer;padding:0;color:#aaa;display:flex;align-items:center" data-exp="${gid}" data-path="${ps}">
-            <i class="ti ti-chevron-${s.expanded?'down':'right'}" style="font-size:11px"></i>
-          </button>`:''}
-        </div>
-        <div class="sub-check${s.done?' done':''}" style="width:17px;height:17px;flex-shrink:0" data-sub-toggle="${gid}" data-path="${ps}">
-          ${s.done?'<i class="ti ti-check" style="font-size:10px"></i>':''}
-        </div>
-        <span style="flex:1;font-size:13px;${s.done?'text-decoration:line-through;color:#aaa':''}">${esc(s.text)}</span>
-        <button class="btn-add-todo-sub" style="border:2px solid #639922;border-radius:6px;background:#f0f9ea;cursor:pointer;padding:3px 10px;font-size:11px;color:#639922;font-family:inherit;flex-shrink:0;font-weight:500" data-gid="${gid}" data-ps="${ps}">
-          ＋ 待辦
-        </button>
-        ${canAdd?`<button style="border:1px solid #ccc;border-radius:6px;background:#f5f5f3;cursor:pointer;padding:2px 8px;font-size:11px;color:#555;font-family:inherit;flex-shrink:0" data-add-child="${gid}" data-path="${ps}">
-          <i class="ti ti-plus" style="font-size:11px"></i> 子任務
-        </button>`:''}
-        <button style="border:1px solid #E24B4A;border-radius:6px;background:transparent;cursor:pointer;padding:2px 6px;font-size:11px;color:#E24B4A;flex-shrink:0" data-del-sub="${gid}" data-path="${ps}">
-          <i class="ti ti-x" style="font-size:11px"></i>
-        </button>
-      </div>
-      <div class="add-child-form" id="${formId}" style="padding-left:${level*22+38}px">
-        <div style="display:flex;gap:6px;align-items:center">
-          <input class="kid-input" type="text" placeholder="輸入子任務名稱..." style="flex:1;padding:5px 8px;font-size:12px">
-          <button class="btn btn-primary btn-sm confirm-kid" data-gid="${gid}" data-path="${ps}">新增</button>
-          <button class="btn btn-sm cancel-kid" data-gid="${gid}" data-path="${ps}">取消</button>
-        </div>
-      </div>
-      ${hasKids&&s.expanded?`<div>${renderSubTree(s.children,gid,p,level+1)}</div>`:''}
-    </div>`;
+    const k=_regBtn({gid:gid,path:p});
+    return '<div>'
+      +'<div class="sub-row" style="padding-left:'+( level*22)+'px">'
+      +'<div style="width:16px;flex-shrink:0;display:flex;align-items:center;justify-content:center">'
+      +(hasKids?'<button style="border:none;background:none;cursor:pointer;padding:0;color:#aaa;display:flex;align-items:center" data-exp="'+gid+'" data-path="'+ps+'"><i class="ti ti-chevron-'+(s.expanded?'down':'right')+'" style="font-size:11px"></i></button>':'')
+      +'</div>'
+      +'<div class="sub-check'+(s.done?' done':'')+'" style="width:17px;height:17px;flex-shrink:0" data-sub-toggle="'+gid+'" data-path="'+ps+'">'
+      +(s.done?'<i class="ti ti-check" style="font-size:10px"></i>':'')
+      +'</div>'
+      +'<span style="flex:1;font-size:13px;'+(s.done?'text-decoration:line-through;color:#aaa':'')+'">'+(esc(s.text))+'</span>'
+      +'<button id="tbtn-'+k+'" onclick="window._addTodo(\''+k+'\')" style="border:2px solid #639922;border-radius:6px;background:#f0f9ea;cursor:pointer;padding:3px 8px;font-size:11px;color:#639922;font-family:inherit;flex-shrink:0;font-weight:500">＋ 待辦</button>'
+      +(canAdd?'<button style="border:1px solid #ccc;border-radius:6px;background:#f5f5f3;cursor:pointer;padding:2px 8px;font-size:11px;color:#555;font-family:inherit;flex-shrink:0" data-add-child="'+gid+'" data-path="'+ps+'"><i class="ti ti-plus" style="font-size:11px"></i> 子任務</button>':'')
+      +'<button style="border:1px solid #E24B4A;border-radius:6px;background:transparent;cursor:pointer;padding:2px 6px;font-size:11px;color:#E24B4A;flex-shrink:0" data-del-sub="'+gid+'" data-path="'+ps+'"><i class="ti ti-x" style="font-size:11px"></i></button>'
+      +'</div>'
+      +'<div class="add-child-form" id="'+formId+'" style="padding-left:'+(level*22+38)+'px">'
+      +'<div style="display:flex;gap:6px;align-items:center">'
+      +'<input class="kid-input" type="text" placeholder="輸入子任務名稱..." style="flex:1;padding:5px 8px;font-size:12px">'
+      +'<button class="btn btn-primary btn-sm confirm-kid" data-gid="'+gid+'" data-path="'+ps+'">新增</button>'
+      +'<button class="btn btn-sm cancel-kid" data-gid="'+gid+'" data-path="'+ps+'">取消</button>'
+      +'</div></div>'
+      +(hasKids&&s.expanded?'<div>'+renderSubTree(s.children,gid,p,level+1)+'</div>':'')
+      +'</div>';
   }).join('');
 }
 
