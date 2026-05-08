@@ -1,517 +1,501 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
-<html>
+<!DOCTYPE html>
+<html lang="zh-TW">
 <head>
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-  <meta http-equiv="Content-Style-Type" content="text/css">
-  <title></title>
-  <meta name="Generator" content="Cocoa HTML Writer">
-  <meta name="CocoaVersion" content="2487.5">
-  <style type="text/css">
-    p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
-    p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Vetica Workspace</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f5f5f3;color:#222;font-size:14px}
+.app{max-width:900px;margin:0 auto;padding:16px}
+.header{display:flex;align-items:center;gap:10px;padding:16px 0 20px;flex-wrap:wrap}
+.logo{font-size:22px;font-weight:500;letter-spacing:-0.5px;color:#555}
+.logo span{color:#999;font-weight:400}
+.sync-bar{display:flex;align-items:center;gap:6px;font-size:12px;color:#666}
+.sync-dot{width:7px;height:7px;border-radius:50%;background:#888;flex-shrink:0}
+.sync-dot.ok{background:#639922}.sync-dot.syncing{background:#BA7517}.sync-dot.err{background:#E24B4A}
+.nav{display:flex;gap:4px;border-bottom:1px solid #e5e5e5;margin-bottom:20px}
+.nav-btn{padding:8px 16px;border:none;background:none;cursor:pointer;color:#888;font-size:14px;border-bottom:2px solid transparent;margin-bottom:-1px;display:flex;align-items:center;gap:6px}
+.nav-btn.active{color:#222;border-bottom-color:#555;font-weight:500}
+.nav-btn:hover:not(.active){color:#222}
+.tab{display:none}.tab.active{display:block}
+.card{background:#fff;border:1px solid #e5e5e5;border-radius:12px;padding:16px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.stat-card{background:#f5f5f3;border-radius:8px;padding:12px 16px}
+.stat-label{font-size:12px;color:#888;margin-bottom:4px}
+.stat-num{font-size:22px;font-weight:500}
+input,select,textarea{width:100%;padding:8px 12px;border:1px solid #ddd;border-radius:8px;background:#fff;color:#222;font-size:14px;font-family:inherit;outline:none}
+input:focus,select:focus,textarea:focus{border-color:#555;box-shadow:0 0 0 2px rgba(85,85,85,0.1)}
+.btn{padding:8px 16px;border:1px solid #ddd;border-radius:8px;background:transparent;color:#222;cursor:pointer;font-size:13px;font-family:inherit;display:inline-flex;align-items:center;gap:6px;transition:background 0.15s}
+.btn:hover{background:#f5f5f3}
+.btn-primary{background:#555;color:#fff;border-color:#555}
+.btn-primary:hover{background:#444}
+.btn-sm{padding:5px 10px;font-size:12px}
+.btn-danger{color:#E24B4A;border-color:#E24B4A}
+.btn-danger:hover{background:#fff5f5}
+.row-between{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px}
+.mb12{margin-bottom:12px}.mt12{margin-top:12px}
+.todo-item{display:flex;align-items:flex-start;gap:10px;padding:12px 0;border-bottom:1px solid #f0f0f0}
+.todo-item:last-child{border-bottom:none}
+.todo-check{width:22px;height:22px;border-radius:5px;border:2px solid #bbb;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;margin-top:1px;background:#fff;transition:all 0.15s}
+.todo-check:hover{border-color:#555}
+.todo-check.done{background:#555;border-color:#555;color:#fff}
+.todo-text{flex:1;font-size:14px;line-height:1.5}
+.todo-text.done{text-decoration:line-through;color:#aaa}
+.badge{font-size:11px;padding:2px 8px;border-radius:100px;font-weight:500}
+.badge-high{background:#FAECE7;color:#993C1D}
+.badge-mid{background:#FAEEDA;color:#854F0B}
+.badge-low{background:#EAF3DE;color:#3B6D11}
+.badge-member{background:#f5f5f3;color:#666}
+.empty{text-align:center;padding:32px;color:#bbb;font-size:13px}
+.filter-row{display:flex;gap:6px;flex-wrap:wrap}
+.filter-btn{padding:4px 12px;border-radius:100px;border:1px solid #ddd;background:transparent;cursor:pointer;font-size:12px;color:#888;font-family:inherit}
+.filter-btn.active{background:#555;color:#fff;border-color:#555}
+.inline-form{background:#f9f9f8;border-radius:12px;padding:16px;margin-bottom:12px;border:1px solid #e5e5e5}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:10px 0}
+.form-label{font-size:12px;color:#888;margin-bottom:4px;display:block}
+.cal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:2px}
+.cal-day-name{text-align:center;font-size:11px;color:#888;padding:4px;font-weight:500}
+.cal-day{min-height:64px;padding:4px;border-radius:8px;border:1px solid transparent;cursor:pointer}
+.cal-day:hover{background:#f5f5f3}
+.cal-day.today{border-color:#555}
+.cal-day.other-month .cal-num{color:#ccc}
+.cal-num{font-size:12px;font-weight:500;margin-bottom:2px}
+.cal-dot{font-size:10px;padding:1px 4px;border-radius:3px;background:#f0f0f0;color:#888;margin-bottom:1px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.cal-dot.high{background:#FAECE7;color:#993C1D}
+.cal-dot.mid{background:#FAEEDA;color:#854F0B}
+.cal-dot.low{background:#EAF3DE;color:#3B6D11}
+.goal-item{padding:12px;border:1px solid #e5e5e5;border-radius:8px;margin-bottom:8px}
+.progress-bar{height:4px;background:#f0f0f0;border-radius:2px;margin:8px 0}
+.progress-fill{height:100%;background:#555;border-radius:2px;transition:width 0.3s}
+.subtask{display:flex;align-items:center;gap:8px;padding:4px 0;font-size:13px}
+.pomo-ring{width:160px;height:160px;margin:0 auto 16px;position:relative;display:flex;align-items:center;justify-content:center}
+.pomo-svg{position:absolute;top:0;left:0;transform:rotate(-90deg)}
+.pomo-time{font-size:32px;font-weight:500;line-height:1}
+.pomo-label{font-size:12px;color:#888;margin-top:4px}
+.setup{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:32px}
+.user-pill{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:100px;background:#f5f5f3;font-size:12px;font-weight:500}
+.conn-err{background:#fff5f5;color:#993C1D;padding:10px 14px;border-radius:8px;font-size:13px;margin-bottom:12px;display:none}
+</style>
 </head>
 <body>
-<p class="p1">&lt;!DOCTYPE html&gt;</p>
-<p class="p1">&lt;html lang="zh-TW"&gt;</p>
-<p class="p1">&lt;head&gt;</p>
-<p class="p1">&lt;meta charset="UTF-8"&gt;</p>
-<p class="p1">&lt;meta name="viewport" content="width=device-width,initial-scale=1.0"&gt;</p>
-<p class="p1">&lt;title&gt;Vetica Workspace&lt;/title&gt;</p>
-<p class="p1">&lt;link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css"&gt;</p>
-<p class="p1">&lt;style&gt;</p>
-<p class="p1">*{box-sizing:border-box;margin:0;padding:0}</p>
-<p class="p1">body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f5f5f3;color:#222;font-size:14px}</p>
-<p class="p1">.app{max-width:900px;margin:0 auto;padding:16px}</p>
-<p class="p1">.header{display:flex;align-items:center;gap:10px;padding:16px 0 20px;flex-wrap:wrap}</p>
-<p class="p1">.logo{font-size:22px;font-weight:500;letter-spacing:-0.5px;color:#555}</p>
-<p class="p1">.logo span{color:#999;font-weight:400}</p>
-<p class="p1">.sync-bar{display:flex;align-items:center;gap:6px;font-size:12px;color:#666}</p>
-<p class="p1">.sync-dot{width:7px;height:7px;border-radius:50%;background:#888;flex-shrink:0}</p>
-<p class="p1">.sync-dot.ok{background:#639922}.sync-dot.syncing{background:#BA7517}.sync-dot.err{background:#E24B4A}</p>
-<p class="p1">.nav{display:flex;gap:4px;border-bottom:1px solid #e5e5e5;margin-bottom:20px}</p>
-<p class="p1">.nav-btn{padding:8px 16px;border:none;background:none;cursor:pointer;color:#888;font-size:14px;border-bottom:2px solid transparent;margin-bottom:-1px;display:flex;align-items:center;gap:6px}</p>
-<p class="p1">.nav-btn.active{color:#222;border-bottom-color:#555;font-weight:500}</p>
-<p class="p1">.nav-btn:hover:not(.active){color:#222}</p>
-<p class="p1">.tab{display:none}.tab.active{display:block}</p>
-<p class="p1">.card{background:#fff;border:1px solid #e5e5e5;border-radius:12px;padding:16px}</p>
-<p class="p1">.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}</p>
-<p class="p1">.stat-card{background:#f5f5f3;border-radius:8px;padding:12px 16px}</p>
-<p class="p1">.stat-label{font-size:12px;color:#888;margin-bottom:4px}</p>
-<p class="p1">.stat-num{font-size:22px;font-weight:500}</p>
-<p class="p1">input,select,textarea{width:100%;padding:8px 12px;border:1px solid #ddd;border-radius:8px;background:#fff;color:#222;font-size:14px;font-family:inherit;outline:none}</p>
-<p class="p1">input:focus,select:focus,textarea:focus{border-color:#555;box-shadow:0 0 0 2px rgba(85,85,85,0.1)}</p>
-<p class="p1">.btn{padding:8px 16px;border:1px solid #ddd;border-radius:8px;background:transparent;color:#222;cursor:pointer;font-size:13px;font-family:inherit;display:inline-flex;align-items:center;gap:6px;transition:background 0.15s}</p>
-<p class="p1">.btn:hover{background:#f5f5f3}</p>
-<p class="p1">.btn-primary{background:#555;color:#fff;border-color:#555}</p>
-<p class="p1">.btn-primary:hover{background:#444}</p>
-<p class="p1">.btn-sm{padding:5px 10px;font-size:12px}</p>
-<p class="p1">.btn-danger{color:#E24B4A;border-color:#E24B4A}</p>
-<p class="p1">.btn-danger:hover{background:#fff5f5}</p>
-<p class="p1">.row-between{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px}</p>
-<p class="p1">.mb12{margin-bottom:12px}.mt12{margin-top:12px}</p>
-<p class="p1">.todo-item{display:flex;align-items:flex-start;gap:10px;padding:12px 0;border-bottom:1px solid #f0f0f0}</p>
-<p class="p1">.todo-item:last-child{border-bottom:none}</p>
-<p class="p1">.todo-check{width:22px;height:22px;border-radius:5px;border:2px solid #bbb;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;margin-top:1px;background:#fff;transition:all 0.15s}</p>
-<p class="p1">.todo-check:hover{border-color:#555}</p>
-<p class="p1">.todo-check.done{background:#555;border-color:#555;color:#fff}</p>
-<p class="p1">.todo-text{flex:1;font-size:14px;line-height:1.5}</p>
-<p class="p1">.todo-text.done{text-decoration:line-through;color:#aaa}</p>
-<p class="p1">.badge{font-size:11px;padding:2px 8px;border-radius:100px;font-weight:500}</p>
-<p class="p1">.badge-high{background:#FAECE7;color:#993C1D}</p>
-<p class="p1">.badge-mid{background:#FAEEDA;color:#854F0B}</p>
-<p class="p1">.badge-low{background:#EAF3DE;color:#3B6D11}</p>
-<p class="p1">.badge-member{background:#f5f5f3;color:#666}</p>
-<p class="p1">.empty{text-align:center;padding:32px;color:#bbb;font-size:13px}</p>
-<p class="p1">.filter-row{display:flex;gap:6px;flex-wrap:wrap}</p>
-<p class="p1">.filter-btn{padding:4px 12px;border-radius:100px;border:1px solid #ddd;background:transparent;cursor:pointer;font-size:12px;color:#888;font-family:inherit}</p>
-<p class="p1">.filter-btn.active{background:#555;color:#fff;border-color:#555}</p>
-<p class="p1">.inline-form{background:#f9f9f8;border-radius:12px;padding:16px;margin-bottom:12px;border:1px solid #e5e5e5}</p>
-<p class="p1">.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:10px 0}</p>
-<p class="p1">.form-label{font-size:12px;color:#888;margin-bottom:4px;display:block}</p>
-<p class="p1">.cal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}</p>
-<p class="p1">.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:2px}</p>
-<p class="p1">.cal-day-name{text-align:center;font-size:11px;color:#888;padding:4px;font-weight:500}</p>
-<p class="p1">.cal-day{min-height:64px;padding:4px;border-radius:8px;border:1px solid transparent;cursor:pointer}</p>
-<p class="p1">.cal-day:hover{background:#f5f5f3}</p>
-<p class="p1">.cal-day.today{border-color:#555}</p>
-<p class="p1">.cal-day.other-month .cal-num{color:#ccc}</p>
-<p class="p1">.cal-num{font-size:12px;font-weight:500;margin-bottom:2px}</p>
-<p class="p1">.cal-dot{font-size:10px;padding:1px 4px;border-radius:3px;background:#f0f0f0;color:#888;margin-bottom:1px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}</p>
-<p class="p1">.cal-dot.high{background:#FAECE7;color:#993C1D}</p>
-<p class="p1">.cal-dot.mid{background:#FAEEDA;color:#854F0B}</p>
-<p class="p1">.cal-dot.low{background:#EAF3DE;color:#3B6D11}</p>
-<p class="p1">.goal-item{padding:12px;border:1px solid #e5e5e5;border-radius:8px;margin-bottom:8px}</p>
-<p class="p1">.progress-bar{height:4px;background:#f0f0f0;border-radius:2px;margin:8px 0}</p>
-<p class="p1">.progress-fill{height:100%;background:#555;border-radius:2px;transition:width 0.3s}</p>
-<p class="p1">.subtask{display:flex;align-items:center;gap:8px;padding:4px 0;font-size:13px}</p>
-<p class="p1">.pomo-ring{width:160px;height:160px;margin:0 auto 16px;position:relative;display:flex;align-items:center;justify-content:center}</p>
-<p class="p1">.pomo-svg{position:absolute;top:0;left:0;transform:rotate(-90deg)}</p>
-<p class="p1">.pomo-time{font-size:32px;font-weight:500;line-height:1}</p>
-<p class="p1">.pomo-label{font-size:12px;color:#888;margin-top:4px}</p>
-<p class="p1">.setup{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:32px}</p>
-<p class="p1">.user-pill{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:100px;background:#f5f5f3;font-size:12px;font-weight:500}</p>
-<p class="p1">.conn-err{background:#fff5f5;color:#993C1D;padding:10px 14px;border-radius:8px;font-size:13px;margin-bottom:12px;display:none}</p>
-<p class="p1">&lt;/style&gt;</p>
-<p class="p1">&lt;/head&gt;</p>
-<p class="p1">&lt;body&gt;</p>
-<p class="p1">&lt;div class="app"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;div id="setup-screen" class="setup"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="card" style="width:340px;text-align:center;padding:32px"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="logo" style="margin-bottom:20px"&gt;vetica &lt;span&gt;workspace&lt;/span&gt;&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;div style="margin-bottom:16px;text-align:left"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;label class="form-label"&gt;工作區名稱 &lt;span style="color:#E24B4A"&gt;*&lt;/span&gt;&lt;/label&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;input id="workspace-input" type="text" placeholder="例如：vetica-team" style="margin-bottom:4px"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;div style="font-size:11px;color:#aaa"&gt;所有成員輸入相同名稱即可共享資料&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;div style="margin-bottom:20px;text-align:left"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;label class="form-label"&gt;你的名稱 &lt;span style="color:#E24B4A"&gt;*&lt;/span&gt;&lt;/label&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;input id="name-input" type="text" placeholder="例如：Alex"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;button class="btn btn-primary" style="width:100%;justify-content:center" onclick="joinWorkspace()"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;i class="ti ti-arrow-right"&gt;&lt;/i&gt; 進入工作區</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;/button&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;div id="setup-err" style="color:#E24B4A;font-size:12px;margin-top:10px;display:none"&gt;&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;/div&gt;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;div id="main-app" style="display:none"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="header"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="logo"&gt;vetica &lt;span&gt;workspace&lt;/span&gt;&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="sync-bar"&gt;&lt;div class="sync-dot" id="sync-dot"&gt;&lt;/div&gt;&lt;span id="sync-label"&gt;連線中...&lt;/span&gt;&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;div style="flex:1"&gt;&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="user-pill"&gt;&lt;i class="ti ti-users" style="font-size:13px"&gt;&lt;/i&gt;&lt;span id="online-count"&gt;—&lt;/span&gt;&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="user-pill"&gt;&lt;i class="ti ti-user" style="font-size:13px"&gt;&lt;/i&gt;&lt;span id="cur-user"&gt;&lt;/span&gt;&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="stat-card" style="padding:6px 14px;display:inline-flex;gap:16px"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;div&gt;&lt;div class="stat-label"&gt;待辦&lt;/div&gt;&lt;div style="font-size:16px;font-weight:500" id="h-todo"&gt;0&lt;/div&gt;&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;div style="border-left:1px solid #e5e5e5;padding-left:16px"&gt;&lt;div class="stat-label"&gt;今日&lt;/div&gt;&lt;div style="font-size:16px;font-weight:500" id="h-today"&gt;0&lt;/div&gt;&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="nav"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;button class="nav-btn active" onclick="switchTab('todo',this)"&gt;&lt;i class="ti ti-check"&gt;&lt;/i&gt; 待辦事項&lt;/button&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;button class="nav-btn" onclick="switchTab('cal',this)"&gt;&lt;i class="ti ti-calendar"&gt;&lt;/i&gt; 行事曆&lt;/button&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;button class="nav-btn" onclick="switchTab('goal',this)"&gt;&lt;i class="ti ti-target"&gt;&lt;/i&gt; 目標規劃&lt;/button&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;button class="nav-btn" onclick="switchTab('timer',this)"&gt;&lt;i class="ti ti-clock"&gt;&lt;/i&gt; 番茄鐘&lt;/button&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;!-- TODO --&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="tab active" id="tab-todo"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;div id="conn-err" class="conn-err"&gt;&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;div id="todo-add-form" style="display:none" class="inline-form"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;div style="font-weight:500;margin-bottom:10px" id="todo-form-title"&gt;新增任務&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;input id="f-text" type="text" placeholder="任務名稱 *" style="margin-bottom:8px"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="form-grid"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">          </span>&lt;div&gt;&lt;label class="form-label"&gt;優先級&lt;/label&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;select id="f-pri"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">              </span>&lt;option value=""&gt;未設定&lt;/option&gt;</p>
-<p class="p1"><span class="Apple-converted-space">              </span>&lt;option value="high"&gt;🔴 高優先&lt;/option&gt;</p>
-<p class="p1"><span class="Apple-converted-space">              </span>&lt;option value="mid"&gt;🟡 中優先&lt;/option&gt;</p>
-<p class="p1"><span class="Apple-converted-space">              </span>&lt;option value="low"&gt;🟢 低優先&lt;/option&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;/select&gt;&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">          </span>&lt;div&gt;&lt;label class="form-label"&gt;負責人&lt;/label&gt;&lt;select id="f-member"&gt;&lt;/select&gt;&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;div style="margin-bottom:8px"&gt;&lt;label class="form-label"&gt;計劃日期&lt;/label&gt;&lt;input id="f-date" type="date"&gt;&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;div style="margin-bottom:12px"&gt;&lt;label class="form-label"&gt;備註&lt;/label&gt;&lt;textarea id="f-note" rows="2" placeholder="備註（選填）"&gt;&lt;/textarea&gt;&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;div id="todo-form-btns" style="display:flex;gap:8px;justify-content:flex-end"&gt;&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="row-between mb12"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="filter-row"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">          </span>&lt;button class="filter-btn active" onclick="setFilter('all',this)"&gt;全部&lt;/button&gt;</p>
-<p class="p1"><span class="Apple-converted-space">          </span>&lt;button class="filter-btn" onclick="setFilter('active',this)"&gt;進行中&lt;/button&gt;</p>
-<p class="p1"><span class="Apple-converted-space">          </span>&lt;button class="filter-btn" onclick="setFilter('done',this)"&gt;已完成&lt;/button&gt;</p>
-<p class="p1"><span class="Apple-converted-space">          </span>&lt;button class="filter-btn" onclick="setFilter('high',this)"&gt;🔴 高&lt;/button&gt;</p>
-<p class="p1"><span class="Apple-converted-space">          </span>&lt;button class="filter-btn" onclick="setFilter('mid',this)"&gt;🟡 中&lt;/button&gt;</p>
-<p class="p1"><span class="Apple-converted-space">          </span>&lt;button class="filter-btn" onclick="setFilter('low',this)"&gt;🟢 低&lt;/button&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;button class="btn btn-primary" onclick="showTodoForm(null)"&gt;&lt;i class="ti ti-plus"&gt;&lt;/i&gt; 新增任務&lt;/button&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="card"&gt;&lt;div id="todo-list"&gt;&lt;/div&gt;&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="grid2 mt12"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="stat-card"&gt;&lt;div class="stat-label"&gt;待完成&lt;/div&gt;&lt;div class="stat-num" id="s-active"&gt;0&lt;/div&gt;&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="stat-card"&gt;&lt;div class="stat-label"&gt;已完成&lt;/div&gt;&lt;div class="stat-num" id="s-done"&gt;0&lt;/div&gt;&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;!-- CALENDAR --&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="tab" id="tab-cal"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="card"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="cal-header"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">          </span>&lt;button class="btn btn-primary" style="padding:6px 14px" onclick="moveCal(-1)"&gt;&lt;i class="ti ti-chevron-left"&gt;&lt;/i&gt; 上個月&lt;/button&gt;</p>
-<p class="p1"><span class="Apple-converted-space">          </span>&lt;div style="display:flex;flex-direction:column;align-items:center;gap:4px"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;span id="cal-title" style="font-weight:500;font-size:15px"&gt;&lt;/span&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;button class="btn btn-sm" style="font-size:11px;padding:2px 10px" onclick="calDate=new Date();renderCal()"&gt;回到今月&lt;/button&gt;</p>
-<p class="p1"><span class="Apple-converted-space">          </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">          </span>&lt;button class="btn btn-primary" style="padding:6px 14px" onclick="moveCal(1)"&gt;下個月 &lt;i class="ti ti-chevron-right"&gt;&lt;/i&gt;&lt;/button&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;div id="cal-month-summary" style="display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap"&gt;&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="cal-grid" id="cal-names"&gt;&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="cal-grid mt12" id="cal-days"&gt;&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="card mt12" id="cal-detail" style="display:none"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;div id="cal-detail-content"&gt;&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;!-- GOALS --&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="tab" id="tab-goal"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;div id="goal-add-form" style="display:none" class="inline-form"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;div style="font-weight:500;margin-bottom:10px" id="goal-form-title"&gt;新增目標&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;input id="f-gname" type="text" placeholder="目標名稱 *" style="margin-bottom:8px"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;div style="margin-bottom:8px"&gt;&lt;label class="form-label"&gt;截止日期&lt;/label&gt;&lt;input id="f-gdate" type="date"&gt;&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;div style="margin-bottom:12px"&gt;&lt;label class="form-label"&gt;子任務（每行一項）&lt;/label&gt;</p>
-<p class="p1"><span class="Apple-converted-space">          </span>&lt;textarea id="f-gsub" rows="6" placeholder="子任務 1&amp;#10;子任務 2&amp;#10;子任務 3" style="min-height:120px;resize:vertical"&gt;&lt;/textarea&gt;&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;div style="display:flex;gap:8px;justify-content:flex-end"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">          </span>&lt;button type="button" class="btn btn-sm" id="goal-cancel-btn"&gt;取消&lt;/button&gt;</p>
-<p class="p1"><span class="Apple-converted-space">          </span>&lt;button type="button" class="btn btn-primary btn-sm" id="goal-save-btn"&gt;&lt;i class="ti ti-check"&gt;&lt;/i&gt; 儲存目標&lt;/button&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="row-between mb12"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;span style="font-size:15px;font-weight:500"&gt;目標清單&lt;/span&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;button class="btn btn-primary" onclick="openGoalForm(null)"&gt;&lt;i class="ti ti-plus"&gt;&lt;/i&gt; 新增目標&lt;/button&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="card"&gt;&lt;div id="goal-list"&gt;&lt;/div&gt;&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;!-- TIMER --&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="tab" id="tab-timer"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="card" style="text-align:center;padding:28px 16px"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;div style="display:flex;gap:8px;justify-content:center;margin-bottom:20px"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">          </span>&lt;button class="filter-btn active" onclick="setPomoMode('work',this)"&gt;專注 25分&lt;/button&gt;</p>
-<p class="p1"><span class="Apple-converted-space">          </span>&lt;button class="filter-btn" onclick="setPomoMode('short',this)"&gt;短休 5分&lt;/button&gt;</p>
-<p class="p1"><span class="Apple-converted-space">          </span>&lt;button class="filter-btn" onclick="setPomoMode('long',this)"&gt;長休 15分&lt;/button&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="pomo-ring"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">          </span>&lt;svg class="pomo-svg" width="160" height="160" viewBox="0 0 160 160"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;circle cx="80" cy="80" r="70" fill="none" stroke="#e5e5e5" stroke-width="6"/&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;circle id="pomo-arc" cx="80" cy="80" r="70" fill="none" stroke="#555" stroke-width="6" stroke-linecap="round" stroke-dasharray="439.82" stroke-dashoffset="0"/&gt;</p>
-<p class="p1"><span class="Apple-converted-space">          </span>&lt;/svg&gt;</p>
-<p class="p1"><span class="Apple-converted-space">          </span>&lt;div&gt;&lt;div class="pomo-time" id="pomo-display"&gt;25:00&lt;/div&gt;&lt;div class="pomo-label" id="pomo-status"&gt;專注時間&lt;/div&gt;&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;div style="display:flex;gap:8px;justify-content:center;margin-top:12px"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">          </span>&lt;button class="btn btn-primary" onclick="togglePomo()" id="pomo-btn"&gt;&lt;i class="ti ti-player-play"&gt;&lt;/i&gt; 開始&lt;/button&gt;</p>
-<p class="p1"><span class="Apple-converted-space">          </span>&lt;button class="btn" onclick="resetPomo()"&gt;&lt;i class="ti ti-refresh"&gt;&lt;/i&gt; 重置&lt;/button&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;div style="margin-top:20px;display:flex;gap:16px;justify-content:center"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">          </span>&lt;div class="stat-card" style="padding:10px 20px"&gt;&lt;div class="stat-label"&gt;今日完成&lt;/div&gt;&lt;div class="stat-num" id="pomo-count"&gt;0&lt;/div&gt;&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">          </span>&lt;div class="stat-card" style="padding:10px 20px"&gt;&lt;div class="stat-label"&gt;累計分鐘&lt;/div&gt;&lt;div class="stat-num" id="pomo-mins"&gt;0&lt;/div&gt;&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;div style="margin-top:16px;text-align:left"&gt;&lt;label class="form-label"&gt;目前任務&lt;/label&gt;</p>
-<p class="p1"><span class="Apple-converted-space">          </span>&lt;input type="text" id="pomo-task" placeholder="輸入正在進行的任務..."&gt;&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;/div&gt;</p>
-<p class="p1">&lt;/div&gt;</p>
-<p class="p2"><br></p>
-<p class="p1">&lt;script&gt;</p>
-<p class="p1">const SB_URL='https://mnaplphslldwaznbinwx.supabase.co';</p>
-<p class="p1">const SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1uYXBscGhzbGxkd2F6bmJpbnd4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgxMzk2MDMsImV4cCI6MjA5MzcxNTYwM30.qYmRCUjXLIGKCbHi7ll00PuKxZWg2Cc65EbcJr9J9JI';</p>
-<p class="p2"><br></p>
-<p class="p1">let todos=[],goals=[],calDate=new Date(),todoFilter='all',editId=null,editGoalId=null;</p>
-<p class="p1">let pomoRunning=false,pomoInterval=null,pomoMode='work',pomoSeconds=25*60,pomoDone=0,pomoTotal=0;</p>
-<p class="p1">let currentUser='',workspaceKey='';</p>
-<p class="p1">const MEMBERS=['Alex','Brian','Cathy','Daniel'];</p>
-<p class="p2"><br></p>
-<p class="p1">function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2)}</p>
-<p class="p1">function todayStr(){const d=new Date();return `${d.getFullYear()}-${p2(d.getMonth()+1)}-${p2(d.getDate())}`}</p>
-<p class="p1">function p2(n){return String(n).padStart(2,'0')}</p>
-<p class="p1">function esc(s){return String(s||'').replace(/&amp;/g,'&amp;amp;').replace(/&lt;/g,'&amp;lt;').replace(/&gt;/g,'&amp;gt;')}</p>
-<p class="p1">function sbH(){return{'Content-Type':'application/json','apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,'Prefer':'return=representation'};}</p>
-<p class="p2"><br></p>
-<p class="p1">async function sbGet(t,f=''){const r=await fetch(`${SB_URL}/rest/v1/${t}?${f}`,{headers:sbH()});if(!r.ok)throw new Error(await r.text());return r.json();}</p>
-<p class="p1">async function sbInsert(t,d){const r=await fetch(`${SB_URL}/rest/v1/${t}`,{method:'POST',headers:sbH(),body:JSON.stringify(d)});if(!r.ok)throw new Error(await r.text());return r.json();}</p>
-<p class="p1">async function sbUpdate(t,id,d){const r=await fetch(`${SB_URL}/rest/v1/${t}?id=eq.${id}`,{method:'PATCH',headers:sbH(),body:JSON.stringify(d)});if(!r.ok)throw new Error(await r.text());return r.json();}</p>
-<p class="p1">async function sbDelete(t,id){const r=await fetch(`${SB_URL}/rest/v1/${t}?id=eq.${id}`,{method:'DELETE',headers:sbH()});if(!r.ok)throw new Error(await r.text());}</p>
-<p class="p2"><br></p>
-<p class="p1">function setSyncStatus(s){</p>
-<p class="p1"><span class="Apple-converted-space">  </span>const dot=document.getElementById('sync-dot'),lbl=document.getElementById('sync-label');</p>
-<p class="p1"><span class="Apple-converted-space">  </span>if(s==='ok'){dot.className='sync-dot ok';lbl.textContent='已同步'}</p>
-<p class="p1"><span class="Apple-converted-space">  </span>else if(s==='syncing'){dot.className='sync-dot syncing';lbl.textContent='同步中...'}</p>
-<p class="p1"><span class="Apple-converted-space">  </span>else{dot.className='sync-dot err';lbl.textContent='連線失敗'}</p>
-<p class="p1">}</p>
-<p class="p2"><br></p>
-<p class="p1">async function loadAll(){</p>
-<p class="p1"><span class="Apple-converted-space">  </span>setSyncStatus('syncing');</p>
-<p class="p1"><span class="Apple-converted-space">  </span>try{</p>
-<p class="p1"><span class="Apple-converted-space">    </span>const[t,g]=await Promise.all([</p>
-<p class="p1"><span class="Apple-converted-space">      </span>sbGet('todos',`workspace=eq.${encodeURIComponent(workspaceKey)}&amp;order=created_at.desc`),</p>
-<p class="p1"><span class="Apple-converted-space">      </span>sbGet('goals',`workspace=eq.${encodeURIComponent(workspaceKey)}&amp;order=created_at.desc`)</p>
-<p class="p1"><span class="Apple-converted-space">    </span>]);</p>
-<p class="p1"><span class="Apple-converted-space">    </span>todos=t||[];goals=g||[];</p>
-<p class="p1"><span class="Apple-converted-space">    </span>setSyncStatus('ok');</p>
-<p class="p1"><span class="Apple-converted-space">    </span>const ce=document.getElementById('conn-err');if(ce)ce.style.display='none';</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}catch(e){</p>
-<p class="p1"><span class="Apple-converted-space">    </span>setSyncStatus('err');</p>
-<p class="p1"><span class="Apple-converted-space">    </span>const ce=document.getElementById('conn-err');</p>
-<p class="p1"><span class="Apple-converted-space">    </span>if(ce){ce.style.display='block';ce.textContent='⚠️ 連線失敗：'+e.message;}</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}</p>
-<p class="p1"><span class="Apple-converted-space">  </span>renderAll();</p>
-<p class="p1">}</p>
-<p class="p2"><br></p>
-<p class="p1">function joinWorkspace(){</p>
-<p class="p1"><span class="Apple-converted-space">  </span>const ws=document.getElementById('workspace-input').value.trim();</p>
-<p class="p1"><span class="Apple-converted-space">  </span>const n=document.getElementById('name-input').value.trim();</p>
-<p class="p1"><span class="Apple-converted-space">  </span>if(!ws||!n){document.getElementById('setup-err').style.display='block';document.getElementById('setup-err').textContent='請填寫所有欄位';return;}</p>
-<p class="p1"><span class="Apple-converted-space">  </span>workspaceKey=ws;currentUser=n;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>document.getElementById('setup-screen').style.display='none';</p>
-<p class="p1"><span class="Apple-converted-space">  </span>document.getElementById('main-app').style.display='block';</p>
-<p class="p1"><span class="Apple-converted-space">  </span>document.getElementById('cur-user').textContent=currentUser;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>loadAll();</p>
-<p class="p1"><span class="Apple-converted-space">  </span>setInterval(loadAll,10000);</p>
-<p class="p1">}</p>
-<p class="p2"><br></p>
-<p class="p1">function switchTab(t,el){</p>
-<p class="p1"><span class="Apple-converted-space">  </span>document.querySelectorAll('.tab').forEach(e=&gt;e.classList.remove('active'));</p>
-<p class="p1"><span class="Apple-converted-space">  </span>document.querySelectorAll('.nav-btn').forEach(e=&gt;e.classList.remove('active'));</p>
-<p class="p1"><span class="Apple-converted-space">  </span>document.getElementById('tab-'+t).classList.add('active');el.classList.add('active');</p>
-<p class="p1"><span class="Apple-converted-space">  </span>if(t==='cal')renderCal();</p>
-<p class="p1">}</p>
-<p class="p2"><br></p>
-<p class="p1">function setFilter(f,el){todoFilter=f;document.querySelectorAll('.filter-btn').forEach(e=&gt;e.classList.remove('active'));el.classList.add('active');renderTodos();}</p>
-<p class="p2"><br></p>
-<p class="p1">function showTodoForm(id){</p>
-<p class="p1"><span class="Apple-converted-space">  </span>editId=id;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>document.getElementById('todo-add-form').style.display='block';</p>
-<p class="p1"><span class="Apple-converted-space">  </span>document.getElementById('todo-form-title').textContent=id?'編輯任務':'新增任務';</p>
-<p class="p1"><span class="Apple-converted-space">  </span>const allM=[...new Set([currentUser,...MEMBERS])];</p>
-<p class="p1"><span class="Apple-converted-space">  </span>document.getElementById('f-member').innerHTML=allM.map(m=&gt;`&lt;option value="${m}"&gt;${m}&lt;/option&gt;`).join('');</p>
-<p class="p1"><span class="Apple-converted-space">  </span>if(id){const t=todos.find(x=&gt;x.id===id)||{};document.getElementById('f-text').value=t.text||'';document.getElementById('f-pri').value=t.priority||'';document.getElementById('f-member').value=t.member||currentUser;document.getElementById('f-date').value=t.date||'';document.getElementById('f-note').value=t.note||'';}</p>
-<p class="p1"><span class="Apple-converted-space">  </span>else{document.getElementById('f-text').value='';document.getElementById('f-pri').value='';document.getElementById('f-member').value=currentUser;document.getElementById('f-date').value='';document.getElementById('f-note').value='';}</p>
-<p class="p1"><span class="Apple-converted-space">  </span>const btns=document.getElementById('todo-form-btns');btns.innerHTML='';</p>
-<p class="p1"><span class="Apple-converted-space">  </span>const cb=document.createElement('button');cb.className='btn btn-sm';cb.textContent='取消';cb.addEventListener('click',e=&gt;{e.preventDefault();document.getElementById('todo-add-form').style.display='none';editId=null;});</p>
-<p class="p1"><span class="Apple-converted-space">  </span>const sb=document.createElement('button');sb.className='btn btn-primary btn-sm';sb.innerHTML='&lt;i class="ti ti-check"&gt;&lt;/i&gt; 儲存';sb.addEventListener('click',e=&gt;{e.preventDefault();saveTodo();});</p>
-<p class="p1"><span class="Apple-converted-space">  </span>btns.appendChild(cb);btns.appendChild(sb);</p>
-<p class="p1"><span class="Apple-converted-space">  </span>document.getElementById('f-text').focus();</p>
-<p class="p1">}</p>
-<p class="p2"><br></p>
-<p class="p1">async function saveTodo(){</p>
-<p class="p1"><span class="Apple-converted-space">  </span>const text=document.getElementById('f-text').value.trim();if(!text)return;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>const data={text,priority:document.getElementById('f-pri').value,member:document.getElementById('f-member').value,date:document.getElementById('f-date').value||null,note:document.getElementById('f-note').value};</p>
-<p class="p1"><span class="Apple-converted-space">  </span>setSyncStatus('syncing');</p>
-<p class="p1"><span class="Apple-converted-space">  </span>try{</p>
-<p class="p1"><span class="Apple-converted-space">    </span>if(editId){await sbUpdate('todos',editId,data);const t=todos.find(x=&gt;x.id===editId);if(t)Object.assign(t,data);}</p>
-<p class="p1"><span class="Apple-converted-space">    </span>else{const rec=await sbInsert('todos',[{id:uid(),workspace:workspaceKey,done:false,created_by:currentUser,...data}]);if(rec&amp;&amp;rec[0])todos.unshift(rec[0]);}</p>
-<p class="p1"><span class="Apple-converted-space">    </span>setSyncStatus('ok');</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}catch(e){setSyncStatus('err');}</p>
-<p class="p1"><span class="Apple-converted-space">  </span>document.getElementById('todo-add-form').style.display='none';editId=null;renderTodos();renderCal();</p>
-<p class="p1">}</p>
-<p class="p2"><br></p>
-<p class="p1">function renderTodos(){</p>
-<p class="p1"><span class="Apple-converted-space">  </span>let list=todos;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>if(todoFilter==='active')list=todos.filter(t=&gt;!t.done);</p>
-<p class="p1"><span class="Apple-converted-space">  </span>else if(todoFilter==='done')list=todos.filter(t=&gt;t.done);</p>
-<p class="p1"><span class="Apple-converted-space">  </span>else if(todoFilter==='high')list=todos.filter(t=&gt;t.priority==='high');</p>
-<p class="p1"><span class="Apple-converted-space">  </span>else if(todoFilter==='mid')list=todos.filter(t=&gt;t.priority==='mid');</p>
-<p class="p1"><span class="Apple-converted-space">  </span>else if(todoFilter==='low')list=todos.filter(t=&gt;t.priority==='low');</p>
-<p class="p1"><span class="Apple-converted-space">  </span>const el=document.getElementById('todo-list');if(!el)return;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>if(!list.length){el.innerHTML='&lt;div class="empty"&gt;&lt;i class="ti ti-inbox" style="font-size:32px;display:block;margin-bottom:8px"&gt;&lt;/i&gt;沒有符合的任務&lt;/div&gt;';updateStats();return;}</p>
-<p class="p1"><span class="Apple-converted-space">  </span>el.innerHTML=list.map(t=&gt;`</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="todo-item"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="todo-check ${t.done?'done':''}" onclick="toggleTodo('${t.id}')"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>${t.done?'&lt;i class="ti ti-check" style="font-size:13px"&gt;&lt;/i&gt;':''}</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;div style="flex:1;min-width:0"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="todo-text ${t.done?'done':''}" style="margin-bottom:4px"&gt;${esc(t.text)}&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;div style="display:flex;gap:4px;flex-wrap:wrap;align-items:center"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">          </span>${t.priority?`&lt;span class="badge badge-${t.priority}"&gt;${t.priority==='high'?'高優先':t.priority==='mid'?'中優先':'低優先'}&lt;/span&gt;`:''}</p>
-<p class="p1"><span class="Apple-converted-space">          </span>${t.member?`&lt;span class="badge badge-member"&gt;&lt;i class="ti ti-user" style="font-size:10px"&gt;&lt;/i&gt; ${esc(t.member)}&lt;/span&gt;`:''}</p>
-<p class="p1"><span class="Apple-converted-space">          </span>${t.date?`&lt;span class="badge badge-member"&gt;&lt;i class="ti ti-calendar" style="font-size:10px"&gt;&lt;/i&gt; ${t.date}&lt;/span&gt;`:''}</p>
-<p class="p1"><span class="Apple-converted-space">          </span>${t.created_by?`&lt;span style="font-size:11px;color:#aaa"&gt;by ${esc(t.created_by)}&lt;/span&gt;`:''}</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;div style="display:flex;gap:4px;flex-shrink:0"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;button class="btn btn-sm" onclick="showTodoForm('${t.id}')"&gt;&lt;i class="ti ti-edit" style="font-size:13px"&gt;&lt;/i&gt; 編輯&lt;/button&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;button class="btn btn-sm btn-danger" data-del="${t.id}" data-confirm="0" onclick="deleteTodo('${t.id}')"&gt;&lt;i class="ti ti-trash" style="font-size:13px"&gt;&lt;/i&gt;&lt;/button&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;/div&gt;`).join('');</p>
-<p class="p1"><span class="Apple-converted-space">  </span>updateStats();</p>
-<p class="p1">}</p>
-<p class="p2"><br></p>
-<p class="p1">async function toggleTodo(id){const t=todos.find(x=&gt;x.id===id);if(!t)return;t.done=!t.done;renderTodos();try{await sbUpdate('todos',id,{done:t.done});setSyncStatus('ok');}catch(e){t.done=!t.done;renderTodos();setSyncStatus('err');}}</p>
-<p class="p2"><br></p>
-<p class="p1">async function deleteTodo(id){</p>
-<p class="p1"><span class="Apple-converted-space">  </span>const el=document.querySelector(`[data-del="${id}"]`);if(!el)return;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>if(el.dataset.confirm==='1'){todos=todos.filter(x=&gt;x.id!==id);renderTodos();renderCal();try{await sbDelete('todos',id);setSyncStatus('ok');}catch(e){setSyncStatus('err');loadAll();}}</p>
-<p class="p1"><span class="Apple-converted-space">  </span>else{el.dataset.confirm='1';el.innerHTML='&lt;i class="ti ti-alert-triangle" style="font-size:13px"&gt;&lt;/i&gt; 確認？';setTimeout(()=&gt;{if(el){el.dataset.confirm='0';el.innerHTML='&lt;i class="ti ti-trash" style="font-size:13px"&gt;&lt;/i&gt;';}},2500);}</p>
-<p class="p1">}</p>
-<p class="p2"><br></p>
-<p class="p1">function updateStats(){</p>
-<p class="p1"><span class="Apple-converted-space">  </span>const active=todos.filter(t=&gt;!t.done).length,done=todos.filter(t=&gt;t.done).length,td=todos.filter(t=&gt;t.date===todayStr()&amp;&amp;!t.done).length;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>['s-active','h-todo'].forEach(id=&gt;{const e=document.getElementById(id);if(e)e.textContent=active;});</p>
-<p class="p1"><span class="Apple-converted-space">  </span>const sd=document.getElementById('s-done');if(sd)sd.textContent=done;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>const hd=document.getElementById('h-today');if(hd)hd.textContent=td;</p>
-<p class="p1">}</p>
-<p class="p2"><br></p>
-<p class="p1">function openGoalForm(id){</p>
-<p class="p1"><span class="Apple-converted-space">  </span>editGoalId=id;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>const form=document.getElementById('goal-add-form');form.style.display='block';</p>
-<p class="p1"><span class="Apple-converted-space">  </span>document.getElementById('goal-form-title').textContent=id?'編輯目標':'新增目標';</p>
-<p class="p1"><span class="Apple-converted-space">  </span>if(id){const g=goals.find(x=&gt;x.id===id)||{};document.getElementById('f-gname').value=g.name||'';document.getElementById('f-gdate').value=g.date||'';document.getElementById('f-gsub').value=(g.subs||[]).map(s=&gt;s.text).join('\n');}</p>
-<p class="p1"><span class="Apple-converted-space">  </span>else{document.getElementById('f-gname').value='';document.getElementById('f-gdate').value='';document.getElementById('f-gsub').value='';}</p>
-<p class="p1"><span class="Apple-converted-space">  </span>const sb=document.getElementById('goal-save-btn'),cb=document.getElementById('goal-cancel-btn');</p>
-<p class="p1"><span class="Apple-converted-space">  </span>const ns=sb.cloneNode(true),nc=cb.cloneNode(true);</p>
-<p class="p1"><span class="Apple-converted-space">  </span>sb.parentNode.replaceChild(ns,sb);cb.parentNode.replaceChild(nc,cb);</p>
-<p class="p1"><span class="Apple-converted-space">  </span>ns.addEventListener('click',e=&gt;{e.preventDefault();saveGoal();});</p>
-<p class="p1"><span class="Apple-converted-space">  </span>nc.addEventListener('click',e=&gt;{e.preventDefault();form.style.display='none';editGoalId=null;});</p>
-<p class="p1"><span class="Apple-converted-space">  </span>document.getElementById('f-gname').focus();</p>
-<p class="p1">}</p>
-<p class="p2"><br></p>
-<p class="p1">async function saveGoal(){</p>
-<p class="p1"><span class="Apple-converted-space">  </span>const name=document.getElementById('f-gname').value.trim();if(!name)return;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>const newSubs=document.getElementById('f-gsub').value.split('\n').map(s=&gt;s.trim()).filter(Boolean);</p>
-<p class="p1"><span class="Apple-converted-space">  </span>setSyncStatus('syncing');</p>
-<p class="p1"><span class="Apple-converted-space">  </span>try{</p>
-<p class="p1"><span class="Apple-converted-space">    </span>if(editGoalId){</p>
-<p class="p1"><span class="Apple-converted-space">      </span>const g=goals.find(x=&gt;x.id===editGoalId);</p>
-<p class="p1"><span class="Apple-converted-space">      </span>const merged=newSubs.map(s=&gt;{const ex=(g.subs||[]).find(o=&gt;o.text===s);return ex||{text:s,done:false};});</p>
-<p class="p1"><span class="Apple-converted-space">      </span>await sbUpdate('goals',editGoalId,{name,date:document.getElementById('f-gdate').value||null,subs:merged});</p>
-<p class="p1"><span class="Apple-converted-space">      </span>if(g){g.name=name;g.date=document.getElementById('f-gdate').value;g.subs=merged;}</p>
-<p class="p1"><span class="Apple-converted-space">    </span>} else {</p>
-<p class="p1"><span class="Apple-converted-space">      </span>const subs=newSubs.map(s=&gt;({text:s,done:false}));</p>
-<p class="p1"><span class="Apple-converted-space">      </span>const rec=await sbInsert('goals',[{id:uid(),workspace:workspaceKey,name,date:document.getElementById('f-gdate').value||null,created_by:currentUser,subs}]);</p>
-<p class="p1"><span class="Apple-converted-space">      </span>if(rec&amp;&amp;rec[0])goals.unshift(rec[0]);</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p1"><span class="Apple-converted-space">    </span>setSyncStatus('ok');</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}catch(e){setSyncStatus('err');}</p>
-<p class="p1"><span class="Apple-converted-space">  </span>document.getElementById('goal-add-form').style.display='none';editGoalId=null;renderGoals();</p>
-<p class="p1">}</p>
-<p class="p2"><br></p>
-<p class="p1">function renderGoals(){</p>
-<p class="p1"><span class="Apple-converted-space">  </span>const el=document.getElementById('goal-list');if(!el)return;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>if(!goals.length){el.innerHTML='&lt;div class="empty"&gt;&lt;i class="ti ti-target" style="font-size:32px;display:block;margin-bottom:8px"&gt;&lt;/i&gt;尚無目標&lt;/div&gt;';return;}</p>
-<p class="p1"><span class="Apple-converted-space">  </span>el.innerHTML=goals.map(g=&gt;{</p>
-<p class="p1"><span class="Apple-converted-space">    </span>const subs=g.subs||[];const pct=subs.length?Math.round(subs.filter(s=&gt;s.done).length/subs.length*100):0;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>return `&lt;div class="goal-item"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="row-between mb12" style="margin-bottom:8px"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;div style="font-weight:500"&gt;${esc(g.name)}&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;div style="display:flex;align-items:center;gap:8px"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">          </span>${g.created_by?`&lt;span style="font-size:11px;color:#aaa"&gt;by ${esc(g.created_by)}&lt;/span&gt;`:''}</p>
-<p class="p1"><span class="Apple-converted-space">          </span>${g.date?`&lt;span style="font-size:12px;color:#888"&gt;${g.date}&lt;/span&gt;`:''}</p>
-<p class="p1"><span class="Apple-converted-space">          </span>&lt;span style="font-size:13px;font-weight:500"&gt;${pct}%&lt;/span&gt;</p>
-<p class="p1"><span class="Apple-converted-space">          </span>&lt;button class="btn btn-sm" onclick="openGoalForm('${g.id}')"&gt;&lt;i class="ti ti-edit" style="font-size:13px"&gt;&lt;/i&gt; 編輯&lt;/button&gt;</p>
-<p class="p1"><span class="Apple-converted-space">          </span>&lt;button class="btn btn-sm btn-danger" data-delg="${g.id}" data-confirm="0" onclick="deleteGoal('${g.id}')"&gt;&lt;i class="ti ti-trash" style="font-size:13px"&gt;&lt;/i&gt;&lt;/button&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="progress-bar"&gt;&lt;div class="progress-fill" style="width:${pct}%"&gt;&lt;/div&gt;&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>${subs.map((s,i)=&gt;`&lt;div class="subtask"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="todo-check ${s.done?'done':''}" style="width:18px;height:18px" onclick="toggleSub('${g.id}',${i})"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">          </span>${s.done?'&lt;i class="ti ti-check" style="font-size:11px"&gt;&lt;/i&gt;':''}</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;span style="${s.done?'text-decoration:line-through;color:#aaa':''}"&gt;${esc(s.text)}&lt;/span&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;/div&gt;`).join('')}</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;/div&gt;`;}).join('');</p>
-<p class="p1">}</p>
-<p class="p2"><br></p>
-<p class="p1">async function toggleSub(gid,i){const g=goals.find(x=&gt;x.id===gid);if(!g)return;g.subs[i].done=!g.subs[i].done;renderGoals();try{await sbUpdate('goals',gid,{subs:g.subs});setSyncStatus('ok');}catch(e){g.subs[i].done=!g.subs[i].done;renderGoals();setSyncStatus('err');}}</p>
-<p class="p2"><br></p>
-<p class="p1">async function deleteGoal(id){</p>
-<p class="p1"><span class="Apple-converted-space">  </span>const el=document.querySelector(`[data-delg="${id}"]`);if(!el)return;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>if(el.dataset.confirm==='1'){goals=goals.filter(x=&gt;x.id!==id);renderGoals();try{await sbDelete('goals',id);setSyncStatus('ok');}catch(e){setSyncStatus('err');loadAll();}}</p>
-<p class="p1"><span class="Apple-converted-space">  </span>else{el.dataset.confirm='1';el.innerHTML='&lt;i class="ti ti-alert-triangle" style="font-size:13px"&gt;&lt;/i&gt; 確認？';setTimeout(()=&gt;{if(el){el.dataset.confirm='0';el.innerHTML='&lt;i class="ti ti-trash" style="font-size:13px"&gt;&lt;/i&gt;';}},2500);}</p>
-<p class="p1">}</p>
-<p class="p2"><br></p>
-<p class="p1">function renderCal(){</p>
-<p class="p1"><span class="Apple-converted-space">  </span>const y=calDate.getFullYear(),m=calDate.getMonth();</p>
-<p class="p1"><span class="Apple-converted-space">  </span>const ct=document.getElementById('cal-title');if(!ct)return;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>ct.textContent=`${y} 年 ${m+1} 月`;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>document.getElementById('cal-names').innerHTML=['日','一','二','三','四','五','六'].map(n=&gt;`&lt;div class="cal-day-name"&gt;${n}&lt;/div&gt;`).join('');</p>
-<p class="p1"><span class="Apple-converted-space">  </span>const first=new Date(y,m,1).getDay(),days=new Date(y,m+1,0).getDate(),ts=todayStr();</p>
-<p class="p1"><span class="Apple-converted-space">  </span>let html='';</p>
-<p class="p1"><span class="Apple-converted-space">  </span>for(let i=0;i&lt;first;i++){const d=new Date(y,m,1-first+i);html+=`&lt;div class="cal-day other-month"&gt;&lt;div class="cal-num"&gt;${d.getDate()}&lt;/div&gt;&lt;/div&gt;`;}</p>
-<p class="p1"><span class="Apple-converted-space">  </span>for(let d=1;d&lt;=days;d++){</p>
-<p class="p1"><span class="Apple-converted-space">    </span>const ds=`${y}-${p2(m+1)}-${p2(d)}`;const dt=todos.filter(t=&gt;t.date===ds);</p>
-<p class="p1"><span class="Apple-converted-space">    </span>html+=`&lt;div class="cal-day${ds===ts?' today':''}" onclick="showCalDay('${ds}')"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="cal-num"&gt;${d}&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>${dt.slice(0,2).map(t=&gt;`&lt;div class="cal-dot ${t.priority||''}"&gt;${esc(t.text)}&lt;/div&gt;`).join('')}</p>
-<p class="p1"><span class="Apple-converted-space">      </span>${dt.length&gt;2?`&lt;div class="cal-dot"&gt;+${dt.length-2}&lt;/div&gt;`:''}</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;/div&gt;`;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}</p>
-<p class="p1"><span class="Apple-converted-space">  </span>document.getElementById('cal-days').innerHTML=html;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>const mc={};todos.filter(t=&gt;t.date&amp;&amp;!t.done).forEach(t=&gt;{const p=t.date.split('-');if(p.length&lt;2)return;const k=`${p[0]}-${p[1]}`;mc[k]=(mc[k]||0)+1;});</p>
-<p class="p1"><span class="Apple-converted-space">  </span>const curKey=`${y}-${p2(m+1)}`;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>document.getElementById('cal-month-summary').innerHTML=Object.entries(mc).sort(([a],[b])=&gt;a.localeCompare(b)).map(([key,count])=&gt;{</p>
-<p class="p1"><span class="Apple-converted-space">    </span>const[ky,km]=key.split('-');const isActive=key===curKey;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>return `&lt;button onclick="calDate=new Date(${ky},${parseInt(km)-1},1);renderCal()" style="padding:3px 10px;border-radius:100px;border:1px solid ${isActive?'#555':'#ddd'};background:${isActive?'#555':'transparent'};color:${isActive?'#fff':'#888'};cursor:pointer;font-size:12px;font-family:inherit"&gt;${parseInt(km)}月 &lt;strong&gt;${count}&lt;/strong&gt;&lt;/button&gt;`;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}).join('');</p>
-<p class="p1">}</p>
-<p class="p2"><br></p>
-<p class="p1">function moveCal(d){calDate=new Date(calDate.getFullYear(),calDate.getMonth()+d,1);renderCal();}</p>
-<p class="p2"><br></p>
-<p class="p1">function showCalDay(ds){</p>
-<p class="p1"><span class="Apple-converted-space">  </span>const dt=todos.filter(t=&gt;t.date===ds);const det=document.getElementById('cal-detail');</p>
-<p class="p1"><span class="Apple-converted-space">  </span>if(!dt.length){det.style.display='none';return;}</p>
-<p class="p1"><span class="Apple-converted-space">  </span>det.style.display='block';</p>
-<p class="p1"><span class="Apple-converted-space">  </span>document.getElementById('cal-detail-content').innerHTML=`</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="row-between mb12"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;div style="font-weight:500"&gt;${ds}（${dt.length} 項）&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;button class="btn btn-primary btn-sm" onclick="switchToTodoAndAdd('${ds}')"&gt;&lt;i class="ti ti-plus"&gt;&lt;/i&gt; 新增&lt;/button&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>${dt.map(t=&gt;`&lt;div class="todo-item" style="padding:8px 0"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="todo-check ${t.done?'done':''}" style="width:18px;height:18px" onclick="toggleTodo('${t.id}');renderCal()"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>${t.done?'&lt;i class="ti ti-check" style="font-size:11px"&gt;&lt;/i&gt;':''}</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="todo-text ${t.done?'done':''}" style="flex:1"&gt;${esc(t.text)}&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>${t.priority?`&lt;span class="badge badge-${t.priority}"&gt;${t.priority==='high'?'高':t.priority==='mid'?'中':'低'}&lt;/span&gt;`:''}</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;/div&gt;`).join('')}`;</p>
-<p class="p1">}</p>
-<p class="p2"><br></p>
-<p class="p1">function switchToTodoAndAdd(ds){document.querySelector('.nav-btn').click();setTimeout(()=&gt;{showTodoForm(null);setTimeout(()=&gt;{const f=document.getElementById('f-date');if(f)f.value=ds;},50);},100);}</p>
-<p class="p2"><br></p>
-<p class="p1">const pomoModes={work:{sec:25*60,label:'專注時間'},short:{sec:5*60,label:'短暫休息'},long:{sec:15*60,label:'長時休息'}};</p>
-<p class="p1">function setPomoMode(m,el){pomoMode=m;resetPomo();document.querySelectorAll('#tab-timer .filter-btn').forEach(e=&gt;e.classList.remove('active'));el.classList.add('active');}</p>
-<p class="p1">function updatePomoDisplay(){const pd=document.getElementById('pomo-display');if(!pd)return;pd.textContent=`${p2(Math.floor(pomoSeconds/60))}:${p2(pomoSeconds%60)}`;const circ=2*Math.PI*70,pct=(pomoModes[pomoMode].sec-pomoSeconds)/pomoModes[pomoMode].sec;document.getElementById('pomo-arc').setAttribute('stroke-dashoffset',circ*(1-pct));document.getElementById('pomo-status').textContent=pomoModes[pomoMode].label;}</p>
-<p class="p1">function togglePomo(){if(pomoRunning){clearInterval(pomoInterval);pomoRunning=false;document.getElementById('pomo-btn').innerHTML='&lt;i class="ti ti-player-play"&gt;&lt;/i&gt; 開始';}else{pomoRunning=true;document.getElementById('pomo-btn').innerHTML='&lt;i class="ti ti-player-pause"&gt;&lt;/i&gt; 暫停';pomoInterval=setInterval(()=&gt;{if(pomoSeconds&lt;=0){clearInterval(pomoInterval);pomoRunning=false;if(pomoMode==='work'){pomoDone++;pomoTotal+=25;document.getElementById('pomo-count').textContent=pomoDone;document.getElementById('pomo-mins').textContent=pomoTotal;}document.getElementById('pomo-btn').innerHTML='&lt;i class="ti ti-player-play"&gt;&lt;/i&gt; 開始';pomoSeconds=0;updatePomoDisplay();return;}pomoSeconds--;updatePomoDisplay();},1000);}}</p>
-<p class="p1">function resetPomo(){clearInterval(pomoInterval);pomoRunning=false;pomoSeconds=pomoModes[pomoMode].sec;updatePomoDisplay();document.getElementById('pomo-btn').innerHTML='&lt;i class="ti ti-player-play"&gt;&lt;/i&gt; 開始';}</p>
-<p class="p1">function renderAll(){renderTodos();renderGoals();renderCal();}</p>
-<p class="p2"><br></p>
-<p class="p1">document.addEventListener('DOMContentLoaded',()=&gt;{</p>
-<p class="p1"><span class="Apple-converted-space">  </span>document.getElementById('main-app').style.display='none';</p>
-<p class="p1"><span class="Apple-converted-space">  </span>updatePomoDisplay();</p>
-<p class="p1"><span class="Apple-converted-space">  </span>document.getElementById('name-input').addEventListener('keydown',e=&gt;{if(e.key==='Enter')joinWorkspace();});</p>
-<p class="p1"><span class="Apple-converted-space">  </span>document.getElementById('workspace-input').addEventListener('keydown',e=&gt;{if(e.key==='Enter')document.getElementById('name-input').focus();});</p>
-<p class="p1">});</p>
-<p class="p1">&lt;/script&gt;</p>
-<p class="p1">&lt;/body&gt;</p>
-<p class="p1">&lt;/html&gt;</p>
+<div class="app">
+  <div id="setup-screen" class="setup">
+    <div class="card" style="width:340px;text-align:center;padding:32px">
+      <div class="logo" style="margin-bottom:20px">vetica <span>workspace</span></div>
+      <div style="margin-bottom:16px;text-align:left">
+        <label class="form-label">工作區名稱 <span style="color:#E24B4A">*</span></label>
+        <input id="workspace-input" type="text" placeholder="例如：vetica-team" style="margin-bottom:4px">
+        <div style="font-size:11px;color:#aaa">所有成員輸入相同名稱即可共享資料</div>
+      </div>
+      <div style="margin-bottom:20px;text-align:left">
+        <label class="form-label">你的名稱 <span style="color:#E24B4A">*</span></label>
+        <input id="name-input" type="text" placeholder="例如：Alex">
+      </div>
+      <button class="btn btn-primary" style="width:100%;justify-content:center" onclick="joinWorkspace()">
+        <i class="ti ti-arrow-right"></i> 進入工作區
+      </button>
+      <div id="setup-err" style="color:#E24B4A;font-size:12px;margin-top:10px;display:none"></div>
+    </div>
+  </div>
+
+  <div id="main-app" style="display:none">
+    <div class="header">
+      <div class="logo">vetica <span>workspace</span></div>
+      <div class="sync-bar"><div class="sync-dot" id="sync-dot"></div><span id="sync-label">連線中...</span></div>
+      <div style="flex:1"></div>
+      <div class="user-pill"><i class="ti ti-users" style="font-size:13px"></i><span id="online-count">—</span></div>
+      <div class="user-pill"><i class="ti ti-user" style="font-size:13px"></i><span id="cur-user"></span></div>
+      <div class="stat-card" style="padding:6px 14px;display:inline-flex;gap:16px">
+        <div><div class="stat-label">待辦</div><div style="font-size:16px;font-weight:500" id="h-todo">0</div></div>
+        <div style="border-left:1px solid #e5e5e5;padding-left:16px"><div class="stat-label">今日</div><div style="font-size:16px;font-weight:500" id="h-today">0</div></div>
+      </div>
+    </div>
+
+    <div class="nav">
+      <button class="nav-btn active" onclick="switchTab('todo',this)"><i class="ti ti-check"></i> 待辦事項</button>
+      <button class="nav-btn" onclick="switchTab('cal',this)"><i class="ti ti-calendar"></i> 行事曆</button>
+      <button class="nav-btn" onclick="switchTab('goal',this)"><i class="ti ti-target"></i> 目標規劃</button>
+      <button class="nav-btn" onclick="switchTab('timer',this)"><i class="ti ti-clock"></i> 番茄鐘</button>
+    </div>
+
+    <!-- TODO -->
+    <div class="tab active" id="tab-todo">
+      <div id="conn-err" class="conn-err"></div>
+      <div id="todo-add-form" style="display:none" class="inline-form">
+        <div style="font-weight:500;margin-bottom:10px" id="todo-form-title">新增任務</div>
+        <input id="f-text" type="text" placeholder="任務名稱 *" style="margin-bottom:8px">
+        <div class="form-grid">
+          <div><label class="form-label">優先級</label>
+            <select id="f-pri">
+              <option value="">未設定</option>
+              <option value="high">🔴 高優先</option>
+              <option value="mid">🟡 中優先</option>
+              <option value="low">🟢 低優先</option>
+            </select></div>
+          <div><label class="form-label">負責人</label><select id="f-member"></select></div>
+        </div>
+        <div style="margin-bottom:8px"><label class="form-label">計劃日期</label><input id="f-date" type="date"></div>
+        <div style="margin-bottom:12px"><label class="form-label">備註</label><textarea id="f-note" rows="2" placeholder="備註（選填）"></textarea></div>
+        <div id="todo-form-btns" style="display:flex;gap:8px;justify-content:flex-end"></div>
+      </div>
+      <div class="row-between mb12">
+        <div class="filter-row">
+          <button class="filter-btn active" onclick="setFilter('all',this)">全部</button>
+          <button class="filter-btn" onclick="setFilter('active',this)">進行中</button>
+          <button class="filter-btn" onclick="setFilter('done',this)">已完成</button>
+          <button class="filter-btn" onclick="setFilter('high',this)">🔴 高</button>
+          <button class="filter-btn" onclick="setFilter('mid',this)">🟡 中</button>
+          <button class="filter-btn" onclick="setFilter('low',this)">🟢 低</button>
+        </div>
+        <button class="btn btn-primary" onclick="showTodoForm(null)"><i class="ti ti-plus"></i> 新增任務</button>
+      </div>
+      <div class="card"><div id="todo-list"></div></div>
+      <div class="grid2 mt12">
+        <div class="stat-card"><div class="stat-label">待完成</div><div class="stat-num" id="s-active">0</div></div>
+        <div class="stat-card"><div class="stat-label">已完成</div><div class="stat-num" id="s-done">0</div></div>
+      </div>
+    </div>
+
+    <!-- CALENDAR -->
+    <div class="tab" id="tab-cal">
+      <div class="card">
+        <div class="cal-header">
+          <button class="btn btn-primary" style="padding:6px 14px" onclick="moveCal(-1)"><i class="ti ti-chevron-left"></i> 上個月</button>
+          <div style="display:flex;flex-direction:column;align-items:center;gap:4px">
+            <span id="cal-title" style="font-weight:500;font-size:15px"></span>
+            <button class="btn btn-sm" style="font-size:11px;padding:2px 10px" onclick="calDate=new Date();renderCal()">回到今月</button>
+          </div>
+          <button class="btn btn-primary" style="padding:6px 14px" onclick="moveCal(1)">下個月 <i class="ti ti-chevron-right"></i></button>
+        </div>
+        <div id="cal-month-summary" style="display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap"></div>
+        <div class="cal-grid" id="cal-names"></div>
+        <div class="cal-grid mt12" id="cal-days"></div>
+      </div>
+      <div class="card mt12" id="cal-detail" style="display:none">
+        <div id="cal-detail-content"></div>
+      </div>
+    </div>
+
+    <!-- GOALS -->
+    <div class="tab" id="tab-goal">
+      <div id="goal-add-form" style="display:none" class="inline-form">
+        <div style="font-weight:500;margin-bottom:10px" id="goal-form-title">新增目標</div>
+        <input id="f-gname" type="text" placeholder="目標名稱 *" style="margin-bottom:8px">
+        <div style="margin-bottom:8px"><label class="form-label">截止日期</label><input id="f-gdate" type="date"></div>
+        <div style="margin-bottom:12px"><label class="form-label">子任務（每行一項）</label>
+          <textarea id="f-gsub" rows="6" placeholder="子任務 1&#10;子任務 2&#10;子任務 3" style="min-height:120px;resize:vertical"></textarea></div>
+        <div style="display:flex;gap:8px;justify-content:flex-end">
+          <button type="button" class="btn btn-sm" id="goal-cancel-btn">取消</button>
+          <button type="button" class="btn btn-primary btn-sm" id="goal-save-btn"><i class="ti ti-check"></i> 儲存目標</button>
+        </div>
+      </div>
+      <div class="row-between mb12">
+        <span style="font-size:15px;font-weight:500">目標清單</span>
+        <button class="btn btn-primary" onclick="openGoalForm(null)"><i class="ti ti-plus"></i> 新增目標</button>
+      </div>
+      <div class="card"><div id="goal-list"></div></div>
+    </div>
+
+    <!-- TIMER -->
+    <div class="tab" id="tab-timer">
+      <div class="card" style="text-align:center;padding:28px 16px">
+        <div style="display:flex;gap:8px;justify-content:center;margin-bottom:20px">
+          <button class="filter-btn active" onclick="setPomoMode('work',this)">專注 25分</button>
+          <button class="filter-btn" onclick="setPomoMode('short',this)">短休 5分</button>
+          <button class="filter-btn" onclick="setPomoMode('long',this)">長休 15分</button>
+        </div>
+        <div class="pomo-ring">
+          <svg class="pomo-svg" width="160" height="160" viewBox="0 0 160 160">
+            <circle cx="80" cy="80" r="70" fill="none" stroke="#e5e5e5" stroke-width="6"/>
+            <circle id="pomo-arc" cx="80" cy="80" r="70" fill="none" stroke="#555" stroke-width="6" stroke-linecap="round" stroke-dasharray="439.82" stroke-dashoffset="0"/>
+          </svg>
+          <div><div class="pomo-time" id="pomo-display">25:00</div><div class="pomo-label" id="pomo-status">專注時間</div></div>
+        </div>
+        <div style="display:flex;gap:8px;justify-content:center;margin-top:12px">
+          <button class="btn btn-primary" onclick="togglePomo()" id="pomo-btn"><i class="ti ti-player-play"></i> 開始</button>
+          <button class="btn" onclick="resetPomo()"><i class="ti ti-refresh"></i> 重置</button>
+        </div>
+        <div style="margin-top:20px;display:flex;gap:16px;justify-content:center">
+          <div class="stat-card" style="padding:10px 20px"><div class="stat-label">今日完成</div><div class="stat-num" id="pomo-count">0</div></div>
+          <div class="stat-card" style="padding:10px 20px"><div class="stat-label">累計分鐘</div><div class="stat-num" id="pomo-mins">0</div></div>
+        </div>
+        <div style="margin-top:16px;text-align:left"><label class="form-label">目前任務</label>
+          <input type="text" id="pomo-task" placeholder="輸入正在進行的任務..."></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const SB_URL='https://mnaplphslldwaznbinwx.supabase.co';
+const SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1uYXBscGhzbGxkd2F6bmJpbnd4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgxMzk2MDMsImV4cCI6MjA5MzcxNTYwM30.qYmRCUjXLIGKCbHi7ll00PuKxZWg2Cc65EbcJr9J9JI';
+
+let todos=[],goals=[],calDate=new Date(),todoFilter='all',editId=null,editGoalId=null;
+let pomoRunning=false,pomoInterval=null,pomoMode='work',pomoSeconds=25*60,pomoDone=0,pomoTotal=0;
+let currentUser='',workspaceKey='';
+const MEMBERS=['Alex','Brian','Cathy','Daniel'];
+
+function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2)}
+function todayStr(){const d=new Date();return `${d.getFullYear()}-${p2(d.getMonth()+1)}-${p2(d.getDate())}`}
+function p2(n){return String(n).padStart(2,'0')}
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+function sbH(){return{'Content-Type':'application/json','apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,'Prefer':'return=representation'};}
+
+async function sbGet(t,f=''){const r=await fetch(`${SB_URL}/rest/v1/${t}?${f}`,{headers:sbH()});if(!r.ok)throw new Error(await r.text());return r.json();}
+async function sbInsert(t,d){const r=await fetch(`${SB_URL}/rest/v1/${t}`,{method:'POST',headers:sbH(),body:JSON.stringify(d)});if(!r.ok)throw new Error(await r.text());return r.json();}
+async function sbUpdate(t,id,d){const r=await fetch(`${SB_URL}/rest/v1/${t}?id=eq.${id}`,{method:'PATCH',headers:sbH(),body:JSON.stringify(d)});if(!r.ok)throw new Error(await r.text());return r.json();}
+async function sbDelete(t,id){const r=await fetch(`${SB_URL}/rest/v1/${t}?id=eq.${id}`,{method:'DELETE',headers:sbH()});if(!r.ok)throw new Error(await r.text());}
+
+function setSyncStatus(s){
+  const dot=document.getElementById('sync-dot'),lbl=document.getElementById('sync-label');
+  if(s==='ok'){dot.className='sync-dot ok';lbl.textContent='已同步'}
+  else if(s==='syncing'){dot.className='sync-dot syncing';lbl.textContent='同步中...'}
+  else{dot.className='sync-dot err';lbl.textContent='連線失敗'}
+}
+
+async function loadAll(){
+  setSyncStatus('syncing');
+  try{
+    const[t,g]=await Promise.all([
+      sbGet('todos',`workspace=eq.${encodeURIComponent(workspaceKey)}&order=created_at.desc`),
+      sbGet('goals',`workspace=eq.${encodeURIComponent(workspaceKey)}&order=created_at.desc`)
+    ]);
+    todos=t||[];goals=g||[];
+    setSyncStatus('ok');
+    const ce=document.getElementById('conn-err');if(ce)ce.style.display='none';
+  }catch(e){
+    setSyncStatus('err');
+    const ce=document.getElementById('conn-err');
+    if(ce){ce.style.display='block';ce.textContent='⚠️ 連線失敗：'+e.message;}
+  }
+  renderAll();
+}
+
+function joinWorkspace(){
+  const ws=document.getElementById('workspace-input').value.trim();
+  const n=document.getElementById('name-input').value.trim();
+  if(!ws||!n){document.getElementById('setup-err').style.display='block';document.getElementById('setup-err').textContent='請填寫所有欄位';return;}
+  workspaceKey=ws;currentUser=n;
+  document.getElementById('setup-screen').style.display='none';
+  document.getElementById('main-app').style.display='block';
+  document.getElementById('cur-user').textContent=currentUser;
+  loadAll();
+  setInterval(loadAll,10000);
+}
+
+function switchTab(t,el){
+  document.querySelectorAll('.tab').forEach(e=>e.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(e=>e.classList.remove('active'));
+  document.getElementById('tab-'+t).classList.add('active');el.classList.add('active');
+  if(t==='cal')renderCal();
+}
+
+function setFilter(f,el){todoFilter=f;document.querySelectorAll('.filter-btn').forEach(e=>e.classList.remove('active'));el.classList.add('active');renderTodos();}
+
+function showTodoForm(id){
+  editId=id;
+  document.getElementById('todo-add-form').style.display='block';
+  document.getElementById('todo-form-title').textContent=id?'編輯任務':'新增任務';
+  const allM=[...new Set([currentUser,...MEMBERS])];
+  document.getElementById('f-member').innerHTML=allM.map(m=>`<option value="${m}">${m}</option>`).join('');
+  if(id){const t=todos.find(x=>x.id===id)||{};document.getElementById('f-text').value=t.text||'';document.getElementById('f-pri').value=t.priority||'';document.getElementById('f-member').value=t.member||currentUser;document.getElementById('f-date').value=t.date||'';document.getElementById('f-note').value=t.note||'';}
+  else{document.getElementById('f-text').value='';document.getElementById('f-pri').value='';document.getElementById('f-member').value=currentUser;document.getElementById('f-date').value='';document.getElementById('f-note').value='';}
+  const btns=document.getElementById('todo-form-btns');btns.innerHTML='';
+  const cb=document.createElement('button');cb.className='btn btn-sm';cb.textContent='取消';cb.addEventListener('click',e=>{e.preventDefault();document.getElementById('todo-add-form').style.display='none';editId=null;});
+  const sb=document.createElement('button');sb.className='btn btn-primary btn-sm';sb.innerHTML='<i class="ti ti-check"></i> 儲存';sb.addEventListener('click',e=>{e.preventDefault();saveTodo();});
+  btns.appendChild(cb);btns.appendChild(sb);
+  document.getElementById('f-text').focus();
+}
+
+async function saveTodo(){
+  const text=document.getElementById('f-text').value.trim();if(!text)return;
+  const data={text,priority:document.getElementById('f-pri').value,member:document.getElementById('f-member').value,date:document.getElementById('f-date').value||null,note:document.getElementById('f-note').value};
+  setSyncStatus('syncing');
+  try{
+    if(editId){await sbUpdate('todos',editId,data);const t=todos.find(x=>x.id===editId);if(t)Object.assign(t,data);}
+    else{const rec=await sbInsert('todos',[{id:uid(),workspace:workspaceKey,done:false,created_by:currentUser,...data}]);if(rec&&rec[0])todos.unshift(rec[0]);}
+    setSyncStatus('ok');
+  }catch(e){setSyncStatus('err');}
+  document.getElementById('todo-add-form').style.display='none';editId=null;renderTodos();renderCal();
+}
+
+function renderTodos(){
+  let list=todos;
+  if(todoFilter==='active')list=todos.filter(t=>!t.done);
+  else if(todoFilter==='done')list=todos.filter(t=>t.done);
+  else if(todoFilter==='high')list=todos.filter(t=>t.priority==='high');
+  else if(todoFilter==='mid')list=todos.filter(t=>t.priority==='mid');
+  else if(todoFilter==='low')list=todos.filter(t=>t.priority==='low');
+  const el=document.getElementById('todo-list');if(!el)return;
+  if(!list.length){el.innerHTML='<div class="empty"><i class="ti ti-inbox" style="font-size:32px;display:block;margin-bottom:8px"></i>沒有符合的任務</div>';updateStats();return;}
+  el.innerHTML=list.map(t=>`
+    <div class="todo-item">
+      <div class="todo-check ${t.done?'done':''}" onclick="toggleTodo('${t.id}')">
+        ${t.done?'<i class="ti ti-check" style="font-size:13px"></i>':''}
+      </div>
+      <div style="flex:1;min-width:0">
+        <div class="todo-text ${t.done?'done':''}" style="margin-bottom:4px">${esc(t.text)}</div>
+        <div style="display:flex;gap:4px;flex-wrap:wrap;align-items:center">
+          ${t.priority?`<span class="badge badge-${t.priority}">${t.priority==='high'?'高優先':t.priority==='mid'?'中優先':'低優先'}</span>`:''}
+          ${t.member?`<span class="badge badge-member"><i class="ti ti-user" style="font-size:10px"></i> ${esc(t.member)}</span>`:''}
+          ${t.date?`<span class="badge badge-member"><i class="ti ti-calendar" style="font-size:10px"></i> ${t.date}</span>`:''}
+          ${t.created_by?`<span style="font-size:11px;color:#aaa">by ${esc(t.created_by)}</span>`:''}
+        </div>
+      </div>
+      <div style="display:flex;gap:4px;flex-shrink:0">
+        <button class="btn btn-sm" onclick="showTodoForm('${t.id}')"><i class="ti ti-edit" style="font-size:13px"></i> 編輯</button>
+        <button class="btn btn-sm btn-danger" data-del="${t.id}" data-confirm="0" onclick="deleteTodo('${t.id}')"><i class="ti ti-trash" style="font-size:13px"></i></button>
+      </div>
+    </div>`).join('');
+  updateStats();
+}
+
+async function toggleTodo(id){const t=todos.find(x=>x.id===id);if(!t)return;t.done=!t.done;renderTodos();try{await sbUpdate('todos',id,{done:t.done});setSyncStatus('ok');}catch(e){t.done=!t.done;renderTodos();setSyncStatus('err');}}
+
+async function deleteTodo(id){
+  const el=document.querySelector(`[data-del="${id}"]`);if(!el)return;
+  if(el.dataset.confirm==='1'){todos=todos.filter(x=>x.id!==id);renderTodos();renderCal();try{await sbDelete('todos',id);setSyncStatus('ok');}catch(e){setSyncStatus('err');loadAll();}}
+  else{el.dataset.confirm='1';el.innerHTML='<i class="ti ti-alert-triangle" style="font-size:13px"></i> 確認？';setTimeout(()=>{if(el){el.dataset.confirm='0';el.innerHTML='<i class="ti ti-trash" style="font-size:13px"></i>';}},2500);}
+}
+
+function updateStats(){
+  const active=todos.filter(t=>!t.done).length,done=todos.filter(t=>t.done).length,td=todos.filter(t=>t.date===todayStr()&&!t.done).length;
+  ['s-active','h-todo'].forEach(id=>{const e=document.getElementById(id);if(e)e.textContent=active;});
+  const sd=document.getElementById('s-done');if(sd)sd.textContent=done;
+  const hd=document.getElementById('h-today');if(hd)hd.textContent=td;
+}
+
+function openGoalForm(id){
+  editGoalId=id;
+  const form=document.getElementById('goal-add-form');form.style.display='block';
+  document.getElementById('goal-form-title').textContent=id?'編輯目標':'新增目標';
+  if(id){const g=goals.find(x=>x.id===id)||{};document.getElementById('f-gname').value=g.name||'';document.getElementById('f-gdate').value=g.date||'';document.getElementById('f-gsub').value=(g.subs||[]).map(s=>s.text).join('\n');}
+  else{document.getElementById('f-gname').value='';document.getElementById('f-gdate').value='';document.getElementById('f-gsub').value='';}
+  const sb=document.getElementById('goal-save-btn'),cb=document.getElementById('goal-cancel-btn');
+  const ns=sb.cloneNode(true),nc=cb.cloneNode(true);
+  sb.parentNode.replaceChild(ns,sb);cb.parentNode.replaceChild(nc,cb);
+  ns.addEventListener('click',e=>{e.preventDefault();saveGoal();});
+  nc.addEventListener('click',e=>{e.preventDefault();form.style.display='none';editGoalId=null;});
+  document.getElementById('f-gname').focus();
+}
+
+async function saveGoal(){
+  const name=document.getElementById('f-gname').value.trim();if(!name)return;
+  const newSubs=document.getElementById('f-gsub').value.split('\n').map(s=>s.trim()).filter(Boolean);
+  setSyncStatus('syncing');
+  try{
+    if(editGoalId){
+      const g=goals.find(x=>x.id===editGoalId);
+      const merged=newSubs.map(s=>{const ex=(g.subs||[]).find(o=>o.text===s);return ex||{text:s,done:false};});
+      await sbUpdate('goals',editGoalId,{name,date:document.getElementById('f-gdate').value||null,subs:merged});
+      if(g){g.name=name;g.date=document.getElementById('f-gdate').value;g.subs=merged;}
+    } else {
+      const subs=newSubs.map(s=>({text:s,done:false}));
+      const rec=await sbInsert('goals',[{id:uid(),workspace:workspaceKey,name,date:document.getElementById('f-gdate').value||null,created_by:currentUser,subs}]);
+      if(rec&&rec[0])goals.unshift(rec[0]);
+    }
+    setSyncStatus('ok');
+  }catch(e){setSyncStatus('err');}
+  document.getElementById('goal-add-form').style.display='none';editGoalId=null;renderGoals();
+}
+
+function renderGoals(){
+  const el=document.getElementById('goal-list');if(!el)return;
+  if(!goals.length){el.innerHTML='<div class="empty"><i class="ti ti-target" style="font-size:32px;display:block;margin-bottom:8px"></i>尚無目標</div>';return;}
+  el.innerHTML=goals.map(g=>{
+    const subs=g.subs||[];const pct=subs.length?Math.round(subs.filter(s=>s.done).length/subs.length*100):0;
+    return `<div class="goal-item">
+      <div class="row-between mb12" style="margin-bottom:8px">
+        <div style="font-weight:500">${esc(g.name)}</div>
+        <div style="display:flex;align-items:center;gap:8px">
+          ${g.created_by?`<span style="font-size:11px;color:#aaa">by ${esc(g.created_by)}</span>`:''}
+          ${g.date?`<span style="font-size:12px;color:#888">${g.date}</span>`:''}
+          <span style="font-size:13px;font-weight:500">${pct}%</span>
+          <button class="btn btn-sm" onclick="openGoalForm('${g.id}')"><i class="ti ti-edit" style="font-size:13px"></i> 編輯</button>
+          <button class="btn btn-sm btn-danger" data-delg="${g.id}" data-confirm="0" onclick="deleteGoal('${g.id}')"><i class="ti ti-trash" style="font-size:13px"></i></button>
+        </div>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" style="width:${pct}%"></div></div>
+      ${subs.map((s,i)=>`<div class="subtask">
+        <div class="todo-check ${s.done?'done':''}" style="width:18px;height:18px" onclick="toggleSub('${g.id}',${i})">
+          ${s.done?'<i class="ti ti-check" style="font-size:11px"></i>':''}
+        </div>
+        <span style="${s.done?'text-decoration:line-through;color:#aaa':''}">${esc(s.text)}</span>
+      </div>`).join('')}
+    </div>`;}).join('');
+}
+
+async function toggleSub(gid,i){const g=goals.find(x=>x.id===gid);if(!g)return;g.subs[i].done=!g.subs[i].done;renderGoals();try{await sbUpdate('goals',gid,{subs:g.subs});setSyncStatus('ok');}catch(e){g.subs[i].done=!g.subs[i].done;renderGoals();setSyncStatus('err');}}
+
+async function deleteGoal(id){
+  const el=document.querySelector(`[data-delg="${id}"]`);if(!el)return;
+  if(el.dataset.confirm==='1'){goals=goals.filter(x=>x.id!==id);renderGoals();try{await sbDelete('goals',id);setSyncStatus('ok');}catch(e){setSyncStatus('err');loadAll();}}
+  else{el.dataset.confirm='1';el.innerHTML='<i class="ti ti-alert-triangle" style="font-size:13px"></i> 確認？';setTimeout(()=>{if(el){el.dataset.confirm='0';el.innerHTML='<i class="ti ti-trash" style="font-size:13px"></i>';}},2500);}
+}
+
+function renderCal(){
+  const y=calDate.getFullYear(),m=calDate.getMonth();
+  const ct=document.getElementById('cal-title');if(!ct)return;
+  ct.textContent=`${y} 年 ${m+1} 月`;
+  document.getElementById('cal-names').innerHTML=['日','一','二','三','四','五','六'].map(n=>`<div class="cal-day-name">${n}</div>`).join('');
+  const first=new Date(y,m,1).getDay(),days=new Date(y,m+1,0).getDate(),ts=todayStr();
+  let html='';
+  for(let i=0;i<first;i++){const d=new Date(y,m,1-first+i);html+=`<div class="cal-day other-month"><div class="cal-num">${d.getDate()}</div></div>`;}
+  for(let d=1;d<=days;d++){
+    const ds=`${y}-${p2(m+1)}-${p2(d)}`;const dt=todos.filter(t=>t.date===ds);
+    html+=`<div class="cal-day${ds===ts?' today':''}" onclick="showCalDay('${ds}')">
+      <div class="cal-num">${d}</div>
+      ${dt.slice(0,2).map(t=>`<div class="cal-dot ${t.priority||''}">${esc(t.text)}</div>`).join('')}
+      ${dt.length>2?`<div class="cal-dot">+${dt.length-2}</div>`:''}
+    </div>`;
+  }
+  document.getElementById('cal-days').innerHTML=html;
+  const mc={};todos.filter(t=>t.date&&!t.done).forEach(t=>{const p=t.date.split('-');if(p.length<2)return;const k=`${p[0]}-${p[1]}`;mc[k]=(mc[k]||0)+1;});
+  const curKey=`${y}-${p2(m+1)}`;
+  document.getElementById('cal-month-summary').innerHTML=Object.entries(mc).sort(([a],[b])=>a.localeCompare(b)).map(([key,count])=>{
+    const[ky,km]=key.split('-');const isActive=key===curKey;
+    return `<button onclick="calDate=new Date(${ky},${parseInt(km)-1},1);renderCal()" style="padding:3px 10px;border-radius:100px;border:1px solid ${isActive?'#555':'#ddd'};background:${isActive?'#555':'transparent'};color:${isActive?'#fff':'#888'};cursor:pointer;font-size:12px;font-family:inherit">${parseInt(km)}月 <strong>${count}</strong></button>`;
+  }).join('');
+}
+
+function moveCal(d){calDate=new Date(calDate.getFullYear(),calDate.getMonth()+d,1);renderCal();}
+
+function showCalDay(ds){
+  const dt=todos.filter(t=>t.date===ds);const det=document.getElementById('cal-detail');
+  if(!dt.length){det.style.display='none';return;}
+  det.style.display='block';
+  document.getElementById('cal-detail-content').innerHTML=`
+    <div class="row-between mb12">
+      <div style="font-weight:500">${ds}（${dt.length} 項）</div>
+      <button class="btn btn-primary btn-sm" onclick="switchToTodoAndAdd('${ds}')"><i class="ti ti-plus"></i> 新增</button>
+    </div>
+    ${dt.map(t=>`<div class="todo-item" style="padding:8px 0">
+      <div class="todo-check ${t.done?'done':''}" style="width:18px;height:18px" onclick="toggleTodo('${t.id}');renderCal()">
+        ${t.done?'<i class="ti ti-check" style="font-size:11px"></i>':''}
+      </div>
+      <div class="todo-text ${t.done?'done':''}" style="flex:1">${esc(t.text)}</div>
+      ${t.priority?`<span class="badge badge-${t.priority}">${t.priority==='high'?'高':t.priority==='mid'?'中':'低'}</span>`:''}
+    </div>`).join('')}`;
+}
+
+function switchToTodoAndAdd(ds){document.querySelector('.nav-btn').click();setTimeout(()=>{showTodoForm(null);setTimeout(()=>{const f=document.getElementById('f-date');if(f)f.value=ds;},50);},100);}
+
+const pomoModes={work:{sec:25*60,label:'專注時間'},short:{sec:5*60,label:'短暫休息'},long:{sec:15*60,label:'長時休息'}};
+function setPomoMode(m,el){pomoMode=m;resetPomo();document.querySelectorAll('#tab-timer .filter-btn').forEach(e=>e.classList.remove('active'));el.classList.add('active');}
+function updatePomoDisplay(){const pd=document.getElementById('pomo-display');if(!pd)return;pd.textContent=`${p2(Math.floor(pomoSeconds/60))}:${p2(pomoSeconds%60)}`;const circ=2*Math.PI*70,pct=(pomoModes[pomoMode].sec-pomoSeconds)/pomoModes[pomoMode].sec;document.getElementById('pomo-arc').setAttribute('stroke-dashoffset',circ*(1-pct));document.getElementById('pomo-status').textContent=pomoModes[pomoMode].label;}
+function togglePomo(){if(pomoRunning){clearInterval(pomoInterval);pomoRunning=false;document.getElementById('pomo-btn').innerHTML='<i class="ti ti-player-play"></i> 開始';}else{pomoRunning=true;document.getElementById('pomo-btn').innerHTML='<i class="ti ti-player-pause"></i> 暫停';pomoInterval=setInterval(()=>{if(pomoSeconds<=0){clearInterval(pomoInterval);pomoRunning=false;if(pomoMode==='work'){pomoDone++;pomoTotal+=25;document.getElementById('pomo-count').textContent=pomoDone;document.getElementById('pomo-mins').textContent=pomoTotal;}document.getElementById('pomo-btn').innerHTML='<i class="ti ti-player-play"></i> 開始';pomoSeconds=0;updatePomoDisplay();return;}pomoSeconds--;updatePomoDisplay();},1000);}}
+function resetPomo(){clearInterval(pomoInterval);pomoRunning=false;pomoSeconds=pomoModes[pomoMode].sec;updatePomoDisplay();document.getElementById('pomo-btn').innerHTML='<i class="ti ti-player-play"></i> 開始';}
+function renderAll(){renderTodos();renderGoals();renderCal();}
+
+document.addEventListener('DOMContentLoaded',()=>{
+  document.getElementById('main-app').style.display='none';
+  updatePomoDisplay();
+  document.getElementById('name-input').addEventListener('keydown',e=>{if(e.key==='Enter')joinWorkspace();});
+  document.getElementById('workspace-input').addEventListener('keydown',e=>{if(e.key==='Enter')document.getElementById('name-input').focus();});
+});
+</script>
 </body>
 </html>
