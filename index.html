@@ -18,7 +18,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .nav{display:flex;gap:4px;border-bottom:1px solid #e5e5e5;margin-bottom:20px}
 .nav-btn{padding:8px 16px;border:none;background:none;cursor:pointer;color:#888;font-size:14px;border-bottom:2px solid transparent;margin-bottom:-1px;display:flex;align-items:center;gap:6px}
 .nav-btn.active{color:#222;border-bottom-color:#555;font-weight:500}
-.nav-btn:hover:not(.active){color:#222}
 .tab{display:none}.tab.active{display:block}
 .card{background:#fff;border:1px solid #e5e5e5;border-radius:12px;padding:16px}
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
@@ -27,13 +26,12 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .stat-num{font-size:22px;font-weight:500}
 input,select,textarea{width:100%;padding:8px 12px;border:1px solid #ddd;border-radius:8px;background:#fff;color:#222;font-size:14px;font-family:inherit;outline:none}
 input:focus,select:focus,textarea:focus{border-color:#555;box-shadow:0 0 0 2px rgba(85,85,85,0.1)}
-.btn{padding:8px 16px;border:1px solid #ddd;border-radius:8px;background:transparent;color:#222;cursor:pointer;font-size:13px;font-family:inherit;display:inline-flex;align-items:center;gap:6px;transition:background 0.15s}
+.btn{padding:8px 16px;border:1px solid #ddd;border-radius:8px;background:transparent;color:#222;cursor:pointer;font-size:13px;font-family:inherit;display:inline-flex;align-items:center;gap:6px}
 .btn:hover{background:#f5f5f3}
 .btn-primary{background:#555;color:#fff;border-color:#555}
 .btn-primary:hover{background:#444}
 .btn-sm{padding:5px 10px;font-size:12px}
 .btn-danger{color:#E24B4A;border-color:#E24B4A}
-.btn-danger:hover{background:#fff5f5}
 .row-between{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px}
 .mb12{margin-bottom:12px}.mt12{margin-top:12px}
 .todo-item{display:flex;align-items:flex-start;gap:10px;padding:12px 0;border-bottom:1px solid #f0f0f0}
@@ -69,706 +67,642 @@ input:focus,select:focus,textarea:focus{border-color:#555;box-shadow:0 0 0 2px r
 .cal-dot.low{background:#EAF3DE;color:#3B6D11}
 .goal-item{padding:14px;border:1px solid #e5e5e5;border-radius:10px;margin-bottom:10px}
 .progress-bar{height:4px;background:#f0f0f0;border-radius:2px;margin:8px 0 10px}
-.progress-fill{height:100%;background:#555;border-radius:2px;transition:width 0.3s}
+.progress-fill{height:100%;background:#555;border-radius:2px}
 .sub-row{display:flex;align-items:center;gap:6px;padding:4px 0}
-.sub-check{width:17px;height:17px;border-radius:4px;border:1.5px solid #bbb;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;background:#fff}
-.sub-check:hover{border-color:#555}
+.sub-check{border-radius:4px;border:1.5px solid #bbb;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;background:#fff}
 .sub-check.done{background:#555;border-color:#555;color:#fff}
-.exp-btn{width:16px;height:16px;border:none;background:none;cursor:pointer;padding:0;color:#aaa;flex-shrink:0;display:flex;align-items:center;justify-content:center}
-.exp-btn:hover{color:#555}
-.add-child-form{display:none;padding:6px 8px;background:#f5f5f3;border-radius:6px;border:1px dashed #ddd;margin:2px 0 4px}
+.add-child-form{display:none;background:#f5f5f3;border-radius:6px;border:1px dashed #ddd;padding:8px;margin:4px 0}
+.setup{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:32px}
+.user-pill{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:100px;background:#f5f5f3;font-size:12px;font-weight:500}
 .pomo-ring{width:160px;height:160px;margin:0 auto 16px;position:relative;display:flex;align-items:center;justify-content:center}
 .pomo-svg{position:absolute;top:0;left:0;transform:rotate(-90deg)}
 .pomo-time{font-size:32px;font-weight:500;line-height:1}
 .pomo-label{font-size:12px;color:#888;margin-top:4px}
-.setup{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:32px}
-.user-pill{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:100px;background:#f5f5f3;font-size:12px;font-weight:500}
 </style>
 </head>
 <body>
 <div class="app">
-  <div id="setup-screen" class="setup">
-    <div class="card" style="width:340px;text-align:center;padding:32px">
-      <div class="logo" style="margin-bottom:20px">vetica <span>workspace</span></div>
-      <div style="margin-bottom:16px;text-align:left">
-        <label class="form-label">工作區名稱 <span style="color:#E24B4A">*</span></label>
-        <input id="workspace-input" type="text" placeholder="例如：vetica-team" style="margin-bottom:4px">
-        <div style="font-size:11px;color:#aaa">所有成員輸入相同名稱即可共享資料</div>
-      </div>
-      <div style="margin-bottom:20px;text-align:left">
-        <label class="form-label">你的名稱 <span style="color:#E24B4A">*</span></label>
-        <input id="name-input" type="text" placeholder="例如：Alex">
-      </div>
-      <button class="btn btn-primary" style="width:100%;justify-content:center" onclick="joinWorkspace()"><i class="ti ti-arrow-right"></i> 進入工作區</button>
-      <div id="setup-err" style="color:#E24B4A;font-size:12px;margin-top:10px;display:none"></div>
-    </div>
-  </div>
 
-  <div id="main-app" style="display:none">
-    <div class="header">
-      <div class="logo">vetica <span>workspace</span></div>
-      <div class="sync-bar"><div class="sync-dot" id="sync-dot"></div><span id="sync-label">連線中...</span></div>
-      <div style="flex:1"></div>
-      <div class="user-pill"><i class="ti ti-users" style="font-size:13px"></i><span id="online-count">—</span></div>
-      <div class="user-pill"><i class="ti ti-user" style="font-size:13px"></i><span id="cur-user"></span></div>
-      <div class="stat-card" style="padding:6px 14px;display:inline-flex;gap:16px">
-        <div><div class="stat-label">待辦</div><div style="font-size:16px;font-weight:500" id="h-todo">0</div></div>
-        <div style="border-left:1px solid #e5e5e5;padding-left:16px"><div class="stat-label">今日</div><div style="font-size:16px;font-weight:500" id="h-today">0</div></div>
-      </div>
+<div id="setup-screen" class="setup">
+  <div class="card" style="width:340px;text-align:center;padding:32px">
+    <div class="logo" style="margin-bottom:20px">vetica <span>workspace</span></div>
+    <div style="margin-bottom:16px;text-align:left">
+      <label class="form-label">工作區名稱 <span style="color:#E24B4A">*</span></label>
+      <input id="ws-name" type="text" placeholder="例如：vetica-team">
+      <div style="font-size:11px;color:#aaa;margin-top:4px">所有成員輸入相同名稱即可共享資料</div>
     </div>
-
-    <div class="nav">
-      <button class="nav-btn active" onclick="switchTab('todo',this)"><i class="ti ti-check"></i> 待辦事項</button>
-      <button class="nav-btn" onclick="switchTab('cal',this)"><i class="ti ti-calendar"></i> 行事曆</button>
-      <button class="nav-btn" onclick="switchTab('goal',this)"><i class="ti ti-target"></i> 目標規劃</button>
-      <button class="nav-btn" onclick="switchTab('timer',this)"><i class="ti ti-clock"></i> 番茄鐘</button>
+    <div style="margin-bottom:20px;text-align:left">
+      <label class="form-label">你的名稱 <span style="color:#E24B4A">*</span></label>
+      <input id="user-name" type="text" placeholder="例如：Alex">
     </div>
-
-    <div class="tab active" id="tab-todo">
-      <div id="conn-err" style="display:none;background:#fff5f5;color:#993C1D;padding:10px 14px;border-radius:8px;font-size:13px;margin-bottom:12px"></div>
-      <div id="todo-add-form" style="display:none" class="inline-form">
-        <div style="font-weight:500;margin-bottom:10px" id="todo-form-title">新增任務</div>
-        <input id="f-text" type="text" placeholder="任務名稱 *" style="margin-bottom:8px">
-        <div class="form-grid">
-          <div><label class="form-label">優先級</label>
-            <select id="f-pri"><option value="">未設定</option>
-              <option value="high">🔴 高優先</option><option value="mid">🟡 中優先</option><option value="low">🟢 低優先</option>
-            </select></div>
-          <div><label class="form-label">負責人</label><select id="f-member"></select></div>
-        </div>
-        <div style="margin-bottom:8px"><label class="form-label">計劃日期</label><input id="f-date" type="date"></div>
-        <div style="margin-bottom:12px"><label class="form-label">備註</label><textarea id="f-note" rows="2" placeholder="備註（選填）"></textarea></div>
-        <div id="todo-form-btns" style="display:flex;gap:8px;justify-content:flex-end"></div>
-      </div>
-      <div class="row-between mb12">
-        <div class="filter-row">
-          <button class="filter-btn active" onclick="setFilter('all',this)">全部</button>
-          <button class="filter-btn" onclick="setFilter('active',this)">進行中</button>
-          <button class="filter-btn" onclick="setFilter('done',this)">已完成</button>
-          <button class="filter-btn" onclick="setFilter('high',this)">🔴 高</button>
-          <button class="filter-btn" onclick="setFilter('mid',this)">🟡 中</button>
-          <button class="filter-btn" onclick="setFilter('low',this)">🟢 低</button>
-        </div>
-        <button class="btn btn-primary" onclick="showTodoForm(null)"><i class="ti ti-plus"></i> 新增任務</button>
-      </div>
-      <div class="card"><div id="todo-list"></div></div>
-      <div class="grid2 mt12">
-        <div class="stat-card"><div class="stat-label">待完成</div><div class="stat-num" id="s-active">0</div></div>
-        <div class="stat-card"><div class="stat-label">已完成</div><div class="stat-num" id="s-done">0</div></div>
-      </div>
-    </div>
-
-    <div class="tab" id="tab-cal">
-      <div class="card">
-        <div class="cal-header">
-          <button class="btn btn-primary" style="padding:6px 14px" onclick="moveCal(-1)"><i class="ti ti-chevron-left"></i> 上個月</button>
-          <div style="display:flex;flex-direction:column;align-items:center;gap:4px">
-            <span id="cal-title" style="font-weight:500;font-size:15px"></span>
-            <button class="btn btn-sm" style="font-size:11px;padding:2px 10px" onclick="calDate=new Date();renderCal()">回到今月</button>
-          </div>
-          <button class="btn btn-primary" style="padding:6px 14px" onclick="moveCal(1)">下個月 <i class="ti ti-chevron-right"></i></button>
-        </div>
-        <div id="cal-month-summary" style="display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap"></div>
-        <div class="cal-grid" id="cal-names"></div>
-        <div class="cal-grid mt12" id="cal-days"></div>
-      </div>
-      <div class="card mt12" id="cal-detail" style="display:none"><div id="cal-detail-content"></div></div>
-    </div>
-
-    <div class="tab" id="tab-goal">
-      <div id="goal-add-form" style="display:none" class="inline-form">
-        <div style="font-weight:500;margin-bottom:10px" id="goal-form-title">新增目標</div>
-        <input id="f-gname" type="text" placeholder="目標名稱 *" style="margin-bottom:8px">
-        <div style="margin-bottom:8px"><label class="form-label">截止日期</label><input id="f-gdate" type="date"></div>
-        <div style="margin-bottom:12px">
-          <label class="form-label">第一層子任務（每行一項）</label>
-          <textarea id="f-gsub" rows="5" placeholder="子任務 1&#10;子任務 2&#10;子任務 3" style="min-height:100px;resize:vertical"></textarea>
-        </div>
-        <div style="display:flex;gap:8px;justify-content:flex-end">
-          <button type="button" class="btn btn-sm" id="goal-cancel-btn">取消</button>
-          <button type="button" class="btn btn-primary btn-sm" id="goal-save-btn"><i class="ti ti-check"></i> 儲存目標</button>
-        </div>
-      </div>
-      <div class="row-between mb12">
-        <span style="font-size:15px;font-weight:500">目標清單</span>
-        <button class="btn btn-primary" onclick="openGoalForm(null)"><i class="ti ti-plus"></i> 新增目標</button>
-      </div>
-      <div id="goal-list"></div>
-    </div>
-
-    <div class="tab" id="tab-timer">
-      <div class="card" style="text-align:center;padding:28px 16px">
-        <div style="display:flex;gap:8px;justify-content:center;margin-bottom:20px">
-          <button class="filter-btn active" onclick="setPomoMode('work',this)">專注 25分</button>
-          <button class="filter-btn" onclick="setPomoMode('short',this)">短休 5分</button>
-          <button class="filter-btn" onclick="setPomoMode('long',this)">長休 15分</button>
-        </div>
-        <div class="pomo-ring">
-          <svg class="pomo-svg" width="160" height="160" viewBox="0 0 160 160">
-            <circle cx="80" cy="80" r="70" fill="none" stroke="#e5e5e5" stroke-width="6"/>
-            <circle id="pomo-arc" cx="80" cy="80" r="70" fill="none" stroke="#555" stroke-width="6" stroke-linecap="round" stroke-dasharray="439.82" stroke-dashoffset="0"/>
-          </svg>
-          <div><div class="pomo-time" id="pomo-display">25:00</div><div class="pomo-label" id="pomo-status">專注時間</div></div>
-        </div>
-        <div style="display:flex;gap:8px;justify-content:center;margin-top:12px">
-          <button class="btn btn-primary" onclick="togglePomo()" id="pomo-btn"><i class="ti ti-player-play"></i> 開始</button>
-          <button class="btn" onclick="resetPomo()"><i class="ti ti-refresh"></i> 重置</button>
-        </div>
-        <div style="margin-top:20px;display:flex;gap:16px;justify-content:center">
-          <div class="stat-card" style="padding:10px 20px"><div class="stat-label">今日完成</div><div class="stat-num" id="pomo-count">0</div></div>
-          <div class="stat-card" style="padding:10px 20px"><div class="stat-label">累計分鐘</div><div class="stat-num" id="pomo-mins">0</div></div>
-        </div>
-        <div style="margin-top:16px;text-align:left"><label class="form-label">目前任務</label>
-          <input type="text" id="pomo-task" placeholder="輸入正在進行的任務..."></div>
-      </div>
-    </div>
+    <button id="join-btn" class="btn btn-primary" style="width:100%;justify-content:center">
+      <i class="ti ti-arrow-right"></i> 進入工作區
+    </button>
+    <div id="setup-err" style="color:#E24B4A;font-size:12px;margin-top:10px;display:none"></div>
   </div>
 </div>
 
+<div id="main-app" style="display:none">
+  <div class="header">
+    <div class="logo">vetica <span>workspace</span></div>
+    <div class="sync-bar"><div class="sync-dot" id="sync-dot"></div><span id="sync-lbl">連線中...</span></div>
+    <div style="flex:1"></div>
+    <div class="user-pill"><i class="ti ti-user" style="font-size:13px"></i><span id="cur-user"></span></div>
+    <div class="stat-card" style="padding:6px 14px;display:inline-flex;gap:16px">
+      <div><div class="stat-label">待辦</div><div style="font-size:16px;font-weight:500" id="h-todo">0</div></div>
+      <div style="border-left:1px solid #e5e5e5;padding-left:16px"><div class="stat-label">今日</div><div style="font-size:16px;font-weight:500" id="h-today">0</div></div>
+    </div>
+  </div>
+
+  <div class="nav">
+    <button class="nav-btn active" data-tab="todo"><i class="ti ti-check"></i> 待辦事項</button>
+    <button class="nav-btn" data-tab="cal"><i class="ti ti-calendar"></i> 行事曆</button>
+    <button class="nav-btn" data-tab="goal"><i class="ti ti-target"></i> 目標規劃</button>
+    <button class="nav-btn" data-tab="timer"><i class="ti ti-clock"></i> 番茄鐘</button>
+  </div>
+
+  <!-- TODO -->
+  <div class="tab active" id="tab-todo">
+    <div id="conn-err" style="display:none;background:#fff5f5;color:#993C1D;padding:10px 14px;border-radius:8px;font-size:13px;margin-bottom:12px"></div>
+    <div id="todo-form" style="display:none" class="inline-form">
+      <div style="font-weight:500;margin-bottom:10px" id="todo-form-title">新增任務</div>
+      <input id="f-text" type="text" placeholder="任務名稱 *" style="margin-bottom:8px">
+      <div class="form-grid">
+        <div><label class="form-label">優先級</label>
+          <select id="f-pri">
+            <option value="">未設定</option>
+            <option value="high">🔴 高優先</option>
+            <option value="mid">🟡 中優先</option>
+            <option value="low">🟢 低優先</option>
+          </select></div>
+        <div><label class="form-label">負責人</label><select id="f-member"></select></div>
+      </div>
+      <div style="margin-bottom:8px"><label class="form-label">計劃日期</label><input id="f-date" type="date"></div>
+      <div style="margin-bottom:12px"><label class="form-label">備註</label><textarea id="f-note" rows="2" placeholder="備註（選填）"></textarea></div>
+      <div style="display:flex;gap:8px;justify-content:flex-end">
+        <button class="btn btn-sm" id="todo-cancel-btn">取消</button>
+        <button class="btn btn-primary btn-sm" id="todo-save-btn"><i class="ti ti-check"></i> 儲存</button>
+      </div>
+    </div>
+    <div class="row-between mb12">
+      <div class="filter-row">
+        <button class="filter-btn active" data-filter="all">全部</button>
+        <button class="filter-btn" data-filter="active">進行中</button>
+        <button class="filter-btn" data-filter="done">已完成</button>
+        <button class="filter-btn" data-filter="high">🔴 高</button>
+        <button class="filter-btn" data-filter="mid">🟡 中</button>
+        <button class="filter-btn" data-filter="low">🟢 低</button>
+      </div>
+      <button class="btn btn-primary" id="todo-add-btn"><i class="ti ti-plus"></i> 新增任務</button>
+    </div>
+    <div class="card"><div id="todo-list"></div></div>
+    <div class="grid2 mt12">
+      <div class="stat-card"><div class="stat-label">待完成</div><div class="stat-num" id="s-active">0</div></div>
+      <div class="stat-card"><div class="stat-label">已完成</div><div class="stat-num" id="s-done">0</div></div>
+    </div>
+  </div>
+
+  <!-- CAL -->
+  <div class="tab" id="tab-cal">
+    <div class="card">
+      <div class="cal-header">
+        <button class="btn btn-primary" style="padding:6px 14px" id="cal-prev"><i class="ti ti-chevron-left"></i> 上個月</button>
+        <div style="text-align:center">
+          <div id="cal-title" style="font-weight:500;font-size:15px"></div>
+          <button class="btn btn-sm" id="cal-today" style="font-size:11px;margin-top:4px">回到今月</button>
+        </div>
+        <button class="btn btn-primary" style="padding:6px 14px" id="cal-next">下個月 <i class="ti ti-chevron-right"></i></button>
+      </div>
+      <div id="cal-summary" style="display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap"></div>
+      <div class="cal-grid" id="cal-names"></div>
+      <div class="cal-grid mt12" id="cal-days"></div>
+    </div>
+    <div class="card mt12" id="cal-detail" style="display:none"><div id="cal-detail-content"></div></div>
+  </div>
+
+  <!-- GOALS -->
+  <div class="tab" id="tab-goal">
+    <div id="goal-form" style="display:none" class="inline-form">
+      <div style="font-weight:500;margin-bottom:10px" id="goal-form-title">新增目標</div>
+      <input id="f-gname" type="text" placeholder="目標名稱 *" style="margin-bottom:8px">
+      <div style="margin-bottom:8px"><label class="form-label">截止日期</label><input id="f-gdate" type="date"></div>
+      <div style="margin-bottom:12px">
+        <label class="form-label">第一層子任務（每行一項）</label>
+        <textarea id="f-gsub" rows="5" placeholder="子任務 1&#10;子任務 2" style="resize:vertical;min-height:100px"></textarea>
+      </div>
+      <div style="display:flex;gap:8px;justify-content:flex-end">
+        <button class="btn btn-sm" id="goal-cancel-btn">取消</button>
+        <button class="btn btn-primary btn-sm" id="goal-save-btn"><i class="ti ti-check"></i> 儲存目標</button>
+      </div>
+    </div>
+    <div class="row-between mb12">
+      <span style="font-size:15px;font-weight:500">目標清單</span>
+      <button class="btn btn-primary" id="goal-add-btn"><i class="ti ti-plus"></i> 新增目標</button>
+    </div>
+    <div id="goal-list"></div>
+  </div>
+
+  <!-- TIMER -->
+  <div class="tab" id="tab-timer">
+    <div class="card" style="text-align:center;padding:28px 16px">
+      <div style="display:flex;gap:8px;justify-content:center;margin-bottom:20px">
+        <button class="filter-btn active" data-pomo="work">專注 25分</button>
+        <button class="filter-btn" data-pomo="short">短休 5分</button>
+        <button class="filter-btn" data-pomo="long">長休 15分</button>
+      </div>
+      <div class="pomo-ring">
+        <svg class="pomo-svg" width="160" height="160" viewBox="0 0 160 160">
+          <circle cx="80" cy="80" r="70" fill="none" stroke="#e5e5e5" stroke-width="6"/>
+          <circle id="pomo-arc" cx="80" cy="80" r="70" fill="none" stroke="#555" stroke-width="6" stroke-linecap="round" stroke-dasharray="439.82" stroke-dashoffset="0"/>
+        </svg>
+        <div><div id="pomo-display" style="font-size:32px;font-weight:500">25:00</div><div id="pomo-status" style="font-size:12px;color:#888;margin-top:4px">專注時間</div></div>
+      </div>
+      <div style="display:flex;gap:8px;justify-content:center">
+        <button class="btn btn-primary" id="pomo-toggle"><i class="ti ti-player-play"></i> 開始</button>
+        <button class="btn" id="pomo-reset"><i class="ti ti-refresh"></i> 重置</button>
+      </div>
+      <div style="margin-top:20px;display:flex;gap:16px;justify-content:center">
+        <div class="stat-card" style="padding:10px 20px"><div class="stat-label">今日完成</div><div class="stat-num" id="pomo-count">0</div></div>
+        <div class="stat-card" style="padding:10px 20px"><div class="stat-label">累計分鐘</div><div class="stat-num" id="pomo-mins">0</div></div>
+      </div>
+      <div style="margin-top:16px;text-align:left"><label class="form-label">目前任務</label><input type="text" id="pomo-task" placeholder="輸入正在進行的任務..."></div>
+    </div>
+  </div>
+</div>
+</div>
+
 <script>
-// ── Supabase ──────────────────────────────────────────────
-var SB_URL='https://mnaplphslldwaznbinwx.supabase.co';
-var SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1uYXBscGhzbGxkd2F6bmJpbnd4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgxMzk2MDMsImV4cCI6MjA5MzcxNTYwM30.qYmRCUjXLIGKCbHi7ll00PuKxZWg2Cc65EbcJr9J9JI';
+const SB = 'https://mnaplphslldwaznbinwx.supabase.co';
+const KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1uYXBscGhzbGxkd2F6bmJpbnd4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgxMzk2MDMsImV4cCI6MjA5MzcxNTYwM30.qYmRCUjXLIGKCbHi7ll00PuKxZWg2Cc65EbcJr9J9JI';
+const H = () => ({'Content-Type':'application/json','apikey':KEY,'Authorization':'Bearer '+KEY,'Prefer':'return=representation'});
+const sbGet = async (t,q) => { const r = await fetch(`${SB}/rest/v1/${t}?${q||''}`,{headers:H()}); if(!r.ok) throw new Error(await r.text()); return r.json(); };
+const sbPost = async (t,d) => { const r = await fetch(`${SB}/rest/v1/${t}`,{method:'POST',headers:H(),body:JSON.stringify(d)}); if(!r.ok) throw new Error(await r.text()); return r.json(); };
+const sbPatch = async (t,id,d) => { const r = await fetch(`${SB}/rest/v1/${t}?id=eq.${id}`,{method:'PATCH',headers:H(),body:JSON.stringify(d)}); if(!r.ok) throw new Error(await r.text()); return r.json(); };
+const sbDel = async (t,id) => { const r = await fetch(`${SB}/rest/v1/${t}?id=eq.${id}`,{method:'DELETE',headers:H()}); if(!r.ok) throw new Error(await r.text()); };
 
-function sbH(){return{'Content-Type':'application/json','apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,'Prefer':'return=representation'};}
-async function sbGet(t,f){var r=await fetch(SB_URL+'/rest/v1/'+t+'?'+(f||''),{headers:sbH()});if(!r.ok)throw new Error(await r.text());return r.json();}
-async function sbPost(t,d){var r=await fetch(SB_URL+'/rest/v1/'+t,{method:'POST',headers:sbH(),body:JSON.stringify(d)});if(!r.ok)throw new Error(await r.text());return r.json();}
-async function sbPatch(t,id,d){var r=await fetch(SB_URL+'/rest/v1/'+t+'?id=eq.'+id,{method:'PATCH',headers:sbH(),body:JSON.stringify(d)});if(!r.ok)throw new Error(await r.text());return r.json();}
-async function sbDel(t,id){var r=await fetch(SB_URL+'/rest/v1/'+t+'?id=eq.'+id,{method:'DELETE',headers:sbH()});if(!r.ok)throw new Error(await r.text());}
+let todos=[], goals=[], calDate=new Date(), todoFilter='all', editTodoId=null, editGoalId=null;
+let wsKey='', currentUser='';
+let subEditing=false, goalExpanded={};
+let pomoMode='work', pomoSec=1500, pomoRunning=false, pomoTimer=null, pomoDone=0, pomoTotal=0;
+const MEMBERS = ['Alex','Brian','Cathy','Daniel'];
+const POMO_MODES = { work:{sec:1500,label:'專注時間'}, short:{sec:300,label:'短暫休息'}, long:{sec:900,label:'長時休息'} };
 
-// ── State ─────────────────────────────────────────────────
-var todos=[],goals=[],calDate=new Date(),todoFilter='all',editTodoId=null,editGoalId=null;
-var pomoRunning=false,pomoInterval=null,pomoMode='work',pomoSec=25*60,pomoDone=0,pomoMins=0;
-var currentUser='',wsKey='';
-var goalExpanded={};   // goal-level collapse (local)
-var subEditActive=false; // prevent renderGoals during subtask input
-var MEMBERS=['Alex','Brian','Cathy','Daniel'];
+const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2);
+const p2 = n => String(n).padStart(2,'0');
+const todayStr = () => { const d=new Date(); return `${d.getFullYear()}-${p2(d.getMonth()+1)}-${p2(d.getDate())}`; };
+const esc = s => String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+const mkSub = text => ({id:uid(),text,done:false,expanded:false,children:[]});
+const normSubs = arr => (Array.isArray(arr)?arr:[]).map(s => ({children:[],...s,children:normSubs(s.children)}));
+const $ = id => document.getElementById(id);
 
-// ── Utils ─────────────────────────────────────────────────
-function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2);}
-function today(){var d=new Date();return d.getFullYear()+'-'+p2(d.getMonth()+1)+'-'+p2(d.getDate());}
-function p2(n){return String(n).padStart(2,'0');}
-function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
-function mkSub(text){return {id:uid(),text:text,done:false,expanded:false,children:[]};}
-
-// Ensure every sub node has children array (handles old data format)
-function normSubs(arr){
-  if(!Array.isArray(arr))return[];
-  return arr.map(function(s){
-    var node=Object.assign({children:[]},s);
-    node.children=normSubs(node.children);
-    return node;
-  });
-}
-
-// Navigate to node by index path array
-function getNode(subs,path){
-  var arr=subs,node=null;
-  for(var i=0;i<path.length;i++){node=arr[path[i]];if(i<path.length-1)arr=(node&&node.children)||[];}
-  return node;
-}
-function getParent(subs,path){
-  if(path.length===1)return{arr:subs,idx:path[0]};
-  var parent=getNode(subs,path.slice(0,-1));
-  if(!parent.children)parent.children=[];
-  return{arr:parent.children,idx:path[path.length-1]};
-}
-
-// Count all tasks recursively
-function countAll(subs){
-  var t=0,d=0;
-  function w(a){a.forEach(function(s){t++;if(s.done)d++;if(s.children&&s.children.length)w(s.children);});}
-  w(subs||[]);
-  return{t:t,d:d};
-}
-
-// ── Sync Status ───────────────────────────────────────────
-function setSyncStatus(s){
-  var dot=document.getElementById('sync-dot'),lbl=document.getElementById('sync-label');
+function setSyncStatus(s) {
+  const dot=$('sync-dot'), lbl=$('sync-lbl');
   if(s==='ok'){dot.className='sync-dot ok';lbl.textContent='已同步';}
   else if(s==='syncing'){dot.className='sync-dot syncing';lbl.textContent='同步中...';}
   else{dot.className='sync-dot err';lbl.textContent='連線失敗';}
 }
 
-// ── Load All ──────────────────────────────────────────────
-async function loadAll(){
+async function loadAll() {
   setSyncStatus('syncing');
-  try{
-    var results=await Promise.all([
-      sbGet('todos','workspace=eq.'+encodeURIComponent(wsKey)+'&order=created_at.desc'),
-      sbGet('goals','workspace=eq.'+encodeURIComponent(wsKey)+'&order=created_at.desc')
+  try {
+    const [t,g] = await Promise.all([
+      sbGet('todos', `workspace=eq.${encodeURIComponent(wsKey)}&order=created_at.desc`),
+      sbGet('goals', `workspace=eq.${encodeURIComponent(wsKey)}&order=created_at.desc`)
     ]);
-    todos=results[0]||[];
-    goals=results[1]||[];
+    todos = t||[]; goals = g||[];
     setSyncStatus('ok');
-    var ce=document.getElementById('conn-err');if(ce)ce.style.display='none';
-  }catch(e){
+    const ce=$('conn-err'); if(ce) ce.style.display='none';
+  } catch(e) {
     setSyncStatus('err');
-    var ce=document.getElementById('conn-err');
-    if(ce){ce.style.display='block';ce.textContent='⚠️ 連線失敗：'+e.message;}
+    const ce=$('conn-err'); if(ce){ce.style.display='block';ce.textContent='⚠️ 連線失敗：'+e.message;}
   }
   renderTodos();
-  if(!subEditActive)renderGoals();
+  if(!subEditing) renderGoals();
   renderCal();
 }
 
-async function saveGoalSubs(gid){
-  var g=goals.find(function(x){return x.id===gid;});if(!g)return;
-  setSyncStatus('syncing');
-  try{await sbPatch('goals',gid,{subs:g.subs});setSyncStatus('ok');}
-  catch(e){setSyncStatus('err');}
-}
-
-// ── Join Workspace ────────────────────────────────────────
-function joinWorkspace(){
-  var ws=document.getElementById('workspace-input').value.trim();
-  var n=document.getElementById('name-input').value.trim();
-  if(!ws||!n){
-    var err=document.getElementById('setup-err');
-    err.style.display='block';err.textContent='請填寫所有欄位';return;
-  }
-  wsKey=ws;currentUser=n;
-  document.getElementById('setup-screen').style.display='none';
-  document.getElementById('main-app').style.display='block';
-  document.getElementById('cur-user').textContent=currentUser;
+// ── Setup ────────────────────────────────────────────────
+$('join-btn').addEventListener('click', () => {
+  const ws=$('ws-name').value.trim(), n=$('user-name').value.trim();
+  if(!ws||!n){$('setup-err').style.display='block';$('setup-err').textContent='請填寫所有欄位';return;}
+  wsKey=ws; currentUser=n;
+  $('setup-screen').style.display='none';
+  $('main-app').style.display='block';
+  $('cur-user').textContent=currentUser;
   loadAll();
-  setInterval(loadAll,10000);
-}
+  setInterval(loadAll, 10000);
+});
+$('ws-name').addEventListener('keydown', e => { if(e.key==='Enter') $('user-name').focus(); });
+$('user-name').addEventListener('keydown', e => { if(e.key==='Enter') $('join-btn').click(); });
 
-// ── Tab Switch ────────────────────────────────────────────
-function switchTab(t,el){
-  document.querySelectorAll('.tab').forEach(function(e){e.classList.remove('active');});
-  document.querySelectorAll('.nav-btn').forEach(function(e){e.classList.remove('active');});
-  document.getElementById('tab-'+t).classList.add('active');
-  el.classList.add('active');
-  if(t==='cal')renderCal();
-}
+// ── Tabs ─────────────────────────────────────────────────
+document.querySelectorAll('.nav-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+    document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+    btn.classList.add('active');
+    $('tab-'+btn.dataset.tab).classList.add('active');
+    if(btn.dataset.tab==='cal') renderCal();
+  });
+});
 
-function setFilter(f,el){
-  todoFilter=f;
-  document.querySelectorAll('.filter-btn').forEach(function(e){e.classList.remove('active');});
-  el.classList.add('active');
-  renderTodos();
-}
-
-// ── Todo ──────────────────────────────────────────────────
-function showTodoForm(id){
+// ── Todo ─────────────────────────────────────────────────
+function openTodoForm(id) {
   editTodoId=id;
-  document.getElementById('todo-add-form').style.display='block';
-  document.getElementById('todo-form-title').textContent=id?'編輯任務':'新增任務';
-  var allM=[currentUser].concat(MEMBERS.filter(function(m){return m!==currentUser;}));
-  document.getElementById('f-member').innerHTML=allM.map(function(m){return '<option value="'+m+'">'+m+'</option>';}).join('');
-  if(id){
-    var t=todos.find(function(x){return x.id===id;})||{};
-    document.getElementById('f-text').value=t.text||'';
-    document.getElementById('f-pri').value=t.priority||'';
-    document.getElementById('f-member').value=t.member||currentUser;
-    document.getElementById('f-date').value=t.date||'';
-    document.getElementById('f-note').value=t.note||'';
-  }else{
-    document.getElementById('f-text').value='';
-    document.getElementById('f-pri').value='';
-    document.getElementById('f-member').value=currentUser;
-    document.getElementById('f-date').value='';
-    document.getElementById('f-note').value='';
+  $('todo-form-title').textContent = id?'編輯任務':'新增任務';
+  const allM = [currentUser,...MEMBERS.filter(m=>m!==currentUser)];
+  $('f-member').innerHTML = allM.map(m=>`<option value="${m}">${m}</option>`).join('');
+  if(id) {
+    const t = todos.find(x=>x.id===id)||{};
+    $('f-text').value=t.text||''; $('f-pri').value=t.priority||'';
+    $('f-member').value=t.member||currentUser; $('f-date').value=t.date||''; $('f-note').value=t.note||'';
+  } else {
+    $('f-text').value=''; $('f-pri').value=''; $('f-member').value=currentUser; $('f-date').value=''; $('f-note').value='';
   }
-  var btns=document.getElementById('todo-form-btns');btns.innerHTML='';
-  var cb=document.createElement('button');cb.className='btn btn-sm';cb.textContent='取消';
-  cb.addEventListener('click',function(e){e.preventDefault();document.getElementById('todo-add-form').style.display='none';editTodoId=null;});
-  var sb=document.createElement('button');sb.className='btn btn-primary btn-sm';sb.innerHTML='<i class="ti ti-check"></i> 儲存';
-  sb.addEventListener('click',function(e){e.preventDefault();saveTodo();});
-  btns.appendChild(cb);btns.appendChild(sb);
-  document.getElementById('f-text').focus();
+  $('todo-form').style.display='block';
+  $('f-text').focus();
 }
 
-async function saveTodo(){
-  var text=document.getElementById('f-text').value.trim();if(!text)return;
-  var data={text:text,priority:document.getElementById('f-pri').value,member:document.getElementById('f-member').value,date:document.getElementById('f-date').value||null,note:document.getElementById('f-note').value};
+$('todo-add-btn').addEventListener('click', () => openTodoForm(null));
+$('todo-cancel-btn').addEventListener('click', () => { $('todo-form').style.display='none'; editTodoId=null; });
+$('todo-save-btn').addEventListener('click', async () => {
+  const text=$('f-text').value.trim(); if(!text) return;
+  const data = {text, priority:$('f-pri').value, member:$('f-member').value, date:$('f-date').value||null, note:$('f-note').value};
   setSyncStatus('syncing');
-  try{
-    if(editTodoId){
+  try {
+    if(editTodoId) {
       await sbPatch('todos',editTodoId,data);
-      var t=todos.find(function(x){return x.id===editTodoId;});if(t)Object.assign(t,data);
-    }else{
-      var rec=await sbPost('todos',[Object.assign({id:uid(),workspace:wsKey,done:false,created_by:currentUser},data)]);
-      if(rec&&rec[0])todos.unshift(rec[0]);
+      const t=todos.find(x=>x.id===editTodoId); if(t) Object.assign(t,data);
+    } else {
+      const rec = await sbPost('todos',[{id:uid(),workspace:wsKey,done:false,created_by:currentUser,...data}]);
+      if(rec&&rec[0]) todos.unshift(rec[0]);
     }
     setSyncStatus('ok');
-  }catch(e){setSyncStatus('err');}
-  document.getElementById('todo-add-form').style.display='none';editTodoId=null;
-  renderTodos();renderCal();
-}
+  } catch(e) { setSyncStatus('err'); }
+  $('todo-form').style.display='none'; editTodoId=null;
+  renderTodos(); renderCal();
+});
 
-function renderTodos(){
-  var list=todos;
-  if(todoFilter==='active')list=todos.filter(function(t){return !t.done;});
-  else if(todoFilter==='done')list=todos.filter(function(t){return t.done;});
-  else if(todoFilter==='high')list=todos.filter(function(t){return t.priority==='high';});
-  else if(todoFilter==='mid')list=todos.filter(function(t){return t.priority==='mid';});
-  else if(todoFilter==='low')list=todos.filter(function(t){return t.priority==='low';});
-  var el=document.getElementById('todo-list');if(!el)return;
+document.querySelectorAll('.filter-btn[data-filter]').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.filter-btn[data-filter]').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active'); todoFilter=btn.dataset.filter; renderTodos();
+  });
+});
+
+function renderTodos() {
+  let list = todos;
+  if(todoFilter==='active') list=todos.filter(t=>!t.done);
+  else if(todoFilter==='done') list=todos.filter(t=>t.done);
+  else if(todoFilter==='high') list=todos.filter(t=>t.priority==='high');
+  else if(todoFilter==='mid') list=todos.filter(t=>t.priority==='mid');
+  else if(todoFilter==='low') list=todos.filter(t=>t.priority==='low');
+  const el=$('todo-list'); if(!el) return;
   if(!list.length){el.innerHTML='<div class="empty"><i class="ti ti-inbox" style="font-size:32px;display:block;margin-bottom:8px"></i>沒有符合的任務</div>';updateStats();return;}
-  el.innerHTML=list.map(function(t){
-    var pri=t.priority==='high'?'高優先':t.priority==='mid'?'中優先':t.priority==='low'?'低優先':'';
-    return '<div class="todo-item">'
-      +'<div class="todo-check'+(t.done?' done':'')+('" onclick="toggleTodo(\''+t.id+'\')">')
-      +(t.done?'<i class="ti ti-check" style="font-size:13px"></i>':'')
-      +'</div>'
-      +'<div style="flex:1;min-width:0">'
-      +'<div class="todo-text'+(t.done?' done':'')+'" style="margin-bottom:4px">'+esc(t.text)+'</div>'
-      +'<div style="display:flex;gap:4px;flex-wrap:wrap;align-items:center">'
-      +(pri?'<span class="badge badge-'+t.priority+'">'+pri+'</span>':'')
-      +(t.member?'<span class="badge badge-member"><i class="ti ti-user" style="font-size:10px"></i> '+esc(t.member)+'</span>':'')
-      +(t.date?'<span class="badge badge-member"><i class="ti ti-calendar" style="font-size:10px"></i> '+t.date+'</span>':'')
-      +(t.created_by?'<span style="font-size:11px;color:#aaa">by '+esc(t.created_by)+'</span>':'')
-      +'</div></div>'
-      +'<div style="display:flex;gap:4px;flex-shrink:0">'
-      +'<button class="btn btn-sm" onclick="showTodoForm(\''+t.id+'\')"><i class="ti ti-edit" style="font-size:13px"></i> 編輯</button>'
-      +'<button class="btn btn-sm btn-danger" data-del="'+t.id+'" data-confirm="0" onclick="deleteTodo(\''+t.id+'\')"><i class="ti ti-trash" style="font-size:13px"></i></button>'
-      +'</div></div>';
+  el.innerHTML = list.map(t => {
+    const priLabel = t.priority==='high'?'高優先':t.priority==='mid'?'中優先':t.priority==='low'?'低優先':'';
+    return `<div class="todo-item">
+      <div class="todo-check${t.done?' done':''}" data-toggle-todo="${t.id}">
+        ${t.done?'<i class="ti ti-check" style="font-size:13px"></i>':''}
+      </div>
+      <div style="flex:1;min-width:0">
+        <div class="todo-text${t.done?' done':''}" style="margin-bottom:4px">${esc(t.text)}</div>
+        <div style="display:flex;gap:4px;flex-wrap:wrap;align-items:center">
+          ${priLabel?`<span class="badge badge-${t.priority}">${priLabel}</span>`:''}
+          ${t.member?`<span class="badge badge-member"><i class="ti ti-user" style="font-size:10px"></i> ${esc(t.member)}</span>`:''}
+          ${t.date?`<span class="badge badge-member"><i class="ti ti-calendar" style="font-size:10px"></i> ${t.date}</span>`:''}
+          ${t.created_by?`<span style="font-size:11px;color:#aaa">by ${esc(t.created_by)}</span>`:''}
+        </div>
+      </div>
+      <div style="display:flex;gap:4px;flex-shrink:0">
+        <button class="btn btn-sm" data-edit-todo="${t.id}"><i class="ti ti-edit" style="font-size:13px"></i> 編輯</button>
+        <button class="btn btn-sm btn-danger" data-del-todo="${t.id}" data-confirm="0"><i class="ti ti-trash" style="font-size:13px"></i></button>
+      </div>
+    </div>`;
   }).join('');
   updateStats();
 }
 
-async function toggleTodo(id){
-  var t=todos.find(function(x){return x.id===id;});if(!t)return;
-  t.done=!t.done;renderTodos();
-  try{await sbPatch('todos',id,{done:t.done});setSyncStatus('ok');}
-  catch(e){t.done=!t.done;renderTodos();setSyncStatus('err');}
+function updateStats() {
+  const active=todos.filter(t=>!t.done).length, done=todos.filter(t=>t.done).length;
+  const td=todos.filter(t=>t.date===todayStr()&&!t.done).length;
+  $('s-active').textContent=active; $('h-todo').textContent=active;
+  $('s-done').textContent=done; $('h-today').textContent=td;
 }
 
-async function deleteTodo(id){
-  var el=document.querySelector('[data-del="'+id+'"]');if(!el)return;
-  if(el.dataset.confirm==='1'){
-    todos=todos.filter(function(x){return x.id!==id;});renderTodos();renderCal();
-    try{await sbDel('todos',id);setSyncStatus('ok');}catch(e){setSyncStatus('err');loadAll();}
-  }else{
-    el.dataset.confirm='1';el.innerHTML='<i class="ti ti-alert-triangle" style="font-size:13px"></i> 確認？';
-    setTimeout(function(){if(el){el.dataset.confirm='0';el.innerHTML='<i class="ti ti-trash" style="font-size:13px"></i>';}},2500);
+$('todo-list').addEventListener('click', async e => {
+  const toggleEl = e.target.closest('[data-toggle-todo]');
+  if(toggleEl) {
+    const id=toggleEl.dataset.toggleTodo;
+    const t=todos.find(x=>x.id===id); if(!t) return;
+    t.done=!t.done; renderTodos();
+    try{await sbPatch('todos',id,{done:t.done});setSyncStatus('ok');}
+    catch(err){t.done=!t.done;renderTodos();setSyncStatus('err');}
+    return;
   }
+  const editEl = e.target.closest('[data-edit-todo]');
+  if(editEl){openTodoForm(editEl.dataset.editTodo);return;}
+  const delEl = e.target.closest('[data-del-todo]');
+  if(delEl){
+    if(delEl.dataset.confirm==='1'){
+      const id=delEl.dataset.delTodo;
+      todos=todos.filter(x=>x.id!==id); renderTodos(); renderCal();
+      try{await sbDel('todos',id);setSyncStatus('ok');}catch(err){setSyncStatus('err');loadAll();}
+    } else {
+      delEl.dataset.confirm='1'; delEl.innerHTML='<i class="ti ti-alert-triangle" style="font-size:13px"></i> 確認？';
+      setTimeout(()=>{if(delEl){delEl.dataset.confirm='0';delEl.innerHTML='<i class="ti ti-trash" style="font-size:13px"></i>';}},2500);
+    }
+  }
+});
+
+// ── Goals ────────────────────────────────────────────────
+$('goal-add-btn').addEventListener('click', () => openGoalForm(null));
+$('goal-cancel-btn').addEventListener('click', () => { $('goal-form').style.display='none'; editGoalId=null; });
+$('goal-save-btn').addEventListener('click', async () => {
+  const name=$('f-gname').value.trim(); if(!name) return;
+  const lines=$('f-gsub').value.split('\n').map(s=>s.trim()).filter(Boolean);
+  setSyncStatus('syncing');
+  try {
+    if(editGoalId) {
+      const g=goals.find(x=>x.id===editGoalId);
+      const existing=normSubs(g?g.subs:[]);
+      const merged=lines.map(txt=>existing.find(o=>o.text===txt)||mkSub(txt));
+      await sbPatch('goals',editGoalId,{name,date:$('f-gdate').value||null,subs:merged});
+      if(g){g.name=name;g.date=$('f-gdate').value;g.subs=merged;}
+    } else {
+      const rec=await sbPost('goals',[{id:uid(),workspace:wsKey,name,date:$('f-gdate').value||null,created_by:currentUser,subs:lines.map(mkSub)}]);
+      if(rec&&rec[0]) goals.unshift(rec[0]);
+    }
+    setSyncStatus('ok');
+  } catch(e){setSyncStatus('err');}
+  $('goal-form').style.display='none'; editGoalId=null; renderGoals();
+});
+
+function openGoalForm(id) {
+  editGoalId=id;
+  $('goal-form-title').textContent=id?'編輯目標':'新增目標';
+  if(id){
+    const g=goals.find(x=>x.id===id)||{};
+    $('f-gname').value=g.name||''; $('f-gdate').value=g.date||'';
+    $('f-gsub').value=normSubs(g.subs).map(s=>s.text).join('\n');
+  } else {
+    $('f-gname').value=''; $('f-gdate').value=''; $('f-gsub').value='';
+  }
+  $('goal-form').style.display='block';
+  $('f-gname').focus();
 }
 
-function updateStats(){
-  var active=todos.filter(function(t){return !t.done;}).length;
-  var done=todos.filter(function(t){return t.done;}).length;
-  var td=todos.filter(function(t){return t.date===today()&&!t.done;}).length;
-  ['s-active','h-todo'].forEach(function(id){var e=document.getElementById(id);if(e)e.textContent=active;});
-  var sd=document.getElementById('s-done');if(sd)sd.textContent=done;
-  var hd=document.getElementById('h-today');if(hd)hd.textContent=td;
+async function saveGoalSubs(gid) {
+  const g=goals.find(x=>x.id===gid); if(!g) return;
+  try{await sbPatch('goals',gid,{subs:g.subs});setSyncStatus('ok');}
+  catch(e){setSyncStatus('err');}
 }
 
-// ── Goals ─────────────────────────────────────────────────
-function renderSubTree(subs,gid,pathArr,level){
-  if(!subs||!subs.length)return'';
-  return subs.map(function(s,i){
-    var p=pathArr.concat([i]);
-    var ps=p.join('-');
-    var hasKids=s.children&&s.children.length>0;
-    var expanded=s.expanded===true;
-    var pad=level*22;
-    var canAdd=level<2;
-    var formId='acf-'+gid+'-'+ps.replace(/-/g,'_');
-    var html='<div class="sub-node">'
-      +'<div class="sub-row" style="padding-left:'+pad+'px">'
-      +'<div style="width:16px;height:16px;flex-shrink:0;display:flex;align-items:center;justify-content:center">'
-      +(hasKids?'<button class="exp-btn" data-gid="'+gid+'" data-path="'+ps+'">'
-        +'<i class="ti ti-chevron-'+(expanded?'down':'right')+'" style="font-size:11px"></i></button>':'')
-      +'</div>'
-      +'<div class="sub-check'+(s.done?' done':'')+'" data-sub-toggle data-gid="'+gid+'" data-path="'+ps+'">'
-      +(s.done?'<i class="ti ti-check" style="font-size:10px"></i>':'')
-      +'</div>'
-      +'<span style="flex:1;font-size:13px;'+(s.done?'text-decoration:line-through;color:#aaa':'')+'">'
-      +esc(s.text)+'</span>'
-      +(canAdd?'<button class="add-kid-btn" style="border:1px solid #ccc;border-radius:6px;background:#f5f5f3;cursor:pointer;padding:2px 8px;font-size:11px;color:#555;font-family:inherit;display:inline-flex;align-items:center;gap:3px;flex-shrink:0" data-gid="'+gid+'" data-path="'+ps+'" title="新增下層子任務"><i class="ti ti-plus" style="font-size:11px"></i> 子任務</button>':'')
-      +'<button class="sub-del-btn btn btn-danger" style="padding:1px 6px;font-size:11px;opacity:0.7;flex-shrink:0" data-gid="'+gid+'" data-path="'+ps+'"><i class="ti ti-x" style="font-size:11px"></i></button>'
-      +'</div>'
-      +'<div class="add-child-form" id="'+formId+'">'
-      +'<div style="display:flex;gap:6px;align-items:center">'
-      +'<input class="kid-input" type="text" placeholder="輸入子任務名稱..." style="flex:1;padding:5px 8px;font-size:12px">'
-      +'<button class="confirm-kid btn btn-primary btn-sm" data-gid="'+gid+'" data-path="'+ps+'" style="padding:4px 10px">新增</button>'
-      +'<button class="cancel-kid btn btn-sm" data-gid="'+gid+'" data-path="'+ps+'" style="padding:4px 10px">取消</button>'
-      +'</div></div>'
-      +(hasKids&&expanded?'<div>'+renderSubTree(s.children,gid,p,level+1)+'</div>':'')
-      +'</div>';
-    return html;
+function getNode(subs,path){let arr=subs,node=null;for(let i=0;i<path.length;i++){node=arr[path[i]];if(i<path.length-1)arr=(node&&node.children)||[];}return node;}
+function getParent(subs,path){if(path.length===1)return{arr:subs,idx:path[0]};const p=getNode(subs,path.slice(0,-1));if(!p.children)p.children=[];return{arr:p.children,idx:path[path.length-1]};}
+function countAll(subs){let t=0,d=0;const w=a=>{(a||[]).forEach(s=>{t++;if(s.done)d++;w(s.children);});};w(subs);return{t,d};}
+
+function renderSubTree(subs,gid,path,level){
+  if(!subs||!subs.length) return '';
+  return subs.map((s,i)=>{
+    const p=[...path,i], ps=p.join('-'), formId=`acf_${gid}_${ps.replace(/-/g,'_')}`;
+    const hasKids=s.children&&s.children.length>0, canAdd=level<2;
+    return `<div>
+      <div class="sub-row" style="padding-left:${level*22}px">
+        <div style="width:16px;flex-shrink:0;display:flex;align-items:center;justify-content:center">
+          ${hasKids?`<button style="border:none;background:none;cursor:pointer;padding:0;color:#aaa;display:flex;align-items:center" data-exp="${gid}" data-path="${ps}">
+            <i class="ti ti-chevron-${s.expanded?'down':'right'}" style="font-size:11px"></i>
+          </button>`:''}
+        </div>
+        <div class="sub-check${s.done?' done':''}" style="width:17px;height:17px;flex-shrink:0" data-sub-toggle="${gid}" data-path="${ps}">
+          ${s.done?'<i class="ti ti-check" style="font-size:10px"></i>':''}
+        </div>
+        <span style="flex:1;font-size:13px;${s.done?'text-decoration:line-through;color:#aaa':''}">${esc(s.text)}</span>
+        ${canAdd?`<button style="border:1px solid #ccc;border-radius:6px;background:#f5f5f3;cursor:pointer;padding:2px 8px;font-size:11px;color:#555;font-family:inherit;flex-shrink:0" data-add-child="${gid}" data-path="${ps}">
+          <i class="ti ti-plus" style="font-size:11px"></i> 子任務
+        </button>`:''}
+        <button style="border:1px solid #E24B4A;border-radius:6px;background:transparent;cursor:pointer;padding:2px 6px;font-size:11px;color:#E24B4A;flex-shrink:0" data-del-sub="${gid}" data-path="${ps}">
+          <i class="ti ti-x" style="font-size:11px"></i>
+        </button>
+      </div>
+      <div class="add-child-form" id="${formId}" style="padding-left:${level*22+38}px">
+        <div style="display:flex;gap:6px;align-items:center">
+          <input class="kid-input" type="text" placeholder="輸入子任務名稱..." style="flex:1;padding:5px 8px;font-size:12px">
+          <button class="btn btn-primary btn-sm confirm-kid" data-gid="${gid}" data-path="${ps}">新增</button>
+          <button class="btn btn-sm cancel-kid" data-gid="${gid}" data-path="${ps}">取消</button>
+        </div>
+      </div>
+      ${hasKids&&s.expanded?`<div>${renderSubTree(s.children,gid,p,level+1)}</div>`:''}
+    </div>`;
   }).join('');
 }
 
 function renderGoals(){
-  if(subEditActive)return;
-  var el=document.getElementById('goal-list');if(!el)return;
+  if(subEditing) return;
+  const el=$('goal-list'); if(!el) return;
   if(!goals.length){el.innerHTML='<div class="empty"><i class="ti ti-target" style="font-size:32px;display:block;margin-bottom:8px"></i>尚無目標</div>';return;}
-  var html='';
-  goals.forEach(function(g){
-    var subs=normSubs(g.subs);
-    var res=countAll(subs);
-    var pct=res.t?Math.round(res.d/res.t*100):0;
-    var isOpen=goalExpanded[g.id]!==false;
-    html+='<div class="goal-item">'
-      +'<div class="row-between" style="margin-bottom:8px">'
-      +'<div style="display:flex;align-items:center;gap:8px;cursor:pointer" onclick="toggleGoalExpand(\''+g.id+'\')">'
-      +'<i class="ti ti-chevron-'+(isOpen?'down':'right')+'" style="font-size:13px;color:#aaa"></i>'
-      +'<span style="font-weight:500;font-size:15px">'+esc(g.name)+'</span>'
-      +'</div>'
-      +'<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">'
-      +(g.created_by?'<span style="font-size:11px;color:#aaa">by '+esc(g.created_by)+'</span>':'')
-      +(g.date?'<span style="font-size:12px;color:#888">'+g.date+'</span>':'')
-      +'<span style="font-size:13px;font-weight:600;color:#555">'+pct+'%</span>'
-      +'<button class="btn btn-sm" onclick="openGoalForm(\''+g.id+'\')"><i class="ti ti-edit" style="font-size:12px"></i> 編輯</button>'
-      +'<button class="btn btn-sm btn-danger" data-delg="'+g.id+'" data-confirm="0" onclick="deleteGoal(\''+g.id+'\')"><i class="ti ti-trash" style="font-size:12px"></i></button>'
-      +'</div></div>'
-      +'<div class="progress-bar"><div class="progress-fill" style="width:'+pct+'%"></div></div>'
-      +(isOpen?'<div>'+renderSubTree(subs,g.id,[],0)+'</div>':'<div style="font-size:12px;color:#aaa;padding:4px 0">'+subs.length+' 項子任務（點擊展開）</div>')
-      +'</div>';
-  });
-  el.innerHTML=html;
-}
-
-function toggleGoalExpand(gid){
-  goalExpanded[gid]=goalExpanded[gid]===false?true:false;
-  renderGoals();
-}
-
-// ── Goal Events (delegation) ──────────────────────────────
-document.addEventListener('click',function(e){
-  // expand/collapse subtask
-  var expBtn=e.target.closest('.exp-btn');
-  if(expBtn){
-    var gid=expBtn.dataset.gid,path=expBtn.dataset.path.split('-').map(Number);
-    var g=goals.find(function(x){return x.id===gid;});if(!g)return;
-    g.subs=normSubs(g.subs);
-    var node=getNode(g.subs,path);if(!node)return;
-    node.expanded=!node.expanded;
-    saveGoalSubs(gid);renderGoals();return;
-  }
-  // toggle subtask done
-  var tog=e.target.closest('[data-sub-toggle]');
-  if(tog){
-    var gid=tog.dataset.gid,path=tog.dataset.path.split('-').map(Number);
-    var g=goals.find(function(x){return x.id===gid;});if(!g)return;
-    g.subs=normSubs(g.subs);
-    var node=getNode(g.subs,path);if(!node)return;
-    node.done=!node.done;
-    saveGoalSubs(gid);renderGoals();return;
-  }
-  // delete subtask
-  var delSub=e.target.closest('.sub-del-btn');
-  if(delSub){
-    var gid=delSub.dataset.gid,path=delSub.dataset.path.split('-').map(Number);
-    var g=goals.find(function(x){return x.id===gid;});if(!g)return;
-    g.subs=normSubs(g.subs);
-    var par=getParent(g.subs,path);par.arr.splice(par.idx,1);
-    saveGoalSubs(gid);renderGoals();return;
-  }
-  // show add child form
-  var addKid=e.target.closest('.add-kid-btn');
-  if(addKid){
-    var gid=addKid.dataset.gid,ps=addKid.dataset.path;
-    var fid='acf-'+gid+'-'+ps.replace(/-/g,'_');
-    var form=document.getElementById(fid);if(!form)return;
-    var isOpen=form.style.display==='block';
-    document.querySelectorAll('.add-child-form').forEach(function(f){f.style.display='none';});
-    if(!isOpen){
-      subEditActive=true;
-      form.style.display='block';
-      form.querySelector('.kid-input').focus();
-    }else{subEditActive=false;}
-    return;
-  }
-  // confirm add child
-  var confirmKid=e.target.closest('.confirm-kid');
-  if(confirmKid){
-    var gid=confirmKid.dataset.gid,ps=confirmKid.dataset.path;
-    var path=ps.split('-').map(Number);
-    var fid='acf-'+gid+'-'+ps.replace(/-/g,'_');
-    var form=document.getElementById(fid);
-    var text=form?form.querySelector('.kid-input').value.trim():'';
-    if(!text)return;
-    var g=goals.find(function(x){return x.id===gid;});if(!g)return;
-    g.subs=normSubs(g.subs);
-    var node=getNode(g.subs,path);if(!node)return;
-    if(!node.children)node.children=[];
-    node.children.push(mkSub(text));
-    node.expanded=true;
-    subEditActive=false;
-    saveGoalSubs(gid);renderGoals();return;
-  }
-  // cancel add child
-  var cancelKid=e.target.closest('.cancel-kid');
-  if(cancelKid){
-    var gid=cancelKid.dataset.gid,ps=cancelKid.dataset.path;
-    var fid='acf-'+gid+'-'+ps.replace(/-/g,'_');
-    var form=document.getElementById(fid);
-    if(form)form.style.display='none';
-    subEditActive=false;return;
-  }
-  // click outside form → close
-  if(subEditActive){
-    var inForm=e.target.closest('.add-child-form');
-    var inAddBtn=e.target.closest('.add-kid-btn');
-    if(!inForm&&!inAddBtn){
-      document.querySelectorAll('.add-child-form').forEach(function(f){f.style.display='none';});
-      subEditActive=false;
-      renderGoals();
-    }
-  }
-});
-
-document.addEventListener('keydown',function(e){
-  if(e.key==='Enter'&&e.target.classList.contains('kid-input')){
-    var btn=e.target.closest('.add-child-form').querySelector('.confirm-kid');if(btn)btn.click();
-  }
-  if(e.key==='Escape'&&e.target.classList.contains('kid-input')){
-    var btn=e.target.closest('.add-child-form').querySelector('.cancel-kid');if(btn)btn.click();
-  }
-});
-
-function openGoalForm(id){
-  editGoalId=id;
-  var form=document.getElementById('goal-add-form');form.style.display='block';
-  document.getElementById('goal-form-title').textContent=id?'編輯目標':'新增目標';
-  if(id){
-    var g=goals.find(function(x){return x.id===id;})||{};
-    document.getElementById('f-gname').value=g.name||'';
-    document.getElementById('f-gdate').value=g.date||'';
-    document.getElementById('f-gsub').value=normSubs(g.subs).map(function(s){return s.text;}).join('\n');
-  }else{
-    document.getElementById('f-gname').value='';
-    document.getElementById('f-gdate').value='';
-    document.getElementById('f-gsub').value='';
-  }
-  var sb=document.getElementById('goal-save-btn'),cb=document.getElementById('goal-cancel-btn');
-  var ns=sb.cloneNode(true),nc=cb.cloneNode(true);
-  sb.parentNode.replaceChild(ns,sb);cb.parentNode.replaceChild(nc,cb);
-  ns.addEventListener('click',function(e){e.preventDefault();e.stopPropagation();saveGoal();});
-  nc.addEventListener('click',function(e){e.preventDefault();e.stopPropagation();form.style.display='none';editGoalId=null;});
-  document.getElementById('f-gname').focus();
-}
-
-async function saveGoal(){
-  var name=document.getElementById('f-gname').value.trim();if(!name)return;
-  var lines=document.getElementById('f-gsub').value.split('\n').map(function(s){return s.trim();}).filter(Boolean);
-  setSyncStatus('syncing');
-  try{
-    if(editGoalId){
-      var g=goals.find(function(x){return x.id===editGoalId;});
-      var existingSubs=normSubs(g?g.subs:[]);
-      var merged=lines.map(function(txt){
-        var ex=existingSubs.find(function(o){return o.text===txt;});
-        return ex||mkSub(txt);
-      });
-      await sbPatch('goals',editGoalId,{name:name,date:document.getElementById('f-gdate').value||null,subs:merged});
-      if(g){g.name=name;g.date=document.getElementById('f-gdate').value;g.subs=merged;}
-    }else{
-      var subs=lines.map(mkSub);
-      var rec=await sbPost('goals',[{id:uid(),workspace:wsKey,name:name,date:document.getElementById('f-gdate').value||null,created_by:currentUser,subs:subs}]);
-      if(rec&&rec[0])goals.unshift(rec[0]);
-    }
-    setSyncStatus('ok');
-  }catch(e){setSyncStatus('err');}
-  document.getElementById('goal-add-form').style.display='none';editGoalId=null;
-  renderGoals();
-}
-
-async function deleteGoal(id){
-  var el=document.querySelector('[data-delg="'+id+'"]');if(!el)return;
-  if(el.dataset.confirm==='1'){
-    goals=goals.filter(function(x){return x.id!==id;});renderGoals();
-    try{await sbDel('goals',id);setSyncStatus('ok');}catch(e){setSyncStatus('err');loadAll();}
-  }else{
-    el.dataset.confirm='1';el.innerHTML='<i class="ti ti-alert-triangle" style="font-size:12px"></i> 確認？';
-    setTimeout(function(){if(el){el.dataset.confirm='0';el.innerHTML='<i class="ti ti-trash" style="font-size:12px"></i>';}},2500);
-  }
-}
-
-// ── Calendar ──────────────────────────────────────────────
-function renderCal(){
-  var y=calDate.getFullYear(),m=calDate.getMonth();
-  var ct=document.getElementById('cal-title');if(!ct)return;
-  ct.textContent=y+' 年 '+(m+1)+' 月';
-  document.getElementById('cal-names').innerHTML=['日','一','二','三','四','五','六'].map(function(n){return '<div class="cal-day-name">'+n+'</div>';}).join('');
-  var first=new Date(y,m,1).getDay(),days=new Date(y,m+1,0).getDate(),ts=today();
-  var html='';
-  for(var i=0;i<first;i++){var d=new Date(y,m,1-first+i);html+='<div class="cal-day other-month"><div class="cal-num">'+d.getDate()+'</div></div>';}
-  for(var d=1;d<=days;d++){
-    var ds=y+'-'+p2(m+1)+'-'+p2(d);
-    var dt=todos.filter(function(t){return t.date===ds;});
-    html+='<div class="cal-day'+(ds===ts?' today':'')+'" onclick="showCalDay(\''+ds+'\')">'
-      +'<div class="cal-num">'+d+'</div>'
-      +dt.slice(0,2).map(function(t){return '<div class="cal-dot '+(t.priority||'')+'">'+esc(t.text)+'</div>';}).join('')
-      +(dt.length>2?'<div class="cal-dot">+'+(dt.length-2)+'</div>':'')
-      +'</div>';
-  }
-  document.getElementById('cal-days').innerHTML=html;
-  var mc={};
-  todos.filter(function(t){return t.date&&!t.done;}).forEach(function(t){
-    var pts=t.date.split('-');if(pts.length<2)return;
-    var k=pts[0]+'-'+pts[1];mc[k]=(mc[k]||0)+1;
-  });
-  var curKey=y+'-'+p2(m+1);
-  document.getElementById('cal-month-summary').innerHTML=Object.entries(mc).sort(function(a,b){return a[0].localeCompare(b[0]);}).map(function(entry){
-    var key=entry[0],count=entry[1];
-    var km=key.split('-')[1];var ky=key.split('-')[0];
-    var isActive=key===curKey;
-    return '<button onclick="calDate=new Date('+ky+','+(parseInt(km)-1)+',1);renderCal()" style="padding:3px 10px;border-radius:100px;border:1px solid '+(isActive?'#555':'#ddd')+';background:'+(isActive?'#555':'transparent')+';color:'+(isActive?'#fff':'#888')+';cursor:pointer;font-size:12px;font-family:inherit">'+parseInt(km)+'月 <strong>'+count+'</strong></button>';
+  el.innerHTML=goals.map(g=>{
+    const subs=normSubs(g.subs), {t,d}=countAll(subs), pct=t?Math.round(d/t*100):0;
+    const open=goalExpanded[g.id]!==false;
+    return `<div class="goal-item">
+      <div class="row-between" style="margin-bottom:8px">
+        <div style="display:flex;align-items:center;gap:8px;cursor:pointer" data-toggle-goal="${g.id}">
+          <i class="ti ti-chevron-${open?'down':'right'}" style="font-size:13px;color:#aaa"></i>
+          <span style="font-weight:500;font-size:15px">${esc(g.name)}</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+          ${g.created_by?`<span style="font-size:11px;color:#aaa">by ${esc(g.created_by)}</span>`:''}
+          ${g.date?`<span style="font-size:12px;color:#888">${g.date}</span>`:''}
+          <span style="font-size:13px;font-weight:600;color:#555">${pct}%</span>
+          <button class="btn btn-sm" data-edit-goal="${g.id}"><i class="ti ti-edit" style="font-size:12px"></i> 編輯</button>
+          <button class="btn btn-sm btn-danger" data-del-goal="${g.id}" data-confirm="0"><i class="ti ti-trash" style="font-size:12px"></i></button>
+        </div>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" style="width:${pct}%"></div></div>
+      ${open?`<div>${renderSubTree(subs,g.id,[],0)}</div>`:`<div style="font-size:12px;color:#aaa;padding:4px 0">${subs.length} 項子任務（點標題展開）</div>`}
+    </div>`;
   }).join('');
 }
 
-function moveCal(d){calDate=new Date(calDate.getFullYear(),calDate.getMonth()+d,1);renderCal();}
+$('goal-list').addEventListener('click', async e => {
+  // toggle goal expand
+  const togGoal=e.target.closest('[data-toggle-goal]');
+  if(togGoal){goalExpanded[togGoal.dataset.toggleGoal]=goalExpanded[togGoal.dataset.toggleGoal]===false?true:false;renderGoals();return;}
+  // edit goal
+  const editGoal=e.target.closest('[data-edit-goal]');
+  if(editGoal){openGoalForm(editGoal.dataset.editGoal);return;}
+  // delete goal
+  const delGoal=e.target.closest('[data-del-goal]');
+  if(delGoal){
+    if(delGoal.dataset.confirm==='1'){
+      const id=delGoal.dataset.delGoal;
+      goals=goals.filter(x=>x.id!==id);renderGoals();
+      try{await sbDel('goals',id);setSyncStatus('ok');}catch(err){setSyncStatus('err');loadAll();}
+    } else {
+      delGoal.dataset.confirm='1';delGoal.innerHTML='<i class="ti ti-alert-triangle"></i> 確認？';
+      setTimeout(()=>{if(delGoal){delGoal.dataset.confirm='0';delGoal.innerHTML='<i class="ti ti-trash" style="font-size:12px"></i>';}},2500);
+    }
+    return;
+  }
+  // expand/collapse subtask
+  const expBtn=e.target.closest('[data-exp]');
+  if(expBtn){
+    const gid=expBtn.dataset.exp, path=expBtn.dataset.path.split('-').map(Number);
+    const g=goals.find(x=>x.id===gid); if(!g) return;
+    g.subs=normSubs(g.subs);
+    const node=getNode(g.subs,path); if(!node) return;
+    node.expanded=!node.expanded;
+    saveGoalSubs(gid); renderGoals(); return;
+  }
+  // toggle subtask done
+  const togSub=e.target.closest('[data-sub-toggle]');
+  if(togSub){
+    const gid=togSub.dataset.subToggle, path=togSub.dataset.path.split('-').map(Number);
+    const g=goals.find(x=>x.id===gid); if(!g) return;
+    g.subs=normSubs(g.subs);
+    const node=getNode(g.subs,path); if(!node) return;
+    node.done=!node.done;
+    saveGoalSubs(gid); renderGoals(); return;
+  }
+  // delete subtask
+  const delSub=e.target.closest('[data-del-sub]');
+  if(delSub){
+    const gid=delSub.dataset.delSub, path=delSub.dataset.path.split('-').map(Number);
+    const g=goals.find(x=>x.id===gid); if(!g) return;
+    g.subs=normSubs(g.subs);
+    const {arr,idx}=getParent(g.subs,path); arr.splice(idx,1);
+    saveGoalSubs(gid); renderGoals(); return;
+  }
+  // show add child form
+  const addChild=e.target.closest('[data-add-child]');
+  if(addChild){
+    const gid=addChild.dataset.addChild, ps=addChild.dataset.path;
+    const fid=`acf_${gid}_${ps.replace(/-/g,'_')}`;
+    document.querySelectorAll('.add-child-form').forEach(f=>f.style.display='none');
+    const form=document.getElementById(fid); if(!form) return;
+    subEditing=true; form.style.display='block'; form.querySelector('.kid-input').focus(); return;
+  }
+  // confirm add child
+  const confirmKid=e.target.closest('.confirm-kid');
+  if(confirmKid){
+    const gid=confirmKid.dataset.gid, ps=confirmKid.dataset.path, path=ps.split('-').map(Number);
+    const fid=`acf_${gid}_${ps.replace(/-/g,'_')}`;
+    const form=document.getElementById(fid); if(!form) return;
+    const text=form.querySelector('.kid-input').value.trim(); if(!text) return;
+    const g=goals.find(x=>x.id===gid); if(!g) return;
+    g.subs=normSubs(g.subs);
+    const node=getNode(g.subs,path); if(!node) return;
+    node.children.push(mkSub(text)); node.expanded=true;
+    subEditing=false; saveGoalSubs(gid); renderGoals(); return;
+  }
+  // cancel add child
+  const cancelKid=e.target.closest('.cancel-kid');
+  if(cancelKid){
+    const gid=cancelKid.dataset.gid, ps=cancelKid.dataset.path;
+    const fid=`acf_${gid}_${ps.replace(/-/g,'_')}`;
+    const form=document.getElementById(fid); if(form) form.style.display='none';
+    subEditing=false; return;
+  }
+  // click outside form
+  if(subEditing && !e.target.closest('.add-child-form') && !e.target.closest('[data-add-child]')){
+    document.querySelectorAll('.add-child-form').forEach(f=>f.style.display='none');
+    subEditing=false; renderGoals();
+  }
+});
+
+document.addEventListener('keydown', e => {
+  if(!e.target.classList.contains('kid-input')) return;
+  if(e.key==='Enter'){ const btn=e.target.closest('.add-child-form').querySelector('.confirm-kid'); if(btn) btn.click(); }
+  if(e.key==='Escape'){ const btn=e.target.closest('.add-child-form').querySelector('.cancel-kid'); if(btn) btn.click(); }
+});
+
+// ── Calendar ──────────────────────────────────────────────
+function renderCal(){
+  const y=calDate.getFullYear(), m=calDate.getMonth();
+  $('cal-title').textContent=`${y} 年 ${m+1} 月`;
+  $('cal-names').innerHTML=['日','一','二','三','四','五','六'].map(n=>`<div class="cal-day-name">${n}</div>`).join('');
+  const first=new Date(y,m,1).getDay(), days=new Date(y,m+1,0).getDate(), ts=todayStr();
+  let html='';
+  for(let i=0;i<first;i++){const d=new Date(y,m,1-first+i);html+=`<div class="cal-day other-month"><div class="cal-num">${d.getDate()}</div></div>`;}
+  for(let d=1;d<=days;d++){
+    const ds=`${y}-${p2(m+1)}-${p2(d)}`, dt=todos.filter(t=>t.date===ds);
+    html+=`<div class="cal-day${ds===ts?' today':''}" data-calday="${ds}">
+      <div class="cal-num">${d}</div>
+      ${dt.slice(0,2).map(t=>`<div class="cal-dot ${t.priority||''}">${esc(t.text)}</div>`).join('')}
+      ${dt.length>2?`<div class="cal-dot">+${dt.length-2}</div>`:''}
+    </div>`;
+  }
+  $('cal-days').innerHTML=html;
+  const mc={};
+  todos.filter(t=>t.date&&!t.done).forEach(t=>{const p=t.date.split('-');if(p.length<2)return;const k=`${p[0]}-${p[1]}`;mc[k]=(mc[k]||0)+1;});
+  const ck=`${y}-${p2(m+1)}`;
+  $('cal-summary').innerHTML=Object.entries(mc).sort((a,b)=>a[0].localeCompare(b[0])).map(([k,c])=>{
+    const [ky,km]=k.split('-'), act=k===ck;
+    return `<button data-cal-jump="${ky}-${km}" style="padding:3px 10px;border-radius:100px;border:1px solid ${act?'#555':'#ddd'};background:${act?'#555':'transparent'};color:${act?'#fff':'#888'};cursor:pointer;font-size:12px;font-family:inherit">${parseInt(km)}月 <strong>${c}</strong></button>`;
+  }).join('');
+}
+$('cal-prev').addEventListener('click',()=>{calDate=new Date(calDate.getFullYear(),calDate.getMonth()-1,1);renderCal();});
+$('cal-next').addEventListener('click',()=>{calDate=new Date(calDate.getFullYear(),calDate.getMonth()+1,1);renderCal();});
+$('cal-today').addEventListener('click',()=>{calDate=new Date();renderCal();});
+$('cal-days').addEventListener('click',e=>{const el=e.target.closest('[data-calday]');if(el)showCalDay(el.dataset.calday);});
+$('cal-summary').addEventListener('click',e=>{const el=e.target.closest('[data-cal-jump]');if(el){const[y,m]=el.dataset.calJump.split('-');calDate=new Date(parseInt(y),parseInt(m)-1,1);renderCal();}});
 
 function showCalDay(ds){
-  var dt=todos.filter(function(t){return t.date===ds;});
-  var det=document.getElementById('cal-detail');
+  const dt=todos.filter(t=>t.date===ds), det=$('cal-detail');
   if(!dt.length){det.style.display='none';return;}
   det.style.display='block';
-  document.getElementById('cal-detail-content').innerHTML=
-    '<div class="row-between mb12"><div style="font-weight:500">'+ds+'（'+dt.length+' 項）</div>'
-    +'<button class="btn btn-primary btn-sm" onclick="switchToTodoAndAdd(\''+ds+'\')"><i class="ti ti-plus"></i> 新增</button></div>'
-    +dt.map(function(t){
-      return '<div class="todo-item" style="padding:8px 0">'
-        +'<div class="todo-check'+(t.done?' done':'')+'" style="width:18px;height:18px" onclick="toggleTodo(\''+t.id+'\');renderCal()">'
-        +(t.done?'<i class="ti ti-check" style="font-size:11px"></i>':'')+'</div>'
-        +'<div class="todo-text'+(t.done?' done':'')+'" style="flex:1">'+esc(t.text)+'</div>'
-        +(t.priority?'<span class="badge badge-'+t.priority+'">'+(t.priority==='high'?'高':t.priority==='mid'?'中':'低')+'</span>':'')
-        +'</div>';
-    }).join('');
+  $('cal-detail-content').innerHTML=`
+    <div class="row-between mb12">
+      <div style="font-weight:500">${ds}（${dt.length} 項）</div>
+      <button class="btn btn-primary btn-sm" data-quick-add="${ds}"><i class="ti ti-plus"></i> 新增</button>
+    </div>
+    ${dt.map(t=>`<div class="todo-item" style="padding:8px 0">
+      <div class="todo-check${t.done?' done':''}" style="width:18px;height:18px" data-toggle-todo="${t.id}">
+        ${t.done?'<i class="ti ti-check" style="font-size:11px"></i>':''}
+      </div>
+      <div class="todo-text${t.done?' done':''}" style="flex:1">${esc(t.text)}</div>
+      ${t.priority?`<span class="badge badge-${t.priority}">${t.priority==='high'?'高':t.priority==='mid'?'中':'低'}</span>`:''}
+    </div>`).join('')}`;
 }
+$('cal-detail').addEventListener('click', async e => {
+  const tog=e.target.closest('[data-toggle-todo]');
+  if(tog){const id=tog.dataset.toggleTodo;const t=todos.find(x=>x.id===id);if(!t)return;t.done=!t.done;renderCal();try{await sbPatch('todos',id,{done:t.done});setSyncStatus('ok');}catch(err){t.done=!t.done;renderCal();setSyncStatus('err');}return;}
+  const qa=e.target.closest('[data-quick-add]');
+  if(qa){
+    document.querySelector('[data-tab="todo"]').click();
+    setTimeout(()=>{openTodoForm(null);setTimeout(()=>{$('f-date').value=qa.dataset.quickAdd;},50);},100);
+  }
+});
 
-function switchToTodoAndAdd(ds){
-  document.querySelector('.nav-btn').click();
-  setTimeout(function(){showTodoForm(null);setTimeout(function(){var f=document.getElementById('f-date');if(f)f.value=ds;},50);},100);
-}
-
-// ── Pomodoro ──────────────────────────────────────────────
-var pomoModes={work:{sec:25*60,label:'專注時間'},short:{sec:5*60,label:'短暫休息'},long:{sec:15*60,label:'長時休息'}};
-function setPomoMode(m,el){pomoMode=m;resetPomo();document.querySelectorAll('#tab-timer .filter-btn').forEach(function(e){e.classList.remove('active');});el.classList.add('active');}
+// ── Pomodoro ─────────────────────────────────────────────
 function updatePomoDisplay(){
-  var pd=document.getElementById('pomo-display');if(!pd)return;
-  pd.textContent=p2(Math.floor(pomoSec/60))+':'+p2(pomoSec%60);
-  var circ=2*Math.PI*70,pct=(pomoModes[pomoMode].sec-pomoSec)/pomoModes[pomoMode].sec;
-  document.getElementById('pomo-arc').setAttribute('stroke-dashoffset',circ*(1-pct));
-  document.getElementById('pomo-status').textContent=pomoModes[pomoMode].label;
+  $('pomo-display').textContent=`${p2(Math.floor(pomoSec/60))}:${p2(pomoSec%60)}`;
+  const circ=2*Math.PI*70, pct=(POMO_MODES[pomoMode].sec-pomoSec)/POMO_MODES[pomoMode].sec;
+  $('pomo-arc').setAttribute('stroke-dashoffset',circ*(1-pct));
+  $('pomo-status').textContent=POMO_MODES[pomoMode].label;
 }
-function togglePomo(){
-  if(pomoRunning){clearInterval(pomoInterval);pomoRunning=false;document.getElementById('pomo-btn').innerHTML='<i class="ti ti-player-play"></i> 開始';}
+$('pomo-toggle').addEventListener('click',()=>{
+  if(pomoRunning){clearInterval(pomoTimer);pomoRunning=false;$('pomo-toggle').innerHTML='<i class="ti ti-player-play"></i> 開始';}
   else{
-    pomoRunning=true;document.getElementById('pomo-btn').innerHTML='<i class="ti ti-player-pause"></i> 暫停';
-    pomoInterval=setInterval(function(){
-      if(pomoSec<=0){clearInterval(pomoInterval);pomoRunning=false;
-        if(pomoMode==='work'){pomoDone++;pomoMins+=25;document.getElementById('pomo-count').textContent=pomoDone;document.getElementById('pomo-mins').textContent=pomoMins;}
-        document.getElementById('pomo-btn').innerHTML='<i class="ti ti-player-play"></i> 開始';pomoSec=0;updatePomoDisplay();return;}
+    pomoRunning=true;$('pomo-toggle').innerHTML='<i class="ti ti-player-pause"></i> 暫停';
+    pomoTimer=setInterval(()=>{
+      if(pomoSec<=0){clearInterval(pomoTimer);pomoRunning=false;
+        if(pomoMode==='work'){pomoDone++;pomoTotal+=25;$('pomo-count').textContent=pomoDone;$('pomo-mins').textContent=pomoTotal;}
+        $('pomo-toggle').innerHTML='<i class="ti ti-player-play"></i> 開始';pomoSec=0;updatePomoDisplay();return;}
       pomoSec--;updatePomoDisplay();},1000);
   }
-}
-function resetPomo(){clearInterval(pomoInterval);pomoRunning=false;pomoSec=pomoModes[pomoMode].sec;updatePomoDisplay();document.getElementById('pomo-btn').innerHTML='<i class="ti ti-player-play"></i> 開始';}
-
-// ── Init ──────────────────────────────────────────────────
-document.addEventListener('DOMContentLoaded',function(){
-  document.getElementById('main-app').style.display='none';
-  updatePomoDisplay();
-  document.getElementById('name-input').addEventListener('keydown',function(e){if(e.key==='Enter')joinWorkspace();});
-  document.getElementById('workspace-input').addEventListener('keydown',function(e){if(e.key==='Enter')document.getElementById('name-input').focus();});
 });
+$('pomo-reset').addEventListener('click',()=>{clearInterval(pomoTimer);pomoRunning=false;pomoSec=POMO_MODES[pomoMode].sec;updatePomoDisplay();$('pomo-toggle').innerHTML='<i class="ti ti-player-play"></i> 開始';});
+document.querySelectorAll('[data-pomo]').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    document.querySelectorAll('[data-pomo]').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active'); pomoMode=btn.dataset.pomo;
+    clearInterval(pomoTimer);pomoRunning=false;pomoSec=POMO_MODES[pomoMode].sec;updatePomoDisplay();
+    $('pomo-toggle').innerHTML='<i class="ti ti-player-play"></i> 開始';
+  });
+});
+
+updatePomoDisplay();
 </script>
 </body>
 </html>
