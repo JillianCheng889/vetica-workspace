@@ -62,23 +62,22 @@ input:focus,select:focus,textarea:focus{border-color:#555;box-shadow:0 0 0 2px r
 .cal-day.today{border-color:#555}
 .cal-day.other-month .cal-num{color:#ccc}
 .cal-num{font-size:12px;font-weight:500;margin-bottom:2px}
-.cal-dot{font-size:10px;padding:1px 4px;border-radius:3px;background:#f0f0f0;color:#888;margin-bottom:1px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;max-width:100%;display:block}
+.cal-dot{font-size:10px;padding:1px 4px;border-radius:3px;background:#f0f0f0;color:#888;margin-bottom:1px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;display:block;max-width:100%}
 .cal-dot.high{background:#FAECE7;color:#993C1D}
 .cal-dot.mid{background:#FAEEDA;color:#854F0B}
 .cal-dot.low{background:#EAF3DE;color:#3B6D11}
 .goal-item{padding:14px;border:1px solid #e5e5e5;border-radius:10px;margin-bottom:10px}
 .progress-bar{height:4px;background:#f0f0f0;border-radius:2px;margin:8px 0 10px}
 .progress-fill{height:100%;background:#555;border-radius:2px}
-.sub-row{display:flex;align-items:center;gap:6px;padding:4px 0}
+.sub-row{display:flex;align-items:center;gap:6px;padding:4px 0;flex-wrap:nowrap}
 .sub-check{border-radius:4px;border:1.5px solid #bbb;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;background:#fff}
 .sub-check.done{background:#555;border-color:#555;color:#fff}
 .add-child-form{display:none;background:#f5f5f3;border-radius:6px;border:1px dashed #ddd;padding:8px;margin:4px 0}
-.setup{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:32px}
-.user-pill{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:100px;background:#f5f5f3;font-size:12px;font-weight:500}
 .pomo-ring{width:160px;height:160px;margin:0 auto 16px;position:relative;display:flex;align-items:center;justify-content:center}
 .pomo-svg{position:absolute;top:0;left:0;transform:rotate(-90deg)}
-.pomo-time{font-size:32px;font-weight:500;line-height:1}
-.pomo-label{font-size:12px;color:#888;margin-top:4px}
+.setup{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:32px}
+.user-pill{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:100px;background:#f5f5f3;font-size:12px;font-weight:500}
+.sub-btn{border-radius:6px;cursor:pointer;padding:2px 8px;font-size:11px;font-family:inherit;flex-shrink:0;border-width:1px;border-style:solid}
 </style>
 </head>
 <body>
@@ -122,8 +121,6 @@ input:focus,select:focus,textarea:focus{border-color:#555;box-shadow:0 0 0 2px r
     <button class="nav-btn" data-tab="timer"><i class="ti ti-clock"></i> 番茄鐘</button>
   </div>
 
-  <!-- TODO -->
-
   <div class="tab active" id="tab-todo">
     <div id="conn-err" style="display:none;background:#fff5f5;color:#993C1D;padding:10px 14px;border-radius:8px;font-size:13px;margin-bottom:12px"></div>
     <div id="todo-form" style="display:none" class="inline-form">
@@ -131,11 +128,8 @@ input:focus,select:focus,textarea:focus{border-color:#555;box-shadow:0 0 0 2px r
       <input id="f-text" type="text" placeholder="任務名稱 *" style="margin-bottom:8px">
       <div class="form-grid">
         <div><label class="form-label">優先級</label>
-          <select id="f-pri">
-            <option value="">未設定</option>
-            <option value="high">🔴 高優先</option>
-            <option value="mid">🟡 中優先</option>
-            <option value="low">🟢 低優先</option>
+          <select id="f-pri"><option value="">未設定</option>
+            <option value="high">🔴 高優先</option><option value="mid">🟡 中優先</option><option value="low">🟢 低優先</option>
           </select></div>
         <div><label class="form-label">負責人</label><select id="f-member"></select></div>
       </div>
@@ -164,15 +158,13 @@ input:focus,select:focus,textarea:focus{border-color:#555;box-shadow:0 0 0 2px r
     </div>
   </div>
 
-  <!-- CAL -->
-
   <div class="tab" id="tab-cal">
     <div class="card">
       <div class="cal-header">
         <button class="btn btn-primary" style="padding:6px 14px" id="cal-prev"><i class="ti ti-chevron-left"></i> 上個月</button>
         <div style="text-align:center">
           <div id="cal-title" style="font-weight:500;font-size:15px"></div>
-          <button class="btn btn-sm" id="cal-today" style="font-size:11px;margin-top:4px">回到今月</button>
+          <button class="btn btn-sm" id="cal-today-btn" style="font-size:11px;margin-top:4px">回到今月</button>
         </div>
         <button class="btn btn-primary" style="padding:6px 14px" id="cal-next">下個月 <i class="ti ti-chevron-right"></i></button>
       </div>
@@ -182,8 +174,6 @@ input:focus,select:focus,textarea:focus{border-color:#555;box-shadow:0 0 0 2px r
     </div>
     <div class="card mt12" id="cal-detail" style="display:none"><div id="cal-detail-content"></div></div>
   </div>
-
-  <!-- GOALS -->
 
   <div class="tab" id="tab-goal">
     <div id="goal-form" style="display:none" class="inline-form">
@@ -205,8 +195,6 @@ input:focus,select:focus,textarea:focus{border-color:#555;box-shadow:0 0 0 2px r
     </div>
     <div id="goal-list"></div>
   </div>
-
-  <!-- TIMER -->
 
   <div class="tab" id="tab-timer">
     <div class="card" style="text-align:center;padding:28px 16px">
@@ -237,526 +225,461 @@ input:focus,select:focus,textarea:focus{border-color:#555;box-shadow:0 0 0 2px r
 </div>
 
 <script>
-const SB = 'https://mnaplphslldwaznbinwx.supabase.co';
-const KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1uYXBscGhzbGxkd2F6bmJpbnd4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgxMzk2MDMsImV4cCI6MjA5MzcxNTYwM30.qYmRCUjXLIGKCbHi7ll00PuKxZWg2Cc65EbcJr9J9JI';
-const H = () => ({'Content-Type':'application/json','apikey':KEY,'Authorization':'Bearer '+KEY,'Prefer':'return=representation'});
-const sbGet = async (t,q) => { const r = await fetch(`${SB}/rest/v1/${t}?${q||''}`,{headers:H()}); if(!r.ok) throw new Error(await r.text()); return r.json(); };
-const sbPost = async (t,d) => { const r = await fetch(`${SB}/rest/v1/${t}`,{method:'POST',headers:H(),body:JSON.stringify(d)}); if(!r.ok) throw new Error(await r.text()); return r.json(); };
-const sbPatch = async (t,id,d) => { const r = await fetch(`${SB}/rest/v1/${t}?id=eq.${id}`,{method:'PATCH',headers:H(),body:JSON.stringify(d)}); if(!r.ok) throw new Error(await r.text()); return r.json(); };
-const sbDel = async (t,id) => { const r = await fetch(`${SB}/rest/v1/${t}?id=eq.${id}`,{method:'DELETE',headers:H()}); if(!r.ok) throw new Error(await r.text()); };
+const SB='https://mnaplphslldwaznbinwx.supabase.co';
+const KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1uYXBscGhzbGxkd2F6bmJpbnd4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgxMzk2MDMsImV4cCI6MjA5MzcxNTYwM30.qYmRCUjXLIGKCbHi7ll00PuKxZWg2Cc65EbcJr9J9JI';
+const SBH=()=>({'Content-Type':'application/json','apikey':KEY,'Authorization':'Bearer '+KEY,'Prefer':'return=representation'});
+const sbGet=async(t,q)=>{const r=await fetch(SB+'/rest/v1/'+t+'?'+(q||''),{headers:SBH()});if(!r.ok)throw new Error(await r.text());return r.json();};
+const sbPost=async(t,d)=>{const r=await fetch(SB+'/rest/v1/'+t,{method:'POST',headers:SBH(),body:JSON.stringify(d)});if(!r.ok)throw new Error(await r.text());return r.json();};
+const sbPatch=async(t,id,d)=>{const r=await fetch(SB+'/rest/v1/'+t+'?id=eq.'+id,{method:'PATCH',headers:SBH(),body:JSON.stringify(d)});if(!r.ok)throw new Error(await r.text());return r.json();};
+const sbDel=async(t,id)=>{const r=await fetch(SB+'/rest/v1/'+t+'?id=eq.'+id,{method:'DELETE',headers:SBH()});if(!r.ok)throw new Error(await r.text());};
 
-let todos=[], goals=[], calDate=new Date(), todoFilter='all', editTodoId=null, editGoalId=null;
-let wsKey='', currentUser='';
-let subEditing=false, goalExpanded={};
-let pomoMode='work', pomoSec=1500, pomoRunning=false, pomoTimer=null, pomoDone=0, pomoTotal=0;
-const MEMBERS = ['Alex','Brian','Cathy','Daniel'];
-const POMO_MODES = { work:{sec:1500,label:'專注時間'}, short:{sec:300,label:'短暫休息'}, long:{sec:900,label:'長時休息'} };
+let todos=[],goals=[],calDate=new Date(),todoFilter='all',editTodoId=null,editGoalId=null;
+let wsKey='',currentUser='',subEditing=false,goalExpanded={};
+let pomoMode='work',pomoSec=1500,pomoRunning=false,pomoTimer=null,pomoDone=0,pomoTotal=0;
+const MEMBERS=['Alex','Brian','Cathy','Daniel'];
+const POMO={work:{sec:1500,label:'專注時間'},short:{sec:300,label:'短暫休息'},long:{sec:900,label:'長時休息'}};
 
-const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2);
-const p2 = n => String(n).padStart(2,'0');
-const todayStr = () => { const d=new Date(); return `${d.getFullYear()}-${p2(d.getMonth()+1)}-${p2(d.getDate())}`; };
-const esc = s => String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-const mkSub = text => ({id:uid(),text,done:false,expanded:false,children:[]});
-const normSubs = arr => (Array.isArray(arr)?arr:[]).map(s => ({children:[],...s,children:normSubs(s.children)}));
-const $ = id => document.getElementById(id);
+const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2);
+const p2=n=>String(n).padStart(2,'0');
+const todayStr=()=>{const d=new Date();return d.getFullYear()+'-'+p2(d.getMonth()+1)+'-'+p2(d.getDate());};
+const esc=s=>String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+const mkSub=t=>({id:uid(),text:t,done:false,expanded:false,children:[]});
+const normSubs=a=>(Array.isArray(a)?a:[]).map(s=>({children:[],...s,children:normSubs(s.children)}));
+const $=id=>document.getElementById(id);
 
-function setSyncStatus(s) {
-  const dot=$('sync-dot'), lbl=$('sync-lbl');
+// ── 子任務路徑工具 ──────────────────────────────────────
+function getNode(subs,path){let a=subs,n=null;for(let i=0;i<path.length;i++){n=a[path[i]];if(i<path.length-1)a=(n&&n.children)||[];}return n;}
+function getParent(subs,path){if(path.length===1)return{arr:subs,idx:path[0]};const p=getNode(subs,path.slice(0,-1));if(!p.children)p.children=[];return{arr:p.children,idx:path[path.length-1]};}
+function countAll(subs){let t=0,d=0;const w=a=>{(a||[]).forEach(s=>{t++;if(s.done)d++;w(s.children);});};w(subs);return{t,d};}
+function buildSubPath(arr,path){const n=arr[path[0]];if(!n)return'';if(path.length===1)return n.text;return n.text+' / '+buildSubPath(n.children||[],path.slice(1));}
+function collectUndone(arr,prefix,goalName,date,out){
+  arr.forEach(s=>{
+    const fp=prefix?prefix+' / '+s.text:s.text;
+    if(!s.done)out.push({text:goalName+' / '+fp,date:date});
+    if(s.children&&s.children.length)collectUndone(s.children,fp,goalName,date,out);
+  });
+}
+
+// ── Sync ────────────────────────────────────────────────
+function setSyncStatus(s){
+  const dot=$('sync-dot'),lbl=$('sync-lbl');
   if(s==='ok'){dot.className='sync-dot ok';lbl.textContent='已同步';}
   else if(s==='syncing'){dot.className='sync-dot syncing';lbl.textContent='同步中...';}
   else{dot.className='sync-dot err';lbl.textContent='連線失敗';}
 }
 
-async function loadAll() {
+async function loadAll(){
   setSyncStatus('syncing');
-  try {
-    const [t,g] = await Promise.all([
-      sbGet('todos', `workspace=eq.${encodeURIComponent(wsKey)}&order=created_at.desc`),
-      sbGet('goals', `workspace=eq.${encodeURIComponent(wsKey)}&order=created_at.desc`)
+  try{
+    const[t,g]=await Promise.all([
+      sbGet('todos','workspace=eq.'+encodeURIComponent(wsKey)+'&order=created_at.desc'),
+      sbGet('goals','workspace=eq.'+encodeURIComponent(wsKey)+'&order=created_at.desc')
     ]);
-    todos = t||[]; goals = g||[];
+    todos=t||[];goals=g||[];
     setSyncStatus('ok');
-    const ce=$('conn-err'); if(ce) ce.style.display='none';
-  } catch(e) {
+    const ce=$('conn-err');if(ce)ce.style.display='none';
+  }catch(e){
     setSyncStatus('err');
-    const ce=$('conn-err'); if(ce){ce.style.display='block';ce.textContent='⚠️ 連線失敗：'+e.message;}
+    const ce=$('conn-err');if(ce){ce.style.display='block';ce.textContent='⚠️ 連線失敗：'+e.message;}
   }
   renderTodos();
-  if(!subEditing) renderGoals();
+  if(!subEditing)renderGoals();
   renderCal();
 }
 
-// ── Setup ────────────────────────────────────────────────
-$('join-btn').addEventListener('click', () => {
-  const ws=$('ws-name').value.trim(), n=$('user-name').value.trim();
-  if(!ws||!n){$('setup-err').style.display='block';$('setup-err').textContent='請填寫所有欄位';return;}
-  // 記住上次輸入
-  try{localStorage.setItem('vetica-ws',ws);localStorage.setItem('vetica-user',n);}catch(e){}
-  wsKey=ws; currentUser=n;
-  $('setup-screen').style.display='none';
-  $('main-app').style.display='block';
-  $('cur-user').textContent=currentUser;
-  loadAll();
-  setInterval(loadAll, 10000);
-});
-$('ws-name').addEventListener('keydown', e => { if(e.key==='Enter') $('user-name').focus(); });
-$('user-name').addEventListener('keydown', e => { if(e.key==='Enter') $('join-btn').click(); });
-
-// 自動填入上次記錄
-try {
-  const savedWs=localStorage.getItem('vetica-ws'), savedUser=localStorage.getItem('vetica-user');
-  if(savedWs) $('ws-name').value=savedWs;
-  if(savedUser) $('user-name').value=savedUser;
-} catch(e) {}
-
-// ── Tabs ─────────────────────────────────────────────────
-document.querySelectorAll('.nav-btn').forEach(btn => {
-  btn.addEventListener('click', () => {
-    document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
-    document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
-    btn.classList.add('active');
-    $('tab-'+btn.dataset.tab).classList.add('active');
-    if(btn.dataset.tab==='cal') renderCal();
-  });
-});
-
-// ── Todo ─────────────────────────────────────────────────
-function openTodoForm(id) {
-  editTodoId=id;
-  $('todo-form-title').textContent = id?'編輯任務':'新增任務';
-  const allM = [currentUser,...MEMBERS.filter(m=>m!==currentUser)];
-  $('f-member').innerHTML = allM.map(m=>`<option value="${m}">${m}</option>`).join('');
-  if(id) {
-    const t = todos.find(x=>x.id===id)||{};
-    $('f-text').value=t.text||''; $('f-pri').value=t.priority||'';
-    $('f-member').value=t.member||currentUser; $('f-date').value=t.date||''; $('f-note').value=t.note||'';
-  } else {
-    $('f-text').value=''; $('f-pri').value=''; $('f-member').value=currentUser; $('f-date').value=''; $('f-note').value='';
-  }
-  $('todo-form').style.display='block';
-  $('f-text').focus();
+async function addSubAsTodo(text,date){
+  const data={id:uid(),workspace:wsKey,done:false,created_by:currentUser,text:text,priority:'',member:currentUser,date:date||null,note:''};
+  try{
+    const rec=await sbPost('todos',[data]);
+    if(rec&&rec[0]){todos.unshift(rec[0]);setSyncStatus('ok');renderTodos();renderCal();return true;}
+    return false;
+  }catch(e){console.error('addSubAsTodo',e);setSyncStatus('err');return false;}
 }
 
-$('todo-add-btn').addEventListener('click', () => openTodoForm(null));
-$('todo-cancel-btn').addEventListener('click', () => { $('todo-form').style.display='none'; editTodoId=null; });
-$('todo-save-btn').addEventListener('click', async () => {
-  const text=$('f-text').value.trim(); if(!text) return;
-  const data = {text, priority:$('f-pri').value, member:$('f-member').value, date:$('f-date').value||null, note:$('f-note').value};
-  setSyncStatus('syncing');
-  try {
-    if(editTodoId) {
-      await sbPatch('todos',editTodoId,data);
-      const t=todos.find(x=>x.id===editTodoId); if(t) Object.assign(t,data);
-    } else {
-      const rec = await sbPost('todos',[{id:uid(),workspace:wsKey,done:false,created_by:currentUser,...data}]);
-      if(rec&&rec[0]) todos.unshift(rec[0]);
-    }
-    setSyncStatus('ok');
-  } catch(e) { setSyncStatus('err'); }
-  $('todo-form').style.display='none'; editTodoId=null;
-  renderTodos(); renderCal();
-});
-
-document.querySelectorAll('.filter-btn[data-filter]').forEach(btn => {
-  btn.addEventListener('click', () => {
-    document.querySelectorAll('.filter-btn[data-filter]').forEach(b=>b.classList.remove('active'));
-    btn.classList.add('active'); todoFilter=btn.dataset.filter; renderTodos();
-  });
-});
-
-function renderTodos() {
-  let list = todos;
-  if(todoFilter==='active') list=todos.filter(t=>!t.done);
-  else if(todoFilter==='done') list=todos.filter(t=>t.done);
-  else if(todoFilter==='high') list=todos.filter(t=>t.priority==='high');
-  else if(todoFilter==='mid') list=todos.filter(t=>t.priority==='mid');
-  else if(todoFilter==='low') list=todos.filter(t=>t.priority==='low');
-  const el=$('todo-list'); if(!el) return;
-  if(!list.length){el.innerHTML='<div class="empty"><i class="ti ti-inbox" style="font-size:32px;display:block;margin-bottom:8px"></i>沒有符合的任務</div>';updateStats();return;}
-  el.innerHTML = list.map(t => {
-    const priLabel = t.priority==='high'?'高優先':t.priority==='mid'?'中優先':t.priority==='low'?'低優先':'';
-    return `<div class="todo-item">
-      <div class="todo-check${t.done?' done':''}" data-toggle-todo="${t.id}">
-        ${t.done?'<i class="ti ti-check" style="font-size:13px"></i>':''}
-      </div>
-      <div style="flex:1;min-width:0">
-        <div class="todo-text${t.done?' done':''}" style="margin-bottom:4px">${esc(t.text)}</div>
-        <div style="display:flex;gap:4px;flex-wrap:wrap;align-items:center">
-          ${priLabel?`<span class="badge badge-${t.priority}">${priLabel}</span>`:''}
-          ${t.member?`<span class="badge badge-member"><i class="ti ti-user" style="font-size:10px"></i> ${esc(t.member)}</span>`:''}
-          ${t.date?`<span class="badge badge-member"><i class="ti ti-calendar" style="font-size:10px"></i> ${t.date}</span>`:''}
-          ${t.created_by?`<span style="font-size:11px;color:#aaa">by ${esc(t.created_by)}</span>`:''}
-        </div>
-      </div>
-      <div style="display:flex;gap:4px;flex-shrink:0">
-        <button class="btn btn-sm" data-edit-todo="${t.id}"><i class="ti ti-edit" style="font-size:13px"></i> 編輯</button>
-        <button class="btn btn-sm btn-danger" data-del-todo="${t.id}" data-confirm="0"><i class="ti ti-trash" style="font-size:13px"></i></button>
-      </div>
-    </div>`;
-  }).join('');
-  updateStats();
-}
-
-function updateStats() {
-  const active=todos.filter(t=>!t.done).length, done=todos.filter(t=>t.done).length;
-  const td=todos.filter(t=>t.date===todayStr()&&!t.done).length;
-  $('s-active').textContent=active; $('h-todo').textContent=active;
-  $('s-done').textContent=done; $('h-today').textContent=td;
-}
-
-$('todo-list').addEventListener('click', async e => {
-  const toggleEl = e.target.closest('[data-toggle-todo]');
-  if(toggleEl) {
-    const id=toggleEl.dataset.toggleTodo;
-    const t=todos.find(x=>x.id===id); if(!t) return;
-    t.done=!t.done; renderTodos();
-    try{await sbPatch('todos',id,{done:t.done});setSyncStatus('ok');}
-    catch(err){t.done=!t.done;renderTodos();setSyncStatus('err');}
-    return;
-  }
-  const editEl = e.target.closest('[data-edit-todo]');
-  if(editEl){openTodoForm(editEl.dataset.editTodo);return;}
-  const delEl = e.target.closest('[data-del-todo]');
-  if(delEl){
-    if(delEl.dataset.confirm==='1'){
-      const id=delEl.dataset.delTodo;
-      todos=todos.filter(x=>x.id!==id); renderTodos(); renderCal();
-      try{await sbDel('todos',id);setSyncStatus('ok');}catch(err){setSyncStatus('err');loadAll();}
-    } else {
-      delEl.dataset.confirm='1'; delEl.innerHTML='<i class="ti ti-alert-triangle" style="font-size:13px"></i> 確認？';
-      setTimeout(()=>{if(delEl){delEl.dataset.confirm='0';delEl.innerHTML='<i class="ti ti-trash" style="font-size:13px"></i>';}},2500);
-    }
-  }
-});
-
-// ── Goals ────────────────────────────────────────────────
-$('goal-add-btn').addEventListener('click', () => openGoalForm(null));
-$('goal-cancel-btn').addEventListener('click', () => { $('goal-form').style.display='none'; editGoalId=null; });
-$('goal-save-btn').addEventListener('click', async () => {
-  const name=$('f-gname').value.trim(); if(!name) return;
-  const lines=$('f-gsub').value.split('\n').map(s=>s.trim()).filter(Boolean);
-  setSyncStatus('syncing');
-  try {
-    if(editGoalId) {
-      const g=goals.find(x=>x.id===editGoalId);
-      const existing=normSubs(g?g.subs:[]);
-      const merged=lines.map(txt=>existing.find(o=>o.text===txt)||mkSub(txt));
-      await sbPatch('goals',editGoalId,{name,date:$('f-gdate').value||null,subs:merged});
-      if(g){g.name=name;g.date=$('f-gdate').value;g.subs=merged;}
-    } else {
-      const rec=await sbPost('goals',[{id:uid(),workspace:wsKey,name,date:$('f-gdate').value||null,created_by:currentUser,subs:lines.map(mkSub)}]);
-      if(rec&&rec[0]) goals.unshift(rec[0]);
-    }
-    setSyncStatus('ok');
-  } catch(e){setSyncStatus('err');}
-  $('goal-form').style.display='none'; editGoalId=null; renderGoals();
-});
-
-function openGoalForm(id) {
-  editGoalId=id;
-  $('goal-form-title').textContent=id?'編輯目標':'新增目標';
-  if(id){
-    const g=goals.find(x=>x.id===id)||{};
-    $('f-gname').value=g.name||''; $('f-gdate').value=g.date||'';
-    $('f-gsub').value=normSubs(g.subs).map(s=>s.text).join('\n');
-  } else {
-    $('f-gname').value=''; $('f-gdate').value=''; $('f-gsub').value='';
-  }
-  $('goal-form').style.display='block';
-  $('f-gname').focus();
-}
-
-async function saveGoalSubs(gid) {
-  const g=goals.find(x=>x.id===gid); if(!g) return;
+async function saveGoalSubs(gid){
+  const g=goals.find(x=>x.id===gid);if(!g)return;
   try{await sbPatch('goals',gid,{subs:g.subs});setSyncStatus('ok');}
   catch(e){setSyncStatus('err');}
 }
 
-function getNode(subs,path){let arr=subs,node=null;for(let i=0;i<path.length;i++){node=arr[path[i]];if(i<path.length-1)arr=(node&&node.children)||[];}return node;}
-function getParent(subs,path){if(path.length===1)return{arr:subs,idx:path[0]};const p=getNode(subs,path.slice(0,-1));if(!p.children)p.children=[];return{arr:p.children,idx:path[path.length-1]};}
-function countAll(subs){let t=0,d=0;const w=a=>{(a||[]).forEach(s=>{t++;if(s.done)d++;w(s.children);});};w(subs);return{t,d};}
+// ── Setup ────────────────────────────────────────────────
+$('join-btn').addEventListener('click',()=>{
+  const ws=$('ws-name').value.trim(),n=$('user-name').value.trim();
+  if(!ws||!n){$('setup-err').style.display='block';$('setup-err').textContent='請填寫所有欄位';return;}
+  try{localStorage.setItem('vetica-ws',ws);localStorage.setItem('vetica-user',n);}catch(e){}
+  wsKey=ws;currentUser=n;
+  $('setup-screen').style.display='none';
+  $('main-app').style.display='block';
+  $('cur-user').textContent=currentUser;
+  loadAll();
+  setInterval(loadAll,10000);
+});
+$('ws-name').addEventListener('keydown',e=>{if(e.key==='Enter')$('user-name').focus();});
+$('user-name').addEventListener('keydown',e=>{if(e.key==='Enter')$('join-btn').click();});
+try{const sw=localStorage.getItem('vetica-ws'),su=localStorage.getItem('vetica-user');if(sw)$('ws-name').value=sw;if(su)$('user-name').value=su;}catch(e){}
 
-function renderSubTree(subs,gid,path,level){
-  if(!subs||!subs.length) return '';
-  return subs.map((s,i)=>{
-    const p=[...path,i], ps=p.join('-'), formId='acf_'+gid+'_'+ps.replace(/-/g,'_');
-    const hasKids=s.children&&s.children.length>0, canAdd=level<2;
-    const k=_regBtn({gid:gid,path:p});
-    return '<div>'
-      +'<div class="sub-row" style="padding-left:'+( level*22)+'px">'
-      +'<div style="width:16px;flex-shrink:0;display:flex;align-items:center;justify-content:center">'
-      +(hasKids?'<button style="border:none;background:none;cursor:pointer;padding:0;color:#aaa;display:flex;align-items:center" data-exp="'+gid+'" data-path="'+ps+'"><i class="ti ti-chevron-'+(s.expanded?'down':'right')+'" style="font-size:11px"></i></button>':'')
-      +'</div>'
-      +'<div class="sub-check'+(s.done?' done':'')+'" style="width:17px;height:17px;flex-shrink:0" data-sub-toggle="'+gid+'" data-path="'+ps+'">'
-      +(s.done?'<i class="ti ti-check" style="font-size:10px"></i>':'')
-      +'</div>'
-      +'<span style="flex:1;font-size:13px;'+(s.done?'text-decoration:line-through;color:#aaa':'')+'">'+(esc(s.text))+'</span>'
-      +'<button id="tbtn-'+k+'" onclick="window._addTodo(\''+k+'\')" style="border:2px solid #639922;border-radius:6px;background:#f0f9ea;cursor:pointer;padding:3px 8px;font-size:11px;color:#639922;font-family:inherit;flex-shrink:0;font-weight:500">＋ 待辦</button>'
-      +(canAdd?'<button style="border:1px solid #ccc;border-radius:6px;background:#f5f5f3;cursor:pointer;padding:2px 8px;font-size:11px;color:#555;font-family:inherit;flex-shrink:0" data-add-child="'+gid+'" data-path="'+ps+'"><i class="ti ti-plus" style="font-size:11px"></i> 子任務</button>':'')
-      +'<button style="border:1px solid #E24B4A;border-radius:6px;background:transparent;cursor:pointer;padding:2px 6px;font-size:11px;color:#E24B4A;flex-shrink:0" data-del-sub="'+gid+'" data-path="'+ps+'"><i class="ti ti-x" style="font-size:11px"></i></button>'
-      +'</div>'
-      +'<div class="add-child-form" id="'+formId+'" style="padding-left:'+(level*22+38)+'px">'
-      +'<div style="display:flex;gap:6px;align-items:center">'
-      +'<input class="kid-input" type="text" placeholder="輸入子任務名稱..." style="flex:1;padding:5px 8px;font-size:12px">'
-      +'<button class="btn btn-primary btn-sm confirm-kid" data-gid="'+gid+'" data-path="'+ps+'">新增</button>'
-      +'<button class="btn btn-sm cancel-kid" data-gid="'+gid+'" data-path="'+ps+'">取消</button>'
+// ── Tabs ─────────────────────────────────────────────────
+document.querySelectorAll('.nav-btn').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+    document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+    btn.classList.add('active');
+    $('tab-'+btn.dataset.tab).classList.add('active');
+    if(btn.dataset.tab==='cal')renderCal();
+  });
+});
+
+// ── Todo ─────────────────────────────────────────────────
+function openTodoForm(id){
+  editTodoId=id;
+  $('todo-form-title').textContent=id?'編輯任務':'新增任務';
+  const allM=[currentUser,...MEMBERS.filter(m=>m!==currentUser)];
+  $('f-member').innerHTML=allM.map(m=>'<option value="'+m+'">'+m+'</option>').join('');
+  if(id){const t=todos.find(x=>x.id===id)||{};$('f-text').value=t.text||'';$('f-pri').value=t.priority||'';$('f-member').value=t.member||currentUser;$('f-date').value=t.date||'';$('f-note').value=t.note||'';}
+  else{$('f-text').value='';$('f-pri').value='';$('f-member').value=currentUser;$('f-date').value='';$('f-note').value='';}
+  $('todo-form').style.display='block';$('f-text').focus();
+}
+$('todo-add-btn').addEventListener('click',()=>openTodoForm(null));
+$('todo-cancel-btn').addEventListener('click',()=>{$('todo-form').style.display='none';editTodoId=null;});
+$('todo-save-btn').addEventListener('click',async()=>{
+  const text=$('f-text').value.trim();if(!text)return;
+  const data={text,priority:$('f-pri').value,member:$('f-member').value,date:$('f-date').value||null,note:$('f-note').value};
+  setSyncStatus('syncing');
+  try{
+    if(editTodoId){await sbPatch('todos',editTodoId,data);const t=todos.find(x=>x.id===editTodoId);if(t)Object.assign(t,data);}
+    else{const rec=await sbPost('todos',[{id:uid(),workspace:wsKey,done:false,created_by:currentUser,...data}]);if(rec&&rec[0])todos.unshift(rec[0]);}
+    setSyncStatus('ok');
+  }catch(e){setSyncStatus('err');}
+  $('todo-form').style.display='none';editTodoId=null;renderTodos();renderCal();
+});
+document.querySelectorAll('.filter-btn[data-filter]').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    document.querySelectorAll('.filter-btn[data-filter]').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');todoFilter=btn.dataset.filter;renderTodos();
+  });
+});
+function renderTodos(){
+  let list=todos;
+  if(todoFilter==='active')list=todos.filter(t=>!t.done);
+  else if(todoFilter==='done')list=todos.filter(t=>t.done);
+  else if(todoFilter==='high')list=todos.filter(t=>t.priority==='high');
+  else if(todoFilter==='mid')list=todos.filter(t=>t.priority==='mid');
+  else if(todoFilter==='low')list=todos.filter(t=>t.priority==='low');
+  const el=$('todo-list');if(!el)return;
+  if(!list.length){el.innerHTML='<div class="empty"><i class="ti ti-inbox" style="font-size:32px;display:block;margin-bottom:8px"></i>沒有符合的任務</div>';updateStats();return;}
+  el.innerHTML=list.map(t=>{
+    const pl=t.priority==='high'?'高優先':t.priority==='mid'?'中優先':t.priority==='low'?'低優先':'';
+    return '<div class="todo-item">'
+      +'<div class="todo-check'+(t.done?' done':'')+'" data-toggle-todo="'+t.id+'">'+(t.done?'<i class="ti ti-check" style="font-size:13px"></i>':'')+'</div>'
+      +'<div style="flex:1;min-width:0">'
+      +'<div class="todo-text'+(t.done?' done':'')+'" style="margin-bottom:4px">'+esc(t.text)+'</div>'
+      +'<div style="display:flex;gap:4px;flex-wrap:wrap;align-items:center">'
+      +(pl?'<span class="badge badge-'+t.priority+'">'+pl+'</span>':'')
+      +(t.member?'<span class="badge badge-member"><i class="ti ti-user" style="font-size:10px"></i> '+esc(t.member)+'</span>':'')
+      +(t.date?'<span class="badge badge-member"><i class="ti ti-calendar" style="font-size:10px"></i> '+t.date+'</span>':'')
+      +(t.created_by?'<span style="font-size:11px;color:#aaa">by '+esc(t.created_by)+'</span>':'')
       +'</div></div>'
-      +(hasKids&&s.expanded?'<div>'+renderSubTree(s.children,gid,p,level+1)+'</div>':'')
-      +'</div>';
+      +'<div style="display:flex;gap:4px;flex-shrink:0">'
+      +'<button class="btn btn-sm" data-edit-todo="'+t.id+'"><i class="ti ti-edit" style="font-size:13px"></i> 編輯</button>'
+      +'<button class="btn btn-sm btn-danger" data-del-todo="'+t.id+'" data-confirm="0"><i class="ti ti-trash" style="font-size:13px"></i></button>'
+      +'</div></div>';
   }).join('');
+  updateStats();
+}
+function updateStats(){
+  const active=todos.filter(t=>!t.done).length,done=todos.filter(t=>t.done).length,td=todos.filter(t=>t.date===todayStr()&&!t.done).length;
+  $('s-active').textContent=active;$('h-todo').textContent=active;$('s-done').textContent=done;$('h-today').textContent=td;
+}
+$('todo-list').addEventListener('click',async e=>{
+  const tog=e.target.closest('[data-toggle-todo]');
+  if(tog){const id=tog.dataset.toggleTodo;const t=todos.find(x=>x.id===id);if(!t)return;t.done=!t.done;renderTodos();try{await sbPatch('todos',id,{done:t.done});setSyncStatus('ok');}catch(err){t.done=!t.done;renderTodos();setSyncStatus('err');}return;}
+  const ed=e.target.closest('[data-edit-todo]');if(ed){openTodoForm(ed.dataset.editTodo);return;}
+  const dl=e.target.closest('[data-del-todo]');
+  if(dl){
+    if(dl.dataset.confirm==='1'){const id=dl.dataset.delTodo;todos=todos.filter(x=>x.id!==id);renderTodos();renderCal();try{await sbDel('todos',id);setSyncStatus('ok');}catch(err){setSyncStatus('err');loadAll();}}
+    else{dl.dataset.confirm='1';dl.innerHTML='<i class="ti ti-alert-triangle" style="font-size:13px"></i> 確認？';setTimeout(()=>{if(dl){dl.dataset.confirm='0';dl.innerHTML='<i class="ti ti-trash" style="font-size:13px"></i>';}},2500);}
+  }
+});
+
+// ── Goals ─────────────────────────────────────────────────
+function renderSubTree(subs,gid,path,level){
+  if(!subs||!subs.length)return'';
+  let html='';
+  subs.forEach(function(s,i){
+    const p=path.concat([i]);
+    const ps=p.join('-');
+    const formId='acf_'+gid+'_'+ps.replace(/-/g,'_');
+    const hasKids=s.children&&s.children.length>0;
+    const canAdd=level<2;
+    html+='<div>';
+    html+='<div class="sub-row" style="padding-left:'+(level*22)+'px">';
+    html+='<div style="width:16px;flex-shrink:0;display:flex;align-items:center;justify-content:center">';
+    if(hasKids){html+='<button style="border:none;background:none;cursor:pointer;padding:0;color:#aaa;display:flex;align-items:center" data-exp="'+gid+'" data-path="'+ps+'"><i class="ti ti-chevron-'+(s.expanded?'down':'right')+'" style="font-size:11px"></i></button>';}
+    html+='</div>';
+    html+='<div class="sub-check'+(s.done?' done':'')+'" style="width:17px;height:17px;flex-shrink:0" data-sub-toggle="'+gid+'" data-path="'+ps+'">'+(s.done?'<i class="ti ti-check" style="font-size:10px"></i>':'')+'</div>';
+    html+='<span style="flex:1;font-size:13px;'+(s.done?'text-decoration:line-through;color:#aaa':'')+' min-width:0;overflow:hidden;text-overflow:ellipsis">'+esc(s.text)+'</span>';
+    // ＋待辦 按鈕 — 用 data-gid + data-path，由 goal-list click handler 處理
+    html+='<button class="sub-btn" style="background:#f0f9ea;color:#639922;border-color:#639922;border-width:2px;font-weight:500" data-add-todo="'+gid+'" data-path="'+ps+'">＋ 待辦</button>';
+    if(canAdd){html+='<button class="sub-btn" style="background:#f5f5f3;color:#555;border-color:#ccc" data-add-child="'+gid+'" data-path="'+ps+'"><i class="ti ti-plus" style="font-size:11px"></i> 子任務</button>';}
+    html+='<button class="sub-btn" style="background:transparent;color:#E24B4A;border-color:#E24B4A" data-del-sub="'+gid+'" data-path="'+ps+'"><i class="ti ti-x" style="font-size:11px"></i></button>';
+    html+='</div>';
+    html+='<div class="add-child-form" id="'+formId+'" style="padding-left:'+(level*22+38)+'px">';
+    html+='<div style="display:flex;gap:6px;align-items:center">';
+    html+='<input class="kid-input" type="text" placeholder="輸入子任務名稱..." style="flex:1;padding:5px 8px;font-size:12px">';
+    html+='<button class="btn btn-primary btn-sm confirm-kid" data-gid="'+gid+'" data-path="'+ps+'">新增</button>';
+    html+='<button class="btn btn-sm cancel-kid" data-gid="'+gid+'" data-path="'+ps+'">取消</button>';
+    html+='</div></div>';
+    if(hasKids&&s.expanded){html+='<div>'+renderSubTree(s.children,gid,p,level+1)+'</div>';}
+    html+='</div>';
+  });
+  return html;
 }
 
 function renderGoals(){
-  if(subEditing) return;
-  const el=$('goal-list'); if(!el) return;
+  if(subEditing)return;
+  const el=$('goal-list');if(!el)return;
   if(!goals.length){el.innerHTML='<div class="empty"><i class="ti ti-target" style="font-size:32px;display:block;margin-bottom:8px"></i>尚無目標</div>';return;}
-  el.innerHTML=goals.map(g=>{
-    const subs=normSubs(g.subs), {t,d}=countAll(subs), pct=t?Math.round(d/t*100):0;
+  let html='';
+  goals.forEach(function(g){
+    const subs=normSubs(g.subs);
+    const res=countAll(subs);
+    const pct=res.t?Math.round(res.d/res.t*100):0;
     const open=goalExpanded[g.id]!==false;
-    return `<div class="goal-item">
-      <div class="row-between" style="margin-bottom:8px">
-        <div style="display:flex;align-items:center;gap:8px;cursor:pointer" data-toggle-goal="${g.id}">
-          <i class="ti ti-chevron-${open?'down':'right'}" style="font-size:13px;color:#aaa"></i>
-          <span style="font-weight:500;font-size:15px">${esc(g.name)}</span>
-        </div>
-        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
-          ${g.created_by?`<span style="font-size:11px;color:#aaa">by ${esc(g.created_by)}</span>`:''}
-          ${g.date?`<span style="font-size:12px;color:#888">${g.date}</span>`:''}
-          <span style="font-size:13px;font-weight:600;color:#555">${pct}%</span>
-          <button class="btn-batch-add-todo" style="color:#639922;border-color:#639922;border:1px solid #639922;border-radius:8px;background:transparent;cursor:pointer;font-size:12px;font-family:inherit;display:inline-flex;align-items:center;gap:4px;padding:5px 10px" data-gid="${g.id}">
-            <i class="ti ti-list-check" style="font-size:12px"></i> 批次加入待辦
-          </button>
-          <button class="btn btn-sm" data-edit-goal="${g.id}"><i class="ti ti-edit" style="font-size:12px"></i> 編輯</button>
-          <button class="btn btn-sm btn-danger" data-del-goal="${g.id}" data-confirm="0"><i class="ti ti-trash" style="font-size:12px"></i></button>
-        </div>
-      </div>
-      <div class="progress-bar"><div class="progress-fill" style="width:${pct}%"></div></div>
-      ${open?`<div>${renderSubTree(subs,g.id,[],0)}</div>`:`<div style="font-size:12px;color:#aaa;padding:4px 0">${subs.length} 項子任務（點標題展開）</div>`}
-    </div>`;
-  }).join('');
+    html+='<div class="goal-item">';
+    html+='<div class="row-between" style="margin-bottom:8px">';
+    html+='<div style="display:flex;align-items:center;gap:8px;cursor:pointer" data-toggle-goal="'+g.id+'">';
+    html+='<i class="ti ti-chevron-'+(open?'down':'right')+'" style="font-size:13px;color:#aaa"></i>';
+    html+='<span style="font-weight:500;font-size:15px">'+esc(g.name)+'</span>';
+    html+='</div>';
+    html+='<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">';
+    if(g.created_by)html+='<span style="font-size:11px;color:#aaa">by '+esc(g.created_by)+'</span>';
+    if(g.date)html+='<span style="font-size:12px;color:#888">'+g.date+'</span>';
+    html+='<span style="font-size:13px;font-weight:600;color:#555">'+pct+'%</span>';
+    html+='<button class="sub-btn" style="background:transparent;color:#639922;border-color:#639922;padding:3px 10px;font-size:12px" data-batch-add="'+g.id+'">批次加入待辦</button>';
+    html+='<button class="btn btn-sm" data-edit-goal="'+g.id+'"><i class="ti ti-edit" style="font-size:12px"></i> 編輯</button>';
+    html+='<button class="btn btn-sm btn-danger" data-del-goal="'+g.id+'" data-confirm="0"><i class="ti ti-trash" style="font-size:12px"></i></button>';
+    html+='</div></div>';
+    html+='<div class="progress-bar"><div class="progress-fill" style="width:'+pct+'%"></div></div>';
+    if(open){html+='<div>'+renderSubTree(subs,g.id,[],0)+'</div>';}
+    else{html+='<div style="font-size:12px;color:#aaa;padding:4px 0">'+subs.length+' 項子任務（點標題展開）</div>';}
+    html+='</div>';
+  });
+  el.innerHTML=html;
 }
 
-$('goal-list').addEventListener('click', async e => {
+$('goal-list').addEventListener('click',async function(e){
   // ＋ 待辦（單一子任務）
-  const addTodoBtn=e.target.closest('.btn-add-todo-sub');
-  if(addTodoBtn){
-    const gid=addTodoBtn.dataset.gid, ps=addTodoBtn.dataset.ps;
+  const addTodo=e.target.closest('[data-add-todo]');
+  if(addTodo){
+    const gid=addTodo.dataset.addTodo;
+    const ps=addTodo.dataset.path;
     const path=ps.split('-').map(Number);
-    const g=goals.find(x=>x.id===gid); if(!g) return;
+    const g=goals.find(x=>x.id===gid);if(!g)return;
     const subs=normSubs(g.subs);
-    function buildPath(arr,p){
-      const node=arr[p[0]]; if(!node) return '';
-      if(p.length===1) return node.text;
-      return node.text+' / '+buildPath(node.children||[],p.slice(1));
-    }
-    const text=g.name+' / '+buildPath(subs,path);
-    addTodoBtn.textContent='⏳...'; addTodoBtn.disabled=true;
-    const ok=await addSubAsTodo(text, g.date||null);
-    addTodoBtn.textContent=ok?'✓ 已加入':'✗ 失敗';
-    addTodoBtn.style.background=ok?'#639922':'#E24B4A';
-    addTodoBtn.style.color='#fff'; addTodoBtn.disabled=false;
-    setTimeout(()=>{addTodoBtn.textContent='＋ 待辦';addTodoBtn.style.background='#f0f9ea';addTodoBtn.style.color='#639922';},2000);
+    const text=g.name+' / '+buildSubPath(subs,path);
+    addTodo.textContent='⏳...';addTodo.disabled=true;
+    const ok=await addSubAsTodo(text,g.date||null);
+    addTodo.textContent=ok?'✓ 已加入':'✗ 失敗';
+    addTodo.style.background=ok?'#639922':'#E24B4A';addTodo.style.color='#fff';
+    addTodo.disabled=false;
+    setTimeout(function(){addTodo.textContent='＋ 待辦';addTodo.style.background='#f0f9ea';addTodo.style.color='#639922';},2000);
     return;
   }
   // 批次加入待辦
-  const batchBtn=e.target.closest('.btn-batch-add-todo');
-  if(batchBtn){
-    const gid=batchBtn.dataset.gid;
-    const g=goals.find(x=>x.id===gid); if(!g) return;
+  const batchAdd=e.target.closest('[data-batch-add]');
+  if(batchAdd){
+    const gid=batchAdd.dataset.batchAdd;
+    const g=goals.find(x=>x.id===gid);if(!g)return;
     const subs=normSubs(g.subs);
     const items=[];
-    function collect(arr,prefix){
-      arr.forEach(s=>{
-        const fp=prefix?prefix+' / '+s.text:s.text;
-        if(!s.done) items.push({text:g.name+' / '+fp,date:g.date||null});
-        if(s.children&&s.children.length) collect(s.children,fp);
-      });
-    }
-    collect(subs,'');
-    if(!items.length){batchBtn.textContent='無未完成項目';setTimeout(()=>{batchBtn.innerHTML='<i class="ti ti-list-check" style="font-size:12px"></i> 批次加入待辦';},2000);return;}
-    batchBtn.textContent='⏳ 新增中...'; batchBtn.disabled=true;
-    const results=await Promise.all(items.map(item=>addSubAsTodo(item.text,item.date)));
+    collectUndone(subs,'',g.name,g.date||null,items);
+    if(!items.length){batchAdd.textContent='無未完成項目';setTimeout(function(){batchAdd.textContent='批次加入待辦';},2000);return;}
+    batchAdd.textContent='⏳ 新增中...';batchAdd.disabled=true;
+    const results=await Promise.all(items.map(function(item){return addSubAsTodo(item.text,item.date);}));
     const count=results.filter(Boolean).length;
-    batchBtn.innerHTML=`✓ 已加入 ${count} 項`;
-    batchBtn.style.background='#639922'; batchBtn.style.color='#fff'; batchBtn.style.borderColor='#639922';
-    batchBtn.disabled=false;
-    setTimeout(()=>{batchBtn.innerHTML='<i class="ti ti-list-check" style="font-size:12px"></i> 批次加入待辦';batchBtn.style.background='transparent';batchBtn.style.color='#639922';},2500);
+    batchAdd.textContent='✓ 已加入 '+count+' 項';
+    batchAdd.style.background='#639922';batchAdd.style.color='#fff';
+    batchAdd.disabled=false;
+    setTimeout(function(){batchAdd.textContent='批次加入待辦';batchAdd.style.background='transparent';batchAdd.style.color='#639922';},2500);
     return;
   }
-  // toggle goal expand
+  // toggle goal
   const togGoal=e.target.closest('[data-toggle-goal]');
   if(togGoal){goalExpanded[togGoal.dataset.toggleGoal]=goalExpanded[togGoal.dataset.toggleGoal]===false?true:false;renderGoals();return;}
   // edit goal
-  const editGoal=e.target.closest('[data-edit-goal]');
-  if(editGoal){openGoalForm(editGoal.dataset.editGoal);return;}
+  const edGoal=e.target.closest('[data-edit-goal]');if(edGoal){openGoalForm(edGoal.dataset.editGoal);return;}
   // delete goal
-  const delGoal=e.target.closest('[data-del-goal]');
-  if(delGoal){
-    if(delGoal.dataset.confirm==='1'){
-      const id=delGoal.dataset.delGoal;
-      goals=goals.filter(x=>x.id!==id);renderGoals();
-      try{await sbDel('goals',id);setSyncStatus('ok');}catch(err){setSyncStatus('err');loadAll();}
-    } else {
-      delGoal.dataset.confirm='1';delGoal.innerHTML='<i class="ti ti-alert-triangle"></i> 確認？';
-      setTimeout(()=>{if(delGoal){delGoal.dataset.confirm='0';delGoal.innerHTML='<i class="ti ti-trash" style="font-size:12px"></i>';}},2500);
-    }
+  const dlGoal=e.target.closest('[data-del-goal]');
+  if(dlGoal){
+    if(dlGoal.dataset.confirm==='1'){const id=dlGoal.dataset.delGoal;goals=goals.filter(x=>x.id!==id);renderGoals();try{await sbDel('goals',id);setSyncStatus('ok');}catch(err){setSyncStatus('err');loadAll();}}
+    else{dlGoal.dataset.confirm='1';dlGoal.innerHTML='<i class="ti ti-alert-triangle"></i> 確認？';setTimeout(function(){if(dlGoal){dlGoal.dataset.confirm='0';dlGoal.innerHTML='<i class="ti ti-trash" style="font-size:12px"></i>';}},2500);}
     return;
   }
-  // expand/collapse subtask
-  const expBtn=e.target.closest('[data-exp]');
-  if(expBtn){
-    const gid=expBtn.dataset.exp, path=expBtn.dataset.path.split('-').map(Number);
-    const g=goals.find(x=>x.id===gid); if(!g) return;
-    g.subs=normSubs(g.subs);
-    const node=getNode(g.subs,path); if(!node) return;
-    node.expanded=!node.expanded;
-    saveGoalSubs(gid); renderGoals(); return;
+  // expand subtask
+  const exp=e.target.closest('[data-exp]');
+  if(exp){
+    const gid=exp.dataset.exp,path=exp.dataset.path.split('-').map(Number);
+    const g=goals.find(x=>x.id===gid);if(!g)return;
+    g.subs=normSubs(g.subs);const node=getNode(g.subs,path);if(!node)return;
+    node.expanded=!node.expanded;saveGoalSubs(gid);renderGoals();return;
   }
-  // toggle subtask done
+  // toggle subtask
   const togSub=e.target.closest('[data-sub-toggle]');
   if(togSub){
-    const gid=togSub.dataset.subToggle, path=togSub.dataset.path.split('-').map(Number);
-    const g=goals.find(x=>x.id===gid); if(!g) return;
-    g.subs=normSubs(g.subs);
-    const node=getNode(g.subs,path); if(!node) return;
-    node.done=!node.done;
-    saveGoalSubs(gid); renderGoals(); return;
+    const gid=togSub.dataset.subToggle,path=togSub.dataset.path.split('-').map(Number);
+    const g=goals.find(x=>x.id===gid);if(!g)return;
+    g.subs=normSubs(g.subs);const node=getNode(g.subs,path);if(!node)return;
+    node.done=!node.done;saveGoalSubs(gid);renderGoals();return;
   }
   // delete subtask
   const delSub=e.target.closest('[data-del-sub]');
   if(delSub){
-    const gid=delSub.dataset.delSub, path=delSub.dataset.path.split('-').map(Number);
-    const g=goals.find(x=>x.id===gid); if(!g) return;
-    g.subs=normSubs(g.subs);
-    const {arr,idx}=getParent(g.subs,path); arr.splice(idx,1);
-    saveGoalSubs(gid); renderGoals(); return;
+    const gid=delSub.dataset.delSub,path=delSub.dataset.path.split('-').map(Number);
+    const g=goals.find(x=>x.id===gid);if(!g)return;
+    g.subs=normSubs(g.subs);const par=getParent(g.subs,path);par.arr.splice(par.idx,1);
+    saveGoalSubs(gid);renderGoals();return;
   }
-  // show add child form
+  // add child
   const addChild=e.target.closest('[data-add-child]');
   if(addChild){
-    const gid=addChild.dataset.addChild, ps=addChild.dataset.path;
-    const fid=`acf_${gid}_${ps.replace(/-/g,'_')}`;
+    const gid=addChild.dataset.addChild,ps=addChild.dataset.path;
+    const fid='acf_'+gid+'_'+ps.replace(/-/g,'_');
     document.querySelectorAll('.add-child-form').forEach(f=>f.style.display='none');
-    const form=document.getElementById(fid); if(!form) return;
-    subEditing=true; form.style.display='block'; form.querySelector('.kid-input').focus(); return;
+    const form=document.getElementById(fid);if(!form)return;
+    subEditing=true;form.style.display='block';form.querySelector('.kid-input').focus();return;
   }
-  // confirm add child
-  const confirmKid=e.target.closest('.confirm-kid');
-  if(confirmKid){
-    const gid=confirmKid.dataset.gid, ps=confirmKid.dataset.path, path=ps.split('-').map(Number);
-    const fid=`acf_${gid}_${ps.replace(/-/g,'_')}`;
-    const form=document.getElementById(fid); if(!form) return;
-    const text=form.querySelector('.kid-input').value.trim(); if(!text) return;
-    const g=goals.find(x=>x.id===gid); if(!g) return;
-    g.subs=normSubs(g.subs);
-    const node=getNode(g.subs,path); if(!node) return;
-    node.children.push(mkSub(text)); node.expanded=true;
-    subEditing=false; saveGoalSubs(gid); renderGoals(); return;
+  // confirm kid
+  const confKid=e.target.closest('.confirm-kid');
+  if(confKid){
+    const gid=confKid.dataset.gid,ps=confKid.dataset.path,path=ps.split('-').map(Number);
+    const fid='acf_'+gid+'_'+ps.replace(/-/g,'_');
+    const form=document.getElementById(fid);if(!form)return;
+    const text=form.querySelector('.kid-input').value.trim();if(!text)return;
+    const g=goals.find(x=>x.id===gid);if(!g)return;
+    g.subs=normSubs(g.subs);const node=getNode(g.subs,path);if(!node)return;
+    node.children.push(mkSub(text));node.expanded=true;
+    subEditing=false;saveGoalSubs(gid);renderGoals();return;
   }
-  // cancel add child
-  const cancelKid=e.target.closest('.cancel-kid');
-  if(cancelKid){
-    const gid=cancelKid.dataset.gid, ps=cancelKid.dataset.path;
-    const fid=`acf_${gid}_${ps.replace(/-/g,'_')}`;
-    const form=document.getElementById(fid); if(form) form.style.display='none';
-    subEditing=false; return;
+  // cancel kid
+  const cancKid=e.target.closest('.cancel-kid');
+  if(cancKid){
+    const gid=cancKid.dataset.gid,ps=cancKid.dataset.path;
+    const fid='acf_'+gid+'_'+ps.replace(/-/g,'_');
+    const form=document.getElementById(fid);if(form)form.style.display='none';
+    subEditing=false;return;
   }
-  // click outside form
-  if(subEditing && !e.target.closest('.add-child-form') && !e.target.closest('[data-add-child]')){
+  // click outside
+  if(subEditing&&!e.target.closest('.add-child-form')&&!e.target.closest('[data-add-child]')){
     document.querySelectorAll('.add-child-form').forEach(f=>f.style.display='none');
-    subEditing=false; renderGoals();
+    subEditing=false;renderGoals();
   }
 });
 
-document.addEventListener('keydown', e => {
-  if(!e.target.classList.contains('kid-input')) return;
-  if(e.key==='Enter'){ const btn=e.target.closest('.add-child-form').querySelector('.confirm-kid'); if(btn) btn.click(); }
-  if(e.key==='Escape'){ const btn=e.target.closest('.add-child-form').querySelector('.cancel-kid'); if(btn) btn.click(); }
+document.addEventListener('keydown',e=>{
+  if(!e.target.classList.contains('kid-input'))return;
+  const form=e.target.closest('.add-child-form');if(!form)return;
+  if(e.key==='Enter'){const btn=form.querySelector('.confirm-kid');if(btn)btn.click();}
+  if(e.key==='Escape'){const btn=form.querySelector('.cancel-kid');if(btn)btn.click();}
 });
 
-// ── Calendar ──────────────────────────────────────────────
+$('goal-add-btn').addEventListener('click',()=>openGoalForm(null));
+$('goal-cancel-btn').addEventListener('click',()=>{$('goal-form').style.display='none';editGoalId=null;});
+$('goal-save-btn').addEventListener('click',async()=>{
+  const name=$('f-gname').value.trim();if(!name)return;
+  const lines=$('f-gsub').value.split('\n').map(s=>s.trim()).filter(Boolean);
+  setSyncStatus('syncing');
+  try{
+    if(editGoalId){
+      const g=goals.find(x=>x.id===editGoalId);
+      const ex=normSubs(g?g.subs:[]);
+      const merged=lines.map(txt=>ex.find(o=>o.text===txt)||mkSub(txt));
+      await sbPatch('goals',editGoalId,{name,date:$('f-gdate').value||null,subs:merged});
+      if(g){g.name=name;g.date=$('f-gdate').value;g.subs=merged;}
+    }else{
+      const rec=await sbPost('goals',[{id:uid(),workspace:wsKey,name,date:$('f-gdate').value||null,created_by:currentUser,subs:lines.map(mkSub)}]);
+      if(rec&&rec[0])goals.unshift(rec[0]);
+    }
+    setSyncStatus('ok');
+  }catch(e){setSyncStatus('err');}
+  $('goal-form').style.display='none';editGoalId=null;renderGoals();
+});
+function openGoalForm(id){
+  editGoalId=id;$('goal-form-title').textContent=id?'編輯目標':'新增目標';
+  if(id){const g=goals.find(x=>x.id===id)||{};$('f-gname').value=g.name||'';$('f-gdate').value=g.date||'';$('f-gsub').value=normSubs(g.subs).map(s=>s.text).join('\n');}
+  else{$('f-gname').value='';$('f-gdate').value='';$('f-gsub').value='';}
+  $('goal-form').style.display='block';$('f-gname').focus();
+}
+
+// ── Calendar ─────────────────────────────────────────────
 function renderCal(){
-  const y=calDate.getFullYear(), m=calDate.getMonth();
-  $('cal-title').textContent=`${y} 年 ${m+1} 月`;
-  $('cal-names').innerHTML=['日','一','二','三','四','五','六'].map(n=>`<div class="cal-day-name">${n}</div>`).join('');
-  const first=new Date(y,m,1).getDay(), days=new Date(y,m+1,0).getDate(), ts=todayStr();
+  const y=calDate.getFullYear(),m=calDate.getMonth();
+  $('cal-title').textContent=y+' 年 '+(m+1)+' 月';
+  $('cal-names').innerHTML=['日','一','二','三','四','五','六'].map(n=>'<div class="cal-day-name">'+n+'</div>').join('');
+  const first=new Date(y,m,1).getDay(),days=new Date(y,m+1,0).getDate(),ts=todayStr();
   let html='';
-  for(let i=0;i<first;i++){const d=new Date(y,m,1-first+i);html+=`<div class="cal-day other-month"><div class="cal-num">${d.getDate()}</div></div>`;}
+  for(let i=0;i<first;i++){const d=new Date(y,m,1-first+i);html+='<div class="cal-day other-month"><div class="cal-num">'+d.getDate()+'</div></div>';}
   for(let d=1;d<=days;d++){
-    const ds=`${y}-${p2(m+1)}-${p2(d)}`, dt=todos.filter(t=>t.date===ds);
-    html+=`<div class="cal-day${ds===ts?' today':''}" data-calday="${ds}">
-      <div class="cal-num">${d}</div>
-      ${dt.slice(0,2).map(t=>`<div class="cal-dot ${t.priority||''}">${esc(t.text)}</div>`).join('')}
-      ${dt.length>2?`<div class="cal-dot">+${dt.length-2}</div>`:''}
-    </div>`;
+    const ds=y+'-'+p2(m+1)+'-'+p2(d);
+    const dt=todos.filter(t=>t.date===ds);
+    html+='<div class="cal-day'+(ds===ts?' today':'')+'" data-calday="'+ds+'">';
+    html+='<div class="cal-num">'+d+'</div>';
+    dt.slice(0,2).forEach(t=>{html+='<div class="cal-dot '+(t.priority||'')+'">'+esc(t.text)+'</div>';});
+    if(dt.length>2)html+='<div class="cal-dot">+'+( dt.length-2)+'</div>';
+    html+='</div>';
   }
   $('cal-days').innerHTML=html;
   const mc={};
-  todos.filter(t=>t.date&&!t.done).forEach(t=>{const p=t.date.split('-');if(p.length<2)return;const k=`${p[0]}-${p[1]}`;mc[k]=(mc[k]||0)+1;});
-  const ck=`${y}-${p2(m+1)}`;
-  $('cal-summary').innerHTML=Object.entries(mc).sort((a,b)=>a[0].localeCompare(b[0])).map(([k,c])=>{
-    const [ky,km]=k.split('-'), act=k===ck;
-    return `<button data-cal-jump="${ky}-${km}" style="padding:3px 10px;border-radius:100px;border:1px solid ${act?'#555':'#ddd'};background:${act?'#555':'transparent'};color:${act?'#fff':'#888'};cursor:pointer;font-size:12px;font-family:inherit">${parseInt(km)}月 <strong>${c}</strong></button>`;
+  todos.filter(t=>t.date&&!t.done).forEach(t=>{const pts=t.date.split('-');if(pts.length<2)return;const k=pts[0]+'-'+pts[1];mc[k]=(mc[k]||0)+1;});
+  const ck=y+'-'+p2(m+1);
+  $('cal-summary').innerHTML=Object.entries(mc).sort((a,b)=>a[0].localeCompare(b[0])).map(function(entry){
+    const key=entry[0],count=entry[1],parts=key.split('-'),act=key===ck;
+    return '<button data-cal-jump="'+key+'" style="padding:3px 10px;border-radius:100px;border:1px solid '+(act?'#555':'#ddd')+';background:'+(act?'#555':'transparent')+';color:'+(act?'#fff':'#888')+';cursor:pointer;font-size:12px;font-family:inherit">'+parseInt(parts[1])+'月 <strong>'+count+'</strong></button>';
   }).join('');
 }
 $('cal-prev').addEventListener('click',()=>{calDate=new Date(calDate.getFullYear(),calDate.getMonth()-1,1);renderCal();});
 $('cal-next').addEventListener('click',()=>{calDate=new Date(calDate.getFullYear(),calDate.getMonth()+1,1);renderCal();});
-$('cal-today').addEventListener('click',()=>{calDate=new Date();renderCal();});
+$('cal-today-btn').addEventListener('click',()=>{calDate=new Date();renderCal();});
 $('cal-days').addEventListener('click',e=>{const el=e.target.closest('[data-calday]');if(el)showCalDay(el.dataset.calday);});
-$('cal-summary').addEventListener('click',e=>{const el=e.target.closest('[data-cal-jump]');if(el){const[y,m]=el.dataset.calJump.split('-');calDate=new Date(parseInt(y),parseInt(m)-1,1);renderCal();}});
-
+$('cal-summary').addEventListener('click',e=>{
+  const el=e.target.closest('[data-cal-jump]');
+  if(el){const parts=el.dataset.calJump.split('-');calDate=new Date(parseInt(parts[0]),parseInt(parts[1])-1,1);renderCal();}
+});
 function showCalDay(ds){
-  const dt=todos.filter(t=>t.date===ds), det=$('cal-detail');
+  const dt=todos.filter(t=>t.date===ds);const det=$('cal-detail');
   if(!dt.length){det.style.display='none';return;}
   det.style.display='block';
-  $('cal-detail-content').innerHTML=`
-    <div class="row-between mb12">
-      <div style="font-weight:500">${ds}（${dt.length} 項）</div>
-      <button class="btn btn-primary btn-sm" data-quick-add="${ds}"><i class="ti ti-plus"></i> 新增</button>
-    </div>
-    ${dt.map(t=>`<div class="todo-item" style="padding:8px 0">
-      <div class="todo-check${t.done?' done':''}" style="width:18px;height:18px" data-toggle-todo="${t.id}">
-        ${t.done?'<i class="ti ti-check" style="font-size:11px"></i>':''}
-      </div>
-      <div class="todo-text${t.done?' done':''}" style="flex:1">${esc(t.text)}</div>
-      ${t.priority?`<span class="badge badge-${t.priority}">${t.priority==='high'?'高':t.priority==='mid'?'中':'低'}</span>`:''}
-    </div>`).join('')}`;
+  let html='<div class="row-between mb12"><div style="font-weight:500">'+ds+'（'+dt.length+' 項）</div><button class="btn btn-primary btn-sm" data-quick-add="'+ds+'"><i class="ti ti-plus"></i> 新增</button></div>';
+  dt.forEach(t=>{html+='<div class="todo-item" style="padding:8px 0"><div class="todo-check'+(t.done?' done':'')+'" style="width:18px;height:18px" data-toggle-todo="'+t.id+'">'+(t.done?'<i class="ti ti-check" style="font-size:11px"></i>':'')+'</div><div class="todo-text'+(t.done?' done':'')+'" style="flex:1">'+esc(t.text)+'</div>'+(t.priority?'<span class="badge badge-'+t.priority+'">'+(t.priority==='high'?'高':t.priority==='mid'?'中':'低')+'</span>':'')+'</div>';});
+  $('cal-detail-content').innerHTML=html;
 }
-$('cal-detail').addEventListener('click', async e => {
+$('cal-detail').addEventListener('click',async e=>{
   const tog=e.target.closest('[data-toggle-todo]');
   if(tog){const id=tog.dataset.toggleTodo;const t=todos.find(x=>x.id===id);if(!t)return;t.done=!t.done;renderCal();try{await sbPatch('todos',id,{done:t.done});setSyncStatus('ok');}catch(err){t.done=!t.done;renderCal();setSyncStatus('err');}return;}
   const qa=e.target.closest('[data-quick-add]');
-  if(qa){
-    document.querySelector('[data-tab="todo"]').click();
-    setTimeout(()=>{openTodoForm(null);setTimeout(()=>{$('f-date').value=qa.dataset.quickAdd;},50);},100);
-  }
+  if(qa){document.querySelector('[data-tab="todo"]').click();setTimeout(()=>{openTodoForm(null);setTimeout(()=>{$('f-date').value=qa.dataset.quickAdd;},50);},100);}
 });
 
 // ── Pomodoro ─────────────────────────────────────────────
 function updatePomoDisplay(){
-  $('pomo-display').textContent=`${p2(Math.floor(pomoSec/60))}:${p2(pomoSec%60)}`;
-  const circ=2*Math.PI*70, pct=(POMO_MODES[pomoMode].sec-pomoSec)/POMO_MODES[pomoMode].sec;
+  $('pomo-display').textContent=p2(Math.floor(pomoSec/60))+':'+p2(pomoSec%60);
+  const circ=2*Math.PI*70,pct=(POMO[pomoMode].sec-pomoSec)/POMO[pomoMode].sec;
   $('pomo-arc').setAttribute('stroke-dashoffset',circ*(1-pct));
-  $('pomo-status').textContent=POMO_MODES[pomoMode].label;
+  $('pomo-status').textContent=POMO[pomoMode].label;
 }
 $('pomo-toggle').addEventListener('click',()=>{
   if(pomoRunning){clearInterval(pomoTimer);pomoRunning=false;$('pomo-toggle').innerHTML='<i class="ti ti-player-play"></i> 開始';}
   else{
     pomoRunning=true;$('pomo-toggle').innerHTML='<i class="ti ti-player-pause"></i> 暫停';
     pomoTimer=setInterval(()=>{
-      if(pomoSec<=0){clearInterval(pomoTimer);pomoRunning=false;
-        if(pomoMode==='work'){pomoDone++;pomoTotal+=25;$('pomo-count').textContent=pomoDone;$('pomo-mins').textContent=pomoTotal;}
-        $('pomo-toggle').innerHTML='<i class="ti ti-player-play"></i> 開始';pomoSec=0;updatePomoDisplay();return;}
+      if(pomoSec<=0){clearInterval(pomoTimer);pomoRunning=false;if(pomoMode==='work'){pomoDone++;pomoTotal+=25;$('pomo-count').textContent=pomoDone;$('pomo-mins').textContent=pomoTotal;}$('pomo-toggle').innerHTML='<i class="ti ti-player-play"></i> 開始';pomoSec=0;updatePomoDisplay();return;}
       pomoSec--;updatePomoDisplay();},1000);
   }
 });
-$('pomo-reset').addEventListener('click',()=>{clearInterval(pomoTimer);pomoRunning=false;pomoSec=POMO_MODES[pomoMode].sec;updatePomoDisplay();$('pomo-toggle').innerHTML='<i class="ti ti-player-play"></i> 開始';});
+$('pomo-reset').addEventListener('click',()=>{clearInterval(pomoTimer);pomoRunning=false;pomoSec=POMO[pomoMode].sec;updatePomoDisplay();$('pomo-toggle').innerHTML='<i class="ti ti-player-play"></i> 開始';});
 document.querySelectorAll('[data-pomo]').forEach(btn=>{
   btn.addEventListener('click',()=>{
     document.querySelectorAll('[data-pomo]').forEach(b=>b.classList.remove('active'));
-    btn.classList.add('active'); pomoMode=btn.dataset.pomo;
-    clearInterval(pomoTimer);pomoRunning=false;pomoSec=POMO_MODES[pomoMode].sec;updatePomoDisplay();
-    $('pomo-toggle').innerHTML='<i class="ti ti-player-play"></i> 開始';
+    btn.classList.add('active');pomoMode=btn.dataset.pomo;clearInterval(pomoTimer);pomoRunning=false;pomoSec=POMO[pomoMode].sec;updatePomoDisplay();$('pomo-toggle').innerHTML='<i class="ti ti-player-play"></i> 開始';
   });
 });
 
