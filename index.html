@@ -458,37 +458,37 @@ function renderSubTree(subs,gid,pathArr,level){
 }
 
 function renderGoals(){
-  if(isSubEditing)return; // 編輯子任務時不重新渲染
+  if(isSubEditing)return;
   const el=document.getElementById('goal-list');if(!el)return;
   if(!goals.length){el.innerHTML='<div class="empty"><i class="ti ti-target" style="font-size:32px;display:block;margin-bottom:8px"></i>尚無目標</div>';return;}
-  el.innerHTML=goals.map(g=>{
-    const subs=g.subs||[];
-    const{t,d}=countAll(subs);
-    const pct=t?Math.round(d/t*100):0;
-    const isOpen=goalExpanded[g.id]!==false; // default expanded
-    return `<div class="goal-item">
-      <div class="row-between" style="margin-bottom:8px">
-        <div style="display:flex;align-items:center;gap:8px;cursor:pointer" onclick="toggleGoalExpand('${g.id}')">
-          <i class="ti ti-chevron-${isOpen?'down':'right'}" style="font-size:13px;color:#aaa"></i>
-          <span style="font-weight:500;font-size:15px">${esc(g.name)}</span>
+  try{
+    el.innerHTML=goals.map(g=>{
+      const subs=(g.subs||[]).map(s=>({children:[],...s})); // 補齊缺少的欄位
+      const{t,d}=countAll(subs);
+      const pct=t?Math.round(d/t*100):0;
+      const isOpen=goalExpanded[g.id]!==false;
+      return `<div class="goal-item">
+        <div class="row-between" style="margin-bottom:8px">
+          <div style="display:flex;align-items:center;gap:8px;cursor:pointer" onclick="toggleGoalExpand('${g.id}')">
+            <i class="ti ti-chevron-${isOpen?'down':'right'}" style="font-size:13px;color:#aaa"></i>
+            <span style="font-weight:500;font-size:15px">${esc(g.name)}</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+            ${g.created_by?`<span style="font-size:11px;color:#aaa">by ${esc(g.created_by)}</span>`:''}
+            ${g.date?`<span style="font-size:12px;color:#888">${g.date}</span>`:''}
+            <span style="font-size:13px;font-weight:600;color:#555">${pct}%</span>
+            <button class="btn btn-sm" onclick="openGoalForm('${g.id}')"><i class="ti ti-edit" style="font-size:12px"></i> 編輯</button>
+            <button class="btn btn-sm btn-danger" data-delg="${g.id}" data-confirm="0" onclick="deleteGoal('${g.id}')"><i class="ti ti-trash" style="font-size:12px"></i></button>
+          </div>
         </div>
-        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
-          ${g.created_by?`<span style="font-size:11px;color:#aaa">by ${esc(g.created_by)}</span>`:''}
-          ${g.date?`<span style="font-size:12px;color:#888">${g.date}</span>`:''}
-          <span style="font-size:13px;font-weight:600;color:#555">${pct}%</span>
-          <button class="btn btn-sm" onclick="openGoalForm('${g.id}')"><i class="ti ti-edit" style="font-size:12px"></i> 編輯</button>
-          <button class="btn btn-sm btn-danger" data-delg="${g.id}" data-confirm="0" onclick="deleteGoal('${g.id}')"><i class="ti ti-trash" style="font-size:12px"></i></button>
-        </div>
-      </div>
-      <div class="progress-bar"><div class="progress-fill" style="width:${pct}%"></div></div>
-      ${isOpen?`<div>${renderSubTree(subs,g.id,[],0)}</div>`:`<div style="font-size:12px;color:#aaa;padding:4px 0">${subs.length} 項子任務（點擊展開）</div>`}
-    </div>`;
-  }).join('');
-}
-
-function toggleGoalExpand(gid){
-  goalExpanded[gid]=goalExpanded[gid]===false?true:false;
-  renderGoals();
+        <div class="progress-bar"><div class="progress-fill" style="width:${pct}%"></div></div>
+        ${isOpen?`<div>${renderSubTree(subs,g.id,[],0)}</div>`:`<div style="font-size:12px;color:#aaa;padding:4px 0">${subs.length} 項子任務（點擊展開）</div>`}
+      </div>`;
+    }).join('');
+  }catch(err){
+    el.innerHTML=`<div style="color:#E24B4A;padding:16px;font-size:13px">⚠️ 渲染錯誤：${err.message}<br><button class="btn btn-sm" onclick="loadAll()" style="margin-top:8px">重新載入</button></div>`;
+    console.error('renderGoals error:',err);
+  }
 }
 
 // ========== GOAL EVENTS (event delegation) ==========
