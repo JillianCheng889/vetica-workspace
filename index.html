@@ -238,7 +238,7 @@ const SB_URL='https://mnaplphslldwaznbinwx.supabase.co';
 const SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1uYXBscGhzbGxkd2F6bmJpbnd4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgxMzk2MDMsImV4cCI6MjA5MzcxNTYwM30.qYmRCUjXLIGKCbHi7ll00PuKxZWg2Cc65EbcJr9J9JI';
 
 let todos=[],goals=[],calDate=new Date(),todoFilter='all',editId=null,editGoalId=null;
-let pomoRunning=false,pomoInterval=null,pomoMode='work',pomoSeconds=25*60,pomoDone=0,pomoTotal=0;
+let goalExpanded={}; // goal-level collapse state (local only),pomoMode='work',pomoSeconds=25*60,pomoDone=0,pomoTotal=0;
 let currentUser='',workspaceKey='';
 const MEMBERS=['Alex','Brian','Cathy','Daniel'];
 
@@ -452,9 +452,13 @@ function renderGoals(){
     const subs=g.subs||[];
     const{t,d}=countAll(subs);
     const pct=t?Math.round(d/t*100):0;
+    const isOpen=goalExpanded[g.id]!==false; // default expanded
     return `<div class="goal-item">
       <div class="row-between" style="margin-bottom:8px">
-        <div style="font-weight:500;font-size:15px">${esc(g.name)}</div>
+        <div style="display:flex;align-items:center;gap:8px;cursor:pointer" onclick="toggleGoalExpand('${g.id}')">
+          <i class="ti ti-chevron-${isOpen?'down':'right'}" style="font-size:13px;color:#aaa"></i>
+          <span style="font-weight:500;font-size:15px">${esc(g.name)}</span>
+        </div>
         <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
           ${g.created_by?`<span style="font-size:11px;color:#aaa">by ${esc(g.created_by)}</span>`:''}
           ${g.date?`<span style="font-size:12px;color:#888">${g.date}</span>`:''}
@@ -464,9 +468,14 @@ function renderGoals(){
         </div>
       </div>
       <div class="progress-bar"><div class="progress-fill" style="width:${pct}%"></div></div>
-      <div>${renderSubTree(subs,g.id,[],0)}</div>
+      ${isOpen?`<div>${renderSubTree(subs,g.id,[],0)}</div>`:`<div style="font-size:12px;color:#aaa;padding:4px 0">${subs.length} 項子任務（點擊展開）</div>`}
     </div>`;
   }).join('');
+}
+
+function toggleGoalExpand(gid){
+  goalExpanded[gid]=goalExpanded[gid]===false?true:false;
+  renderGoals();
 }
 
 // ========== GOAL EVENTS (event delegation) ==========
@@ -477,7 +486,9 @@ document.addEventListener('click',function(e){
     const gid=expBtn.dataset.gid,path=expBtn.dataset.path.split('-').map(Number);
     const g=goals.find(x=>x.id===gid);if(!g)return;
     const node=getNode(g.subs,path);node.expanded=!node.expanded;
-    renderGoals();return;
+    renderGoals();
+    saveGoalSubs(gid); // 存回 Supabase，防止 loadAll 覆蓋
+    return;
   }
   // toggle subtask done
   const tog=e.target.closest('[data-sub-toggle]');
