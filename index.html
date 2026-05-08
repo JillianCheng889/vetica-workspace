@@ -83,6 +83,8 @@ input:focus,select:focus,textarea:focus{border-color:#555;box-shadow:0 0 0 2px r
 <body>
 <div class="app">
 
+<div id="global-err" style="display:none;background:#fff5f5;color:#993C1D;padding:10px 14px;border-radius:8px;font-size:13px;margin-bottom:12px;position:fixed;top:10px;left:10px;right:10px;z-index:999"></div>
+
 <div id="setup-screen" class="setup">
   <div class="card" style="width:340px;text-align:center;padding:32px">
     <div class="logo" style="margin-bottom:20px">vetica <span>workspace</span></div>
@@ -106,6 +108,7 @@ input:focus,select:focus,textarea:focus{border-color:#555;box-shadow:0 0 0 2px r
   <div class="header">
     <div class="logo">vetica <span>workspace</span></div>
     <div class="sync-bar"><div class="sync-dot" id="sync-dot"></div><span id="sync-lbl">連線中...</span></div>
+    <button onclick="loadAll()" class="btn btn-sm" style="font-size:11px"><i class="ti ti-refresh"></i> 重新載入</button>
     <div style="flex:1"></div>
     <div class="user-pill"><i class="ti ti-user" style="font-size:13px"></i><span id="cur-user"></span></div>
     <div class="stat-card" style="padding:6px 14px;display:inline-flex;gap:16px">
@@ -225,6 +228,16 @@ input:focus,select:focus,textarea:focus{border-color:#555;box-shadow:0 0 0 2px r
 </div>
 
 <script>
+// 全域錯誤捕捉，顯示在頁面上
+window.onerror = function(msg, src, line, col, err) {
+  var div = document.getElementById('global-err');
+  if(div) { div.style.display='block'; div.textContent='JS錯誤: '+msg+' (行'+line+')'; }
+  return false;
+};
+window.onunhandledrejection = function(e) {
+  var div = document.getElementById('global-err');
+  if(div) { div.style.display='block'; div.textContent='Promise錯誤: '+(e.reason||e); }
+};
 const SB='https://mnaplphslldwaznbinwx.supabase.co';
 const KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1uYXBscGhzbGxkd2F6bmJpbnd4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgxMzk2MDMsImV4cCI6MjA5MzcxNTYwM30.qYmRCUjXLIGKCbHi7ll00PuKxZWg2Cc65EbcJr9J9JI';
 const SBH=()=>({'Content-Type':'application/json','apikey':KEY,'Authorization':'Bearer '+KEY,'Prefer':'return=representation'});
