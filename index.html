@@ -248,7 +248,17 @@ function p2(n){return String(n).padStart(2,'0')}
 function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
 function sbH(){return{'Content-Type':'application/json','apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,'Prefer':'return=representation'};}
 
-async function sbGet(t,f=''){const r=await fetch(`${SB_URL}/rest/v1/${t}?${f}`,{headers:sbH()});if(!r.ok)throw new Error(await r.text());return r.json();}
+async function sbGet(t,f=''){const r=await fetch(`${SB_URL}/rest/v1/${t}?${f}`,{headers:sbH()  // 點擊表單外部 → 關閉表單並恢復渲染
+  if(isSubEditing){
+    const insideForm=e.target.closest('.add-child-form');
+    const insideAddBtn=e.target.closest('.add-kid-btn');
+    if(!insideForm&&!insideAddBtn){
+      document.querySelectorAll('.add-child-form').forEach(f=>f.style.display='none');
+      isSubEditing=false;
+      renderGoals();
+    }
+  }
+});if(!r.ok)throw new Error(await r.text());return r.json();}
 async function sbInsert(t,d){const r=await fetch(`${SB_URL}/rest/v1/${t}`,{method:'POST',headers:sbH(),body:JSON.stringify(d)});if(!r.ok)throw new Error(await r.text());return r.json();}
 async function sbUpdate(t,id,d){const r=await fetch(`${SB_URL}/rest/v1/${t}?id=eq.${id}`,{method:'PATCH',headers:sbH(),body:JSON.stringify(d)});if(!r.ok)throw new Error(await r.text());return r.json();}
 async function sbDelete(t,id){const r=await fetch(`${SB_URL}/rest/v1/${t}?id=eq.${id}`,{method:'DELETE',headers:sbH()});if(!r.ok)throw new Error(await r.text());}
@@ -448,6 +458,7 @@ function renderSubTree(subs,gid,pathArr,level){
 }
 
 function renderGoals(){
+  if(isSubEditing)return; // 編輯子任務時不重新渲染
   const el=document.getElementById('goal-list');if(!el)return;
   if(!goals.length){el.innerHTML='<div class="empty"><i class="ti ti-target" style="font-size:32px;display:block;margin-bottom:8px"></i>尚無目標</div>';return;}
   el.innerHTML=goals.map(g=>{
