@@ -420,12 +420,21 @@ function renderGoals(){
       </div>
       <div class="progress-bar"><div class="progress-fill" style="width:${pct}%"></div></div>
       ${subs.map((s,i)=>`<div class="subtask">
-        <div class="todo-check ${s.done?'done':''}" style="width:18px;height:18px" onclick="toggleSub('${g.id}',${i})">
+        <div class="todo-check ${s.done?'done':''}" style="width:18px;height:18px;flex-shrink:0" onclick="event.stopPropagation();toggleSub('${g.id}',${i})">
           ${s.done?'<i class="ti ti-check" style="font-size:11px"></i>':''}
         </div>
-        <span style="${s.done?'text-decoration:line-through;color:#aaa':''}">${esc(s.text)}</span>
+        <span style="flex:1;${s.done?'text-decoration:line-through;color:#aaa':''}">${esc(s.text)}</span>
+        <button class="btn btn-sm btn-danger" style="padding:2px 7px;font-size:11px;opacity:0.6" onclick="event.stopPropagation();deleteSub('${g.id}',${i})" title="刪除此子任務"><i class="ti ti-x" style="font-size:11px"></i></button>
       </div>`).join('')}
     </div>`;}).join('');
+}
+
+async function deleteSub(gid,i){
+  const g=goals.find(x=>x.id===gid);if(!g)return;
+  g.subs.splice(i,1);
+  renderGoals();
+  try{await sbUpdate('goals',gid,{subs:g.subs});setSyncStatus('ok');}
+  catch(e){setSyncStatus('err');loadAll();}
 }
 
 async function toggleSub(gid,i){const g=goals.find(x=>x.id===gid);if(!g)return;g.subs[i].done=!g.subs[i].done;renderGoals();try{await sbUpdate('goals',gid,{subs:g.subs});setSyncStatus('ok');}catch(e){g.subs[i].done=!g.subs[i].done;renderGoals();setSyncStatus('err');}}
