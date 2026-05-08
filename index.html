@@ -88,12 +88,12 @@ input:focus,select:focus,textarea:focus{border-color:#555;box-shadow:0 0 0 2px r
     <div class="logo" style="margin-bottom:20px">vetica <span>workspace</span></div>
     <div style="margin-bottom:16px;text-align:left">
       <label class="form-label">工作區名稱 <span style="color:#E24B4A">*</span></label>
-      <input id="ws-name" type="text" placeholder="例如：vetica-team">
+      <input id="ws-name" type="text" placeholder="例如：vetica-team" autocomplete="off">
       <div style="font-size:11px;color:#aaa;margin-top:4px">所有成員輸入相同名稱即可共享資料</div>
     </div>
     <div style="margin-bottom:20px;text-align:left">
       <label class="form-label">你的名稱 <span style="color:#E24B4A">*</span></label>
-      <input id="user-name" type="text" placeholder="例如：Alex">
+      <input id="user-name" type="text" placeholder="例如：Alex" autocomplete="off">
     </div>
     <button id="join-btn" class="btn btn-primary" style="width:100%;justify-content:center">
       <i class="ti ti-arrow-right"></i> 進入工作區
@@ -285,6 +285,8 @@ async function loadAll() {
 $('join-btn').addEventListener('click', () => {
   const ws=$('ws-name').value.trim(), n=$('user-name').value.trim();
   if(!ws||!n){$('setup-err').style.display='block';$('setup-err').textContent='請填寫所有欄位';return;}
+  // 記住上次輸入
+  try{localStorage.setItem('vetica-ws',ws);localStorage.setItem('vetica-user',n);}catch(e){}
   wsKey=ws; currentUser=n;
   $('setup-screen').style.display='none';
   $('main-app').style.display='block';
@@ -294,6 +296,13 @@ $('join-btn').addEventListener('click', () => {
 });
 $('ws-name').addEventListener('keydown', e => { if(e.key==='Enter') $('user-name').focus(); });
 $('user-name').addEventListener('keydown', e => { if(e.key==='Enter') $('join-btn').click(); });
+
+// 自動填入上次記錄
+try {
+  const savedWs=localStorage.getItem('vetica-ws'), savedUser=localStorage.getItem('vetica-user');
+  if(savedWs) $('ws-name').value=savedWs;
+  if(savedUser) $('user-name').value=savedUser;
+} catch(e) {}
 
 // ── Tabs ─────────────────────────────────────────────────
 document.querySelectorAll('.nav-btn').forEach(btn => {
