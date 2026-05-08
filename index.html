@@ -275,7 +275,9 @@ async function loadAll(){
     const ce=document.getElementById('conn-err');
     if(ce){ce.style.display='block';ce.textContent='⚠️ 連線失敗：'+e.message;}
   }
-  renderAll();
+  renderTodos();
+  if(!isSubEditing)renderGoals(); // 編輯中不重新渲染避免表單消失
+  renderCal();
 }
 
 function joinWorkspace(){
@@ -551,6 +553,11 @@ document.addEventListener('keydown',function(e){
     const form=e.target.closest('.add-child-form');
     if(!form)return;
     const btn=form.querySelector('.confirm-kid');if(btn)btn.click();
+  }
+  if(e.key==='Escape'&&e.target.classList.contains('kid-input')){
+    const form=e.target.closest('.add-child-form');
+    if(!form)return;
+    const btn=form.querySelector('.cancel-kid');if(btn)btn.click();
   }
 });
 
