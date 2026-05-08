@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+　<!DOCTYPE html>
 
 <html lang="zh-TW">
 <head>
@@ -552,19 +552,26 @@ $('goal-list').addEventListener('click', async e => {
     const path=addTodoSub.dataset.path.split('-').map(Number);
     const g=goals.find(x=>x.id===gid); if(!g) return;
     const subs=normSubs(g.subs);
-    // 建立完整路徑文字
     function buildPath(arr,p){
-      const node=arr[p[0]];
-      if(!node) return '';
+      const node=arr[p[0]]; if(!node) return '';
       if(p.length===1) return node.text;
       return node.text+' / '+buildPath(node.children||[],p.slice(1));
     }
     const subPath=buildPath(subs,path);
     const text=`${g.name} / ${subPath}`;
-    addSubAsTodo(text, g.date||null);
-    addTodoSub.innerHTML='<i class="ti ti-check" style="font-size:11px"></i> 已加入';
-    addTodoSub.style.background='#639922';addTodoSub.style.color='#fff';
-    setTimeout(()=>{addTodoSub.innerHTML='<i class="ti ti-corner-down-right" style="font-size:11px"></i> 待辦';addTodoSub.style.background='transparent';addTodoSub.style.color='#639922';},2000);
+    addTodoSub.innerHTML='⏳ 新增中...';
+    addTodoSub.disabled=true;
+    addSubAsTodo(text, g.date||null).then(ok=>{
+      if(ok){
+        addTodoSub.innerHTML='✓ 已加入';
+        addTodoSub.style.background='#639922';addTodoSub.style.color='#fff';
+      } else {
+        addTodoSub.innerHTML='✗ 失敗';
+        addTodoSub.style.background='#E24B4A';addTodoSub.style.color='#fff';
+      }
+      addTodoSub.disabled=false;
+      setTimeout(()=>{addTodoSub.innerHTML='＋ 待辦';addTodoSub.style.background='#f0f9ea';addTodoSub.style.color='#639922';},2000);
+    });
     return;
   }
   // 批次加入待辦
