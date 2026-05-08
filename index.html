@@ -605,7 +605,15 @@ $('goal-save-btn').addEventListener('click',async()=>{
     if(editGoalId){
       const g=goals.find(x=>x.id===editGoalId);
       const ex=normSubs(g?g.subs:[]);
-      const merged=lines.map(txt=>ex.find(o=>o.text===txt)||mkSub(txt));
+      const merged=lines.map(function(txt,idx){
+        // 優先用文字比對（完全一致）
+        const byText=ex.find(function(o){return o.text===txt;});
+        if(byText) return byText;
+        // 文字不同但同位置 → 保留子層，只更新文字
+        if(ex[idx]) return Object.assign({},ex[idx],{text:txt});
+        // 全新項目
+        return mkSub(txt);
+      });
       await sbPatch('goals',editGoalId,{name,date:$('f-gdate').value||null,subs:merged});
       if(g){g.name=name;g.date=$('f-gdate').value;g.subs=merged;}
     }else{
