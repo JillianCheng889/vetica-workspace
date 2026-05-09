@@ -175,6 +175,7 @@ input:focus,select:focus,textarea:focus{border-color:#555;box-shadow:0 0 0 2px r
         <button class="filter-btn" data-filter="high">🔴 高</button>
         <button class="filter-btn" data-filter="mid">🟡 中</button>
         <button class="filter-btn" data-filter="low">🟢 低</button>
+        <button class="filter-btn" id="sort-done-btn" onclick="moveDoneToBottom()" style="border-color:#639922;color:#639922"><i class="ti ti-arrow-down" style="font-size:11px"></i> 整理</button>
       </div>
       <button class="btn btn-primary" id="todo-add-btn"><i class="ti ti-plus"></i> 新增任務</button>
     </div>
@@ -398,6 +399,24 @@ function setSyncStatus(s){
   if(s==='ok'){dot.className='sync-dot ok';lbl.textContent='已同步';}
   else if(s==='syncing'){dot.className='sync-dot syncing';lbl.textContent='同步中...';}
   else{dot.className='sync-dot err';lbl.textContent='連線失敗';}
+}
+
+async function moveDoneToBottom(){
+  var undone=todos.filter(function(t){return !t.done;});
+  var done=todos.filter(function(t){return t.done;});
+  if(!done.length){return;}
+  todos=undone.concat(done);
+  renderTodos();
+  setSyncStatus('syncing');
+  try{
+    await Promise.all(todos.map(function(t,i){
+      return sbPatch('todos',t.id,{sort_order:i});
+    }));
+    setSyncStatus('ok');autoBackup();
+    var btn=$('sort-done-btn');
+    if(btn){btn.textContent='✓ 已整理';btn.style.background='#639922';btn.style.color='#fff';
+      setTimeout(function(){btn.innerHTML='<i class="ti ti-arrow-down" style="font-size:11px"></i> 整理';btn.style.background='transparent';btn.style.color='#639922';},2000);}
+  }catch(e){setSyncStatus('err');}
 }
 
 async function loadAll(){
