@@ -497,13 +497,14 @@ function renderTodos(){
   else if(todoFilter==='mid')list=todos.filter(function(t){return t.priority==='mid';});
   else if(todoFilter==='low')list=todos.filter(function(t){return t.priority==='low';});
   var el=$('todo-list');if(!el)return;
+  var isDraggable=(todoFilter==='all');
   if(!list.length){el.innerHTML='<div class="empty"><i class="ti ti-inbox" style="font-size:32px;display:block;margin-bottom:8px"></i>沒有符合的任務</div>';updateStats();return;}
-  var isDraggable=todoFilter==='all';
-  el.innerHTML=list.map(function(t,i){
+  var html='';
+  list.forEach(function(t,i){
     var pl=t.priority==='high'?'高優先':t.priority==='mid'?'中優先':t.priority==='low'?'低優先':'';
-    return '<div class="todo-item" '+(isDraggable?'draggable="true" data-idx="'+i+'"':'')+' style="'+(isDraggable?'cursor:default':'')+'">'
-      +(isDraggable?'<div class="drag-handle" title="拖拉調整順序"><i class="ti ti-grip-vertical" style="font-size:16px"></i></div>':'')
-      +'<div class="todo-check'+(t.done?' done':'')+'" data-toggle-todo="'+t.id+'">'+(t.done?'<i class="ti ti-check" style="font-size:13px"></i>':'')+'</div>'
+    html+='<div class="todo-item" '+(isDraggable?'draggable="true" data-idx="'+i+'"':'')+' style="'+(isDraggable?'cursor:default':'')+'">';
+    if(isDraggable){html+='<div class="drag-handle"><i class="ti ti-grip-vertical" style="font-size:18px"></i></div>';}
+    html+='<div class="todo-check'+(t.done?' done':'')+'" data-toggle-todo="'+t.id+'">'+(t.done?'<i class="ti ti-check" style="font-size:13px"></i>':'')+'</div>'
       +'<div style="flex:1;min-width:0">'
       +'<div class="todo-text'+(t.done?' done':'')+'" style="margin-bottom:4px">'+esc(t.text)+'</div>'
       +'<div style="display:flex;gap:4px;flex-wrap:wrap;align-items:center">'
@@ -516,9 +517,9 @@ function renderTodos(){
       +'<button class="btn btn-sm" data-edit-todo="'+t.id+'"><i class="ti ti-edit" style="font-size:13px"></i> 編輯</button>'
       +'<button class="btn btn-sm btn-danger" data-del-todo="'+t.id+'" data-confirm="0"><i class="ti ti-trash" style="font-size:13px"></i></button>'
       +'</div></div>';
-  }).join('');
+  });
+  el.innerHTML=html;
 
-  // 綁定拖拉事件（只在全部模式）
   if(isDraggable){
     document.querySelectorAll('#todo-list .todo-item').forEach(function(item){
       item.addEventListener('dragstart',onDragStart);
