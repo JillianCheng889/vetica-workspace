@@ -9,7 +9,7 @@
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f5f5f3;color:#222;font-size:14px}
 .app{max-width:900px;margin:0 auto;padding:16px}
-.header{display:flex;align-items:center;gap:10px;padding:16px 0 20px;flex-wrap:wrap}
+.header{display:flex;align-items:center;gap:8px;padding:16px 0 20px;flex-wrap:wrap}
 .logo{font-size:22px;font-weight:500;letter-spacing:-0.5px;color:#555}
 .logo span{color:#999;font-weight:400}
 .sync-bar{display:flex;align-items:center;gap:6px;font-size:12px;color:#666}
@@ -68,22 +68,24 @@ input:focus,select:focus,textarea:focus{border-color:#555;box-shadow:0 0 0 2px r
 .goal-item{padding:14px;border:1px solid #e5e5e5;border-radius:10px;margin-bottom:10px}
 .progress-bar{height:4px;background:#f0f0f0;border-radius:2px;margin:8px 0 10px}
 .progress-fill{height:100%;background:#555;border-radius:2px}
-.sub-row{display:flex;align-items:center;gap:6px;padding:4px 0;flex-wrap:nowrap}
+.sub-row{display:flex;align-items:center;gap:4px;padding:4px 0;flex-wrap:nowrap}
 .sub-check{border-radius:4px;border:1.5px solid #bbb;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;background:#fff}
 .sub-check.done{background:#555;border-color:#555;color:#fff}
-.add-child-form{display:none;background:#f5f5f3;border-radius:6px;border:1px dashed #ddd;padding:8px;margin:4px 0}
+.sub-form{display:none;background:#f5f5f3;border-radius:6px;border:1px dashed #ddd;padding:8px;margin:2px 0 4px}
+.sub-btn{border-radius:6px;cursor:pointer;padding:2px 7px;font-size:11px;font-family:inherit;flex-shrink:0;border-width:1px;border-style:solid;display:inline-flex;align-items:center;gap:3px}
 .pomo-ring{width:160px;height:160px;margin:0 auto 16px;position:relative;display:flex;align-items:center;justify-content:center}
 .pomo-svg{position:absolute;top:0;left:0;transform:rotate(-90deg)}
 .setup{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:32px}
 .user-pill{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:100px;background:#f5f5f3;font-size:12px;font-weight:500}
-.sub-btn{border-radius:6px;cursor:pointer;padding:2px 8px;font-size:11px;font-family:inherit;flex-shrink:0;border-width:1px;border-style:solid}
 </style>
 </head>
 <body>
 <div class="app">
 
+<!-- 全域錯誤 -->
 <div id="global-err" style="display:none;background:#fff5f5;color:#993C1D;padding:10px 14px;border-radius:8px;font-size:13px;margin-bottom:12px;position:fixed;top:10px;left:10px;right:10px;z-index:999"></div>
 
+<!-- 登入 -->
 <div id="setup-screen" class="setup">
   <div class="card" style="width:340px;text-align:center;padding:32px">
     <div class="logo" style="margin-bottom:20px">vetica <span>workspace</span></div>
@@ -96,25 +98,24 @@ input:focus,select:focus,textarea:focus{border-color:#555;box-shadow:0 0 0 2px r
       <label class="form-label">你的名稱 <span style="color:#E24B4A">*</span></label>
       <input id="user-name" type="text" placeholder="例如：Alex" autocomplete="off">
     </div>
-    <button id="join-btn" class="btn btn-primary" style="width:100%;justify-content:center">
-      <i class="ti ti-arrow-right"></i> 進入工作區
-    </button>
+    <button id="join-btn" class="btn btn-primary" style="width:100%;justify-content:center"><i class="ti ti-arrow-right"></i> 進入工作區</button>
     <div id="setup-err" style="color:#E24B4A;font-size:12px;margin-top:10px;display:none"></div>
   </div>
 </div>
 
+<!-- 主畫面 -->
 <div id="main-app" style="display:none">
   <div class="header">
     <div class="logo">vetica <span>workspace</span></div>
     <div class="sync-bar"><div class="sync-dot" id="sync-dot"></div><span id="sync-lbl">連線中...</span></div>
-    <button onclick="loadAll()" class="btn btn-sm" style="font-size:11px"><i class="ti ti-refresh"></i> 重新載入</button>
-    <button onclick="showBackupPanel()" class="btn btn-sm" style="font-size:11px;color:#BA7517;border-color:#BA7517"><i class="ti ti-database"></i> 備份還原</button>
     <div style="flex:1"></div>
     <div class="user-pill"><i class="ti ti-user" style="font-size:13px"></i><span id="cur-user"></span></div>
     <div class="stat-card" style="padding:6px 14px;display:inline-flex;gap:16px">
       <div><div class="stat-label">待辦</div><div style="font-size:16px;font-weight:500" id="h-todo">0</div></div>
       <div style="border-left:1px solid #e5e5e5;padding-left:16px"><div class="stat-label">今日</div><div style="font-size:16px;font-weight:500" id="h-today">0</div></div>
     </div>
+    <button onclick="loadAll()" class="btn btn-sm" style="font-size:11px"><i class="ti ti-refresh"></i> 重新載入</button>
+    <button onclick="toggleBackupPanel()" class="btn btn-sm" style="font-size:11px;color:#BA7517;border-color:#BA7517"><i class="ti ti-database"></i> 備份還原</button>
   </div>
 
   <div class="nav">
@@ -124,43 +125,28 @@ input:focus,select:focus,textarea:focus{border-color:#555;box-shadow:0 0 0 2px r
     <button class="nav-btn" data-tab="timer"><i class="ti ti-clock"></i> 番茄鐘</button>
   </div>
 
-  <!-- 備份還原面板 -->
+  <!-- 備份面板 -->
   <div id="backup-panel" style="display:none" class="inline-form">
     <div class="row-between mb12">
       <div style="font-weight:500;font-size:15px"><i class="ti ti-database"></i> 備份與還原</div>
-      <button onclick="$('backup-panel').style.display='none'" class="btn btn-sm"><i class="ti ti-x"></i></button>
+      <button onclick="toggleBackupPanel()" class="btn btn-sm"><i class="ti ti-x"></i></button>
     </div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px">
-      <div class="stat-card">
-        <div class="stat-label">目標數量</div>
-        <div class="stat-num" id="bk-goals">0</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-label">待辦數量</div>
-        <div class="stat-num" id="bk-todos">0</div>
-      </div>
+    <div class="grid2" style="margin-bottom:12px">
+      <div class="stat-card"><div class="stat-label">目標數量</div><div class="stat-num" id="bk-goals">0</div></div>
+      <div class="stat-card"><div class="stat-label">待辦數量</div><div class="stat-num" id="bk-todos">0</div></div>
     </div>
-    <div style="margin-bottom:10px;font-size:13px;color:#666">
-      <strong>匯出</strong>：把目前所有資料下載為 JSON 檔案，可跨裝置備份。
-    </div>
-    <button onclick="exportJSON()" class="btn btn-primary" style="width:100%;justify-content:center;margin-bottom:12px">
-      <i class="ti ti-download"></i> 匯出 JSON 備份檔
-    </button>
-    <div style="margin-bottom:10px;font-size:13px;color:#666">
-      <strong>匯入</strong>：選擇之前匯出的 JSON 檔案還原資料。
-    </div>
+    <button onclick="exportJSON()" class="btn btn-primary" style="width:100%;justify-content:center;margin-bottom:10px"><i class="ti ti-download"></i> 匯出 JSON 備份檔</button>
+    <div style="margin-bottom:8px;font-size:12px;color:#888">匯入備份（選擇之前匯出的 .json 檔）</div>
     <input type="file" id="import-file" accept=".json" style="margin-bottom:8px">
-    <button onclick="importJSON()" class="btn" style="width:100%;justify-content:center;border-color:#BA7517;color:#BA7517">
-      <i class="ti ti-upload"></i> 匯入 JSON 還原資料
-    </button>
-    <div id="import-status" style="display:none;margin-top:8px;font-size:13px;padding:8px 12px;border-radius:8px"></div>
-    <div style="margin-top:12px;padding-top:12px;border-top:1px solid #e5e5e5">
-      <div style="font-size:12px;color:#aaa;margin-bottom:6px">本機快取備份（僅限此裝置）</div>
-      <div id="bk-local-time" style="font-size:12px;color:#888;margin-bottom:6px"></div>
+    <button onclick="importJSON()" class="btn" style="width:100%;justify-content:center;border-color:#BA7517;color:#BA7517;margin-bottom:8px"><i class="ti ti-upload"></i> 匯入 JSON 還原資料</button>
+    <div id="import-status" style="display:none;font-size:13px;padding:8px 12px;border-radius:8px"></div>
+    <div style="margin-top:12px;padding-top:12px;border-top:1px solid #e5e5e5;font-size:12px;color:#aaa">
+      <div id="bk-local-time" style="margin-bottom:6px"></div>
       <button onclick="restoreFromBackup()" class="btn btn-sm" style="font-size:12px">從本機快取還原</button>
     </div>
   </div>
 
+  <!-- 待辦事項 -->
   <div class="tab active" id="tab-todo">
     <div id="conn-err" style="display:none;background:#fff5f5;color:#993C1D;padding:10px 14px;border-radius:8px;font-size:13px;margin-bottom:12px"></div>
     <div id="todo-form" style="display:none" class="inline-form">
@@ -168,9 +154,7 @@ input:focus,select:focus,textarea:focus{border-color:#555;box-shadow:0 0 0 2px r
       <input id="f-text" type="text" placeholder="任務名稱 *" style="margin-bottom:8px">
       <div class="form-grid">
         <div><label class="form-label">優先級</label>
-          <select id="f-pri"><option value="">未設定</option>
-            <option value="high">🔴 高優先</option><option value="mid">🟡 中優先</option><option value="low">🟢 低優先</option>
-          </select></div>
+          <select id="f-pri"><option value="">未設定</option><option value="high">🔴 高優先</option><option value="mid">🟡 中優先</option><option value="low">🟢 低優先</option></select></div>
         <div><label class="form-label">負責人</label><select id="f-member"></select></div>
       </div>
       <div style="margin-bottom:8px"><label class="form-label">計劃日期</label><input id="f-date" type="date"></div>
@@ -198,6 +182,7 @@ input:focus,select:focus,textarea:focus{border-color:#555;box-shadow:0 0 0 2px r
     </div>
   </div>
 
+  <!-- 行事曆 -->
   <div class="tab" id="tab-cal">
     <div class="card">
       <div class="cal-header">
@@ -215,6 +200,7 @@ input:focus,select:focus,textarea:focus{border-color:#555;box-shadow:0 0 0 2px r
     <div class="card mt12" id="cal-detail" style="display:none"><div id="cal-detail-content"></div></div>
   </div>
 
+  <!-- 目標規劃 -->
   <div class="tab" id="tab-goal">
     <div id="goal-form" style="display:none" class="inline-form">
       <div style="font-weight:500;margin-bottom:10px" id="goal-form-title">新增目標</div>
@@ -236,6 +222,7 @@ input:focus,select:focus,textarea:focus{border-color:#555;box-shadow:0 0 0 2px r
     <div id="goal-list"></div>
   </div>
 
+  <!-- 番茄鐘 -->
   <div class="tab" id="tab-timer">
     <div class="card" style="text-align:center;padding:28px 16px">
       <div style="display:flex;gap:8px;justify-content:center;margin-bottom:20px">
@@ -265,54 +252,101 @@ input:focus,select:focus,textarea:focus{border-color:#555;box-shadow:0 0 0 2px r
 </div>
 
 <script>
-// 全域錯誤捕捉，顯示在頁面上
-window.onerror = function(msg, src, line, col, err) {
-  var div = document.getElementById('global-err');
-  if(div) { div.style.display='block'; div.textContent='JS錯誤: '+msg+' (行'+line+')'; }
-  return false;
-};
-window.onunhandledrejection = function(e) {
-  var div = document.getElementById('global-err');
-  if(div) { div.style.display='block'; div.textContent='Promise錯誤: '+(e.reason||e); }
-};
+window.onerror=function(msg,src,line){var d=document.getElementById('global-err');if(d){d.style.display='block';d.textContent='錯誤(行'+line+'): '+msg;}return false;};
+window.onunhandledrejection=function(e){var d=document.getElementById('global-err');if(d){d.style.display='block';d.textContent='錯誤: '+(e.reason||e);}};
+
 const SB='https://mnaplphslldwaznbinwx.supabase.co';
 const KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1uYXBscGhzbGxkd2F6bmJpbnd4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgxMzk2MDMsImV4cCI6MjA5MzcxNTYwM30.qYmRCUjXLIGKCbHi7ll00PuKxZWg2Cc65EbcJr9J9JI';
-const SBH=()=>({'Content-Type':'application/json','apikey':KEY,'Authorization':'Bearer '+KEY,'Prefer':'return=representation'});
-const sbGet=async(t,q)=>{const r=await fetch(SB+'/rest/v1/'+t+'?'+(q||''),{headers:SBH()});if(!r.ok)throw new Error(await r.text());return r.json();};
-const sbPost=async(t,d)=>{const r=await fetch(SB+'/rest/v1/'+t,{method:'POST',headers:SBH(),body:JSON.stringify(d)});if(!r.ok)throw new Error(await r.text());return r.json();};
-const sbPatch=async(t,id,d)=>{const r=await fetch(SB+'/rest/v1/'+t+'?id=eq.'+id,{method:'PATCH',headers:SBH(),body:JSON.stringify(d)});if(!r.ok)throw new Error(await r.text());return r.json();};
-const sbDel=async(t,id)=>{const r=await fetch(SB+'/rest/v1/'+t+'?id=eq.'+id,{method:'DELETE',headers:SBH()});if(!r.ok)throw new Error(await r.text());};
+const SBH=function(){return{'Content-Type':'application/json','apikey':KEY,'Authorization':'Bearer '+KEY,'Prefer':'return=representation'};};
+async function sbGet(t,q){var r=await fetch(SB+'/rest/v1/'+t+'?'+(q||''),{headers:SBH()});if(!r.ok)throw new Error(await r.text());return r.json();}
+async function sbPost(t,d){var r=await fetch(SB+'/rest/v1/'+t,{method:'POST',headers:SBH(),body:JSON.stringify(d)});if(!r.ok)throw new Error(await r.text());return r.json();}
+async function sbPatch(t,id,d){var r=await fetch(SB+'/rest/v1/'+t+'?id=eq.'+id,{method:'PATCH',headers:SBH(),body:JSON.stringify(d)});if(!r.ok)throw new Error(await r.text());return r.json();}
+async function sbDel(t,id){var r=await fetch(SB+'/rest/v1/'+t+'?id=eq.'+id,{method:'DELETE',headers:SBH()});if(!r.ok)throw new Error(await r.text());}
 
-let todos=[],goals=[],calDate=new Date(),todoFilter='all',editTodoId=null,editGoalId=null;
-let wsKey='',currentUser='',subEditing=false,goalExpanded={};
-let pomoMode='work',pomoSec=1500,pomoRunning=false,pomoTimer=null,pomoDone=0,pomoTotal=0;
-const MEMBERS=['Alex','Brian','Cathy','Daniel'];
-const POMO={work:{sec:1500,label:'專注時間'},short:{sec:300,label:'短暫休息'},long:{sec:900,label:'長時休息'}};
+var todos=[],goals=[],calDate=new Date(),todoFilter='all',editTodoId=null,editGoalId=null;
+var wsKey='',currentUser='',subEditing=false,goalExpanded={};
+var pomoMode='work',pomoSec=1500,pomoRunning=false,pomoTimer=null,pomoDone=0,pomoTotal=0;
+var MEMBERS=['Alex','Brian','Cathy','Daniel'];
+var POMO={work:{sec:1500,label:'專注時間'},short:{sec:300,label:'短暫休息'},long:{sec:900,label:'長時休息'}};
 
-const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2);
-const p2=n=>String(n).padStart(2,'0');
-const todayStr=()=>{const d=new Date();return d.getFullYear()+'-'+p2(d.getMonth()+1)+'-'+p2(d.getDate());};
-const esc=s=>String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-const mkSub=t=>({id:uid(),text:t,done:false,expanded:false,children:[]});
-const normSubs=a=>(Array.isArray(a)?a:[]).map(s=>({children:[],...s,children:normSubs(s.children)}));
-const $=id=>document.getElementById(id);
+function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2);}
+function p2(n){return String(n).padStart(2,'0');}
+function todayStr(){var d=new Date();return d.getFullYear()+'-'+p2(d.getMonth()+1)+'-'+p2(d.getDate());}
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function mkSub(t){return {id:uid(),text:t,done:false,expanded:false,children:[]};}
+function normSubs(a){return (Array.isArray(a)?a:[]).map(function(s){return Object.assign({children:[]},s,{children:normSubs(s.children)});});}
+function $(id){return document.getElementById(id);}
 
-// ── 子任務路徑工具 ──────────────────────────────────────
-function getNode(subs,path){let a=subs,n=null;for(let i=0;i<path.length;i++){n=a[path[i]];if(i<path.length-1)a=(n&&n.children)||[];}return n;}
-function getParent(subs,path){if(path.length===1)return{arr:subs,idx:path[0]};const p=getNode(subs,path.slice(0,-1));if(!p.children)p.children=[];return{arr:p.children,idx:path[path.length-1]};}
-function countAll(subs){let t=0,d=0;const w=a=>{(a||[]).forEach(s=>{t++;if(s.done)d++;w(s.children);});};w(subs);return{t,d};}
-function buildSubPath(arr,path){const n=arr[path[0]];if(!n)return'';if(path.length===1)return n.text;return n.text+' / '+buildSubPath(n.children||[],path.slice(1));}
-function collectUndone(arr,prefix,goalName,date,out){
-  arr.forEach(s=>{
-    const fp=prefix?prefix+' / '+s.text:s.text;
-    if(!s.done)out.push({text:goalName+' / '+fp,date:date});
-    if(s.children&&s.children.length)collectUndone(s.children,fp,goalName,date,out);
-  });
+function getNode(subs,path){var a=subs,n=null;for(var i=0;i<path.length;i++){n=a[path[i]];if(i<path.length-1)a=(n&&n.children)||[];}return n;}
+function getParent(subs,path){if(path.length===1)return{arr:subs,idx:path[0]};var p=getNode(subs,path.slice(0,-1));if(!p.children)p.children=[];return{arr:p.children,idx:path[path.length-1]};}
+function countAll(subs){var t=0,d=0;function w(a){(a||[]).forEach(function(s){t++;if(s.done)d++;w(s.children);});}w(subs);return{t:t,d:d};}
+function buildSubPath(arr,path){var n=arr[path[0]];if(!n)return'';if(path.length===1)return n.text;return n.text+' / '+buildSubPath(n.children||[],path.slice(1));}
+function collectUndone(arr,prefix,gname,date,out){(arr||[]).forEach(function(s){var fp=prefix?prefix+' / '+s.text:s.text;if(!s.done)out.push({text:gname+' / '+fp,date:date});collectUndone(s.children,fp,gname,date,out);});}
+
+// ── 備份 ─────────────────────────────────────────────────
+function autoBackup(){try{localStorage.setItem('vetica-backup',JSON.stringify({ts:Date.now(),todos:todos,goals:goals}));}catch(e){}}
+function getBackup(){try{var r=localStorage.getItem('vetica-backup');return r?JSON.parse(r):null;}catch(e){return null;}}
+function fmtTs(ts){if(!ts)return'';var d=new Date(ts);return d.getFullYear()+'/'+p2(d.getMonth()+1)+'/'+p2(d.getDate())+' '+p2(d.getHours())+':'+p2(d.getMinutes());}
+
+function toggleBackupPanel(){
+  var p=$('backup-panel');
+  if(p.style.display==='block'){p.style.display='none';return;}
+  $('bk-goals').textContent=goals.length;
+  $('bk-todos').textContent=todos.length;
+  var bk=getBackup();
+  $('bk-local-time').textContent=bk?'本機快取：'+fmtTs(bk.ts):'尚無本機快取';
+  $('import-status').style.display='none';
+  p.style.display='block';
 }
 
-// ── Sync ────────────────────────────────────────────────
+function exportJSON(){
+  var data={exported_at:new Date().toISOString(),workspace:wsKey,goals:goals,todos:todos};
+  var blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+  var url=URL.createObjectURL(blob);
+  var a=document.createElement('a');
+  var ts=new Date();
+  a.href=url;a.download='vetica-backup-'+ts.getFullYear()+p2(ts.getMonth()+1)+p2(ts.getDate())+'-'+p2(ts.getHours())+p2(ts.getMinutes())+'.json';
+  a.click();URL.revokeObjectURL(url);
+}
+
+async function importJSON(){
+  var file=$('import-file').files[0];
+  var status=$('import-status');
+  if(!file){status.style.display='block';status.style.background='#fff5f5';status.style.color='#993C1D';status.textContent='請先選擇 JSON 檔案';return;}
+  var reader=new FileReader();
+  reader.onload=async function(e){
+    try{
+      var data=JSON.parse(e.target.result);
+      if(!data.goals&&!data.todos)throw new Error('無效的備份格式');
+      if(!confirm('確定匯入？\n匯出時間：'+(data.exported_at||'不明')+'\n目標：'+(data.goals||[]).length+' 個\n待辦：'+(data.todos||[]).length+' 筆'))return;
+      setSyncStatus('syncing');
+      var gOk=0,tOk=0;
+      for(var i=0;i<(data.goals||[]).length;i++){var g=data.goals[i];try{await sbPatch('goals',g.id,{name:g.name,date:g.date,subs:g.subs,workspace:g.workspace||wsKey});gOk++;}catch(e1){try{await sbPost('goals',[Object.assign({},g,{workspace:g.workspace||wsKey})]);gOk++;}catch(e2){}}}
+      for(var j=0;j<(data.todos||[]).length;j++){var t=data.todos[j];try{await sbPatch('todos',t.id,{text:t.text,done:t.done,priority:t.priority,member:t.member,date:t.date,note:t.note});tOk++;}catch(e1){try{await sbPost('todos',[Object.assign({},t,{workspace:t.workspace||wsKey})]);tOk++;}catch(e2){}}}
+      setSyncStatus('ok');
+      status.style.display='block';status.style.background='#EAF3DE';status.style.color='#3B6D11';
+      status.textContent='✓ 匯入成功！目標 '+gOk+' 個、待辦 '+tOk+' 筆';
+      await loadAll();
+    }catch(err){status.style.display='block';status.style.background='#fff5f5';status.style.color='#993C1D';status.textContent='✗ 失敗：'+err.message;}
+  };
+  reader.readAsText(file);
+}
+
+async function restoreFromBackup(){
+  var bk=getBackup();
+  if(!bk){alert('找不到本機快取');return;}
+  if(!confirm('從本機快取還原？\n時間：'+fmtTs(bk.ts)))return;
+  setSyncStatus('syncing');
+  try{
+    for(var i=0;i<(bk.goals||[]).length;i++){var g=bk.goals[i];try{await sbPatch('goals',g.id,{name:g.name,date:g.date,subs:g.subs});}catch(e){try{await sbPost('goals',[g]);}catch(e2){}}}
+    for(var j=0;j<(bk.todos||[]).length;j++){var t=bk.todos[j];try{await sbPatch('todos',t.id,{text:t.text,done:t.done,priority:t.priority,member:t.member,date:t.date,note:t.note});}catch(e){try{await sbPost('todos',[t]);}catch(e2){}}}
+    setSyncStatus('ok');alert('還原成功');await loadAll();
+  }catch(e){setSyncStatus('err');alert('還原失敗：'+e.message);}
+}
+
+// ── Sync ─────────────────────────────────────────────────
 function setSyncStatus(s){
-  const dot=$('sync-dot'),lbl=$('sync-lbl');
+  var dot=$('sync-dot'),lbl=$('sync-lbl');
   if(s==='ok'){dot.className='sync-dot ok';lbl.textContent='已同步';}
   else if(s==='syncing'){dot.className='sync-dot syncing';lbl.textContent='同步中...';}
   else{dot.className='sync-dot err';lbl.textContent='連線失敗';}
@@ -321,83 +355,38 @@ function setSyncStatus(s){
 async function loadAll(){
   setSyncStatus('syncing');
   try{
-    const[t,g]=await Promise.all([
+    var res=await Promise.all([
       sbGet('todos','workspace=eq.'+encodeURIComponent(wsKey)+'&order=created_at.desc'),
       sbGet('goals','workspace=eq.'+encodeURIComponent(wsKey)+'&order=created_at.desc')
     ]);
-    todos=t||[];goals=g||[];
+    todos=res[0]||[];goals=res[1]||[];
     setSyncStatus('ok');
-    const ce=$('conn-err');if(ce)ce.style.display='none';
-    autoBackup(); // 每次成功載入就備份
+    var ce=$('conn-err');if(ce)ce.style.display='none';
+    autoBackup();
   }catch(e){
     setSyncStatus('err');
-    const ce=$('conn-err');if(ce){ce.style.display='block';ce.textContent='⚠️ 連線失敗：'+e.message;}
+    var ce=$('conn-err');if(ce){ce.style.display='block';ce.textContent='⚠️ 連線失敗：'+e.message;}
   }
   renderTodos();
   if(!subEditing)renderGoals();
   renderCal();
 }
 
-async function addSubAsTodo(text,date){
-  const data={id:uid(),workspace:wsKey,done:false,created_by:currentUser,text:text,priority:'',member:currentUser,date:date||null,note:''};
-  try{
-    const rec=await sbPost('todos',[data]);
-    if(rec&&rec[0]){todos.unshift(rec[0]);setSyncStatus('ok');renderTodos();renderCal();return true;}
-    return false;
-  }catch(e){console.error('addSubAsTodo',e);setSyncStatus('err');return false;}
-}
-
-// ── 自動備份到 localStorage ──────────────────────────────
-function autoBackup(){
-  try{
-    const backup={ts:Date.now(),todos:todos,goals:goals};
-    localStorage.setItem('vetica-backup',JSON.stringify(backup));
-  }catch(e){}
-}
-
-function getBackup(){
-  try{
-    const raw=localStorage.getItem('vetica-backup');
-    if(!raw)return null;
-    return JSON.parse(raw);
-  }catch(e){return null;}
-}
-
-function formatBackupTime(ts){
-  if(!ts)return'';
-  const d=new Date(ts);
-  return d.getFullYear()+'/'+p2(d.getMonth()+1)+'/'+p2(d.getDate())+' '+p2(d.getHours())+':'+p2(d.getMinutes());
-}
-
-async function restoreFromBackup(){
-  const bk=getBackup();
-  if(!bk){alert('找不到本地備份資料');return;}
-  if(!confirm('確定要從備份還原？\n備份時間：'+formatBackupTime(bk.ts)+'\n\n注意：這會覆蓋目前 Supabase 的資料！'))return;
-  setSyncStatus('syncing');
-  try{
-    // 還原 goals
-    for(const g of(bk.goals||[])){
-      try{await sbPatch('goals',g.id,{name:g.name,date:g.date,subs:g.subs,workspace:g.workspace});}
-      catch(e){await sbPost('goals',[g]);}
-    }
-    // 還原 todos
-    for(const t of(bk.todos||[])){
-      try{await sbPatch('todos',t.id,{text:t.text,done:t.done,priority:t.priority,member:t.member,date:t.date,note:t.note});}
-      catch(e){await sbPost('todos',[t]);}
-    }
-    setSyncStatus('ok');
-    alert('還原成功！共還原 '+( bk.goals||[]).length+' 個目標、'+(bk.todos||[]).length+' 筆待辦');
-    await loadAll();
-  }catch(e){setSyncStatus('err');alert('還原失敗：'+e.message);}
-}
-  const g=goals.find(x=>x.id===gid);if(!g)return;
-  try{await sbPatch('goals',gid,{subs:g.subs});setSyncStatus('ok');}
+async function saveGoalSubs(gid){
+  var g=goals.find(function(x){return x.id===gid;});if(!g)return;
+  try{await sbPatch('goals',gid,{subs:g.subs});setSyncStatus('ok');autoBackup();}
   catch(e){setSyncStatus('err');}
 }
 
-// ── Setup ────────────────────────────────────────────────
-$('join-btn').addEventListener('click',()=>{
-  const ws=$('ws-name').value.trim(),n=$('user-name').value.trim();
+async function addSubAsTodo(text,date){
+  var data={id:uid(),workspace:wsKey,done:false,created_by:currentUser,text:text,priority:'',member:currentUser,date:date||null,note:''};
+  try{var rec=await sbPost('todos',[data]);if(rec&&rec[0]){todos.unshift(rec[0]);setSyncStatus('ok');renderTodos();renderCal();return true;}return false;}
+  catch(e){setSyncStatus('err');return false;}
+}
+
+// ── Setup ─────────────────────────────────────────────────
+$('join-btn').addEventListener('click',function(){
+  var ws=$('ws-name').value.trim(),n=$('user-name').value.trim();
   if(!ws||!n){$('setup-err').style.display='block';$('setup-err').textContent='請填寫所有欄位';return;}
   try{localStorage.setItem('vetica-ws',ws);localStorage.setItem('vetica-user',n);}catch(e){}
   wsKey=ws;currentUser=n;
@@ -407,61 +396,62 @@ $('join-btn').addEventListener('click',()=>{
   loadAll();
   setInterval(loadAll,10000);
 });
-$('ws-name').addEventListener('keydown',e=>{if(e.key==='Enter')$('user-name').focus();});
-$('user-name').addEventListener('keydown',e=>{if(e.key==='Enter')$('join-btn').click();});
-try{const sw=localStorage.getItem('vetica-ws'),su=localStorage.getItem('vetica-user');if(sw)$('ws-name').value=sw;if(su)$('user-name').value=su;}catch(e){}
+$('ws-name').addEventListener('keydown',function(e){if(e.key==='Enter')$('user-name').focus();});
+$('user-name').addEventListener('keydown',function(e){if(e.key==='Enter')$('join-btn').click();});
+try{var _sw=localStorage.getItem('vetica-ws'),_su=localStorage.getItem('vetica-user');if(_sw)$('ws-name').value=_sw;if(_su)$('user-name').value=_su;}catch(e){}
 
-// ── Tabs ─────────────────────────────────────────────────
-document.querySelectorAll('.nav-btn').forEach(btn=>{
-  btn.addEventListener('click',()=>{
-    document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
-    document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+// ── Tabs ──────────────────────────────────────────────────
+document.querySelectorAll('.nav-btn').forEach(function(btn){
+  btn.addEventListener('click',function(){
+    document.querySelectorAll('.nav-btn').forEach(function(b){b.classList.remove('active');});
+    document.querySelectorAll('.tab').forEach(function(t){t.classList.remove('active');});
     btn.classList.add('active');
     $('tab-'+btn.dataset.tab).classList.add('active');
     if(btn.dataset.tab==='cal')renderCal();
   });
 });
+document.querySelectorAll('.filter-btn[data-filter]').forEach(function(btn){
+  btn.addEventListener('click',function(){
+    document.querySelectorAll('.filter-btn[data-filter]').forEach(function(b){b.classList.remove('active');});
+    btn.classList.add('active');todoFilter=btn.dataset.filter;renderTodos();
+  });
+});
 
-// ── Todo ─────────────────────────────────────────────────
+// ── Todo ──────────────────────────────────────────────────
 function openTodoForm(id){
   editTodoId=id;
   $('todo-form-title').textContent=id?'編輯任務':'新增任務';
-  const allM=[currentUser,...MEMBERS.filter(m=>m!==currentUser)];
-  $('f-member').innerHTML=allM.map(m=>'<option value="'+m+'">'+m+'</option>').join('');
-  if(id){const t=todos.find(x=>x.id===id)||{};$('f-text').value=t.text||'';$('f-pri').value=t.priority||'';$('f-member').value=t.member||currentUser;$('f-date').value=t.date||'';$('f-note').value=t.note||'';}
+  var allM=[currentUser].concat(MEMBERS.filter(function(m){return m!==currentUser;}));
+  $('f-member').innerHTML=allM.map(function(m){return '<option value="'+m+'">'+m+'</option>';}).join('');
+  if(id){var t=todos.find(function(x){return x.id===id;})||{};$('f-text').value=t.text||'';$('f-pri').value=t.priority||'';$('f-member').value=t.member||currentUser;$('f-date').value=t.date||'';$('f-note').value=t.note||'';}
   else{$('f-text').value='';$('f-pri').value='';$('f-member').value=currentUser;$('f-date').value='';$('f-note').value='';}
   $('todo-form').style.display='block';$('f-text').focus();
 }
-$('todo-add-btn').addEventListener('click',()=>openTodoForm(null));
-$('todo-cancel-btn').addEventListener('click',()=>{$('todo-form').style.display='none';editTodoId=null;});
-$('todo-save-btn').addEventListener('click',async()=>{
-  const text=$('f-text').value.trim();if(!text)return;
-  const data={text,priority:$('f-pri').value,member:$('f-member').value,date:$('f-date').value||null,note:$('f-note').value};
+$('todo-add-btn').addEventListener('click',function(){openTodoForm(null);});
+$('todo-cancel-btn').addEventListener('click',function(){$('todo-form').style.display='none';editTodoId=null;});
+$('todo-save-btn').addEventListener('click',async function(){
+  var text=$('f-text').value.trim();if(!text)return;
+  var data={text:text,priority:$('f-pri').value,member:$('f-member').value,date:$('f-date').value||null,note:$('f-note').value};
   setSyncStatus('syncing');
   try{
-    if(editTodoId){await sbPatch('todos',editTodoId,data);const t=todos.find(x=>x.id===editTodoId);if(t)Object.assign(t,data);}
-    else{const rec=await sbPost('todos',[{id:uid(),workspace:wsKey,done:false,created_by:currentUser,...data}]);if(rec&&rec[0])todos.unshift(rec[0]);}
+    if(editTodoId){await sbPatch('todos',editTodoId,data);var t=todos.find(function(x){return x.id===editTodoId;});if(t)Object.assign(t,data);}
+    else{var rec=await sbPost('todos',[Object.assign({id:uid(),workspace:wsKey,done:false,created_by:currentUser},data)]);if(rec&&rec[0])todos.unshift(rec[0]);}
     setSyncStatus('ok');
   }catch(e){setSyncStatus('err');}
   $('todo-form').style.display='none';editTodoId=null;renderTodos();renderCal();
 });
-document.querySelectorAll('.filter-btn[data-filter]').forEach(btn=>{
-  btn.addEventListener('click',()=>{
-    document.querySelectorAll('.filter-btn[data-filter]').forEach(b=>b.classList.remove('active'));
-    btn.classList.add('active');todoFilter=btn.dataset.filter;renderTodos();
-  });
-});
+
 function renderTodos(){
-  let list=todos;
-  if(todoFilter==='active')list=todos.filter(t=>!t.done);
-  else if(todoFilter==='done')list=todos.filter(t=>t.done);
-  else if(todoFilter==='high')list=todos.filter(t=>t.priority==='high');
-  else if(todoFilter==='mid')list=todos.filter(t=>t.priority==='mid');
-  else if(todoFilter==='low')list=todos.filter(t=>t.priority==='low');
-  const el=$('todo-list');if(!el)return;
+  var list=todos;
+  if(todoFilter==='active')list=todos.filter(function(t){return !t.done;});
+  else if(todoFilter==='done')list=todos.filter(function(t){return t.done;});
+  else if(todoFilter==='high')list=todos.filter(function(t){return t.priority==='high';});
+  else if(todoFilter==='mid')list=todos.filter(function(t){return t.priority==='mid';});
+  else if(todoFilter==='low')list=todos.filter(function(t){return t.priority==='low';});
+  var el=$('todo-list');if(!el)return;
   if(!list.length){el.innerHTML='<div class="empty"><i class="ti ti-inbox" style="font-size:32px;display:block;margin-bottom:8px"></i>沒有符合的任務</div>';updateStats();return;}
-  el.innerHTML=list.map(t=>{
-    const pl=t.priority==='high'?'高優先':t.priority==='mid'?'中優先':t.priority==='low'?'低優先':'';
+  el.innerHTML=list.map(function(t){
+    var pl=t.priority==='high'?'高優先':t.priority==='mid'?'中優先':t.priority==='low'?'低優先':'';
     return '<div class="todo-item">'
       +'<div class="todo-check'+(t.done?' done':'')+'" data-toggle-todo="'+t.id+'">'+(t.done?'<i class="ti ti-check" style="font-size:13px"></i>':'')+'</div>'
       +'<div style="flex:1;min-width:0">'
@@ -479,58 +469,74 @@ function renderTodos(){
   }).join('');
   updateStats();
 }
+
 function updateStats(){
-  const active=todos.filter(t=>!t.done).length,done=todos.filter(t=>t.done).length,td=todos.filter(t=>t.date===todayStr()&&!t.done).length;
+  var active=todos.filter(function(t){return !t.done;}).length;
+  var done=todos.filter(function(t){return t.done;}).length;
+  var td=todos.filter(function(t){return t.date===todayStr()&&!t.done;}).length;
   $('s-active').textContent=active;$('h-todo').textContent=active;$('s-done').textContent=done;$('h-today').textContent=td;
 }
-$('todo-list').addEventListener('click',async e=>{
-  const tog=e.target.closest('[data-toggle-todo]');
-  if(tog){const id=tog.dataset.toggleTodo;const t=todos.find(x=>x.id===id);if(!t)return;t.done=!t.done;renderTodos();try{await sbPatch('todos',id,{done:t.done});setSyncStatus('ok');}catch(err){t.done=!t.done;renderTodos();setSyncStatus('err');}return;}
-  const ed=e.target.closest('[data-edit-todo]');if(ed){openTodoForm(ed.dataset.editTodo);return;}
-  const dl=e.target.closest('[data-del-todo]');
+
+$('todo-list').addEventListener('click',async function(e){
+  var tog=e.target.closest('[data-toggle-todo]');
+  if(tog){var id=tog.dataset.toggleTodo;var t=todos.find(function(x){return x.id===id;});if(!t)return;t.done=!t.done;renderTodos();try{await sbPatch('todos',id,{done:t.done});setSyncStatus('ok');}catch(err){t.done=!t.done;renderTodos();setSyncStatus('err');}return;}
+  var ed=e.target.closest('[data-edit-todo]');if(ed){openTodoForm(ed.dataset.editTodo);return;}
+  var dl=e.target.closest('[data-del-todo]');
   if(dl){
-    if(dl.dataset.confirm==='1'){const id=dl.dataset.delTodo;todos=todos.filter(x=>x.id!==id);renderTodos();renderCal();try{await sbDel('todos',id);setSyncStatus('ok');}catch(err){setSyncStatus('err');loadAll();}}
-    else{dl.dataset.confirm='1';dl.innerHTML='<i class="ti ti-alert-triangle" style="font-size:13px"></i> 確認？';setTimeout(()=>{if(dl){dl.dataset.confirm='0';dl.innerHTML='<i class="ti ti-trash" style="font-size:13px"></i>';}},2500);}
+    if(dl.dataset.confirm==='1'){var id=dl.dataset.delTodo;todos=todos.filter(function(x){return x.id!==id;});renderTodos();renderCal();try{await sbDel('todos',id);setSyncStatus('ok');}catch(err){setSyncStatus('err');loadAll();}}
+    else{dl.dataset.confirm='1';dl.innerHTML='<i class="ti ti-alert-triangle" style="font-size:13px"></i> 確認？';setTimeout(function(){if(dl){dl.dataset.confirm='0';dl.innerHTML='<i class="ti ti-trash" style="font-size:13px"></i>';}},2500);}
   }
 });
 
 // ── Goals ─────────────────────────────────────────────────
 function renderSubTree(subs,gid,path,level){
   if(!subs||!subs.length)return'';
-  let html='';
+  var html='';
   subs.forEach(function(s,i){
-    const p=path.concat([i]);
-    const ps=p.join('-');
-    const formId='acf_'+gid+'_'+ps.replace(/-/g,'_');
-    const hasKids=s.children&&s.children.length>0;
-    const canAdd=level<2;
+    var p=path.concat([i]);
+    var ps=p.join('-');
+    var hasKids=s.children&&s.children.length>0;
+    var canAdd=level<2;
+    var addFormId='acf_'+gid+'_'+ps.replace(/-/g,'_');
+    var editFormId='edf_'+gid+'_'+ps.replace(/-/g,'_');
+
     html+='<div>';
     html+='<div class="sub-row" style="padding-left:'+(level*22)+'px">';
+    // 展開按鈕
     html+='<div style="width:16px;flex-shrink:0;display:flex;align-items:center;justify-content:center">';
-    if(hasKids){html+='<button style="border:none;background:none;cursor:pointer;padding:0;color:#aaa;display:flex;align-items:center" data-exp="'+gid+'" data-path="'+ps+'"><i class="ti ti-chevron-'+(s.expanded?'down':'right')+'" style="font-size:11px"></i></button>';}
+    if(hasKids)html+='<button style="border:none;background:none;cursor:pointer;padding:0;color:#aaa;display:flex;align-items:center" data-exp="'+gid+'" data-path="'+ps+'"><i class="ti ti-chevron-'+(s.expanded?'down':'right')+'" style="font-size:11px"></i></button>';
     html+='</div>';
+    // 勾選
     html+='<div class="sub-check'+(s.done?' done':'')+'" style="width:17px;height:17px;flex-shrink:0" data-sub-toggle="'+gid+'" data-path="'+ps+'">'+(s.done?'<i class="ti ti-check" style="font-size:10px"></i>':'')+'</div>';
-    html+='<span style="flex:1;font-size:13px;'+(s.done?'text-decoration:line-through;color:#aaa':'')+' min-width:0;overflow:hidden;text-overflow:ellipsis">'+esc(s.text)+'</span>';
-    // ＋待辦 按鈕 — 用 data-gid + data-path，由 goal-list click handler 處理
+    // 文字
+    html+='<span style="flex:1;font-size:13px;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;'+(s.done?'text-decoration:line-through;color:#aaa':'')+'">'+ esc(s.text)+'</span>';
+    // ＋待辦
     html+='<button class="sub-btn" style="background:#f0f9ea;color:#639922;border-color:#639922;border-width:2px;font-weight:500" data-add-todo="'+gid+'" data-path="'+ps+'">＋ 待辦</button>';
-    if(canAdd){html+='<button class="sub-btn" style="background:#f5f5f3;color:#555;border-color:#ccc" data-add-child="'+gid+'" data-path="'+ps+'"><i class="ti ti-plus" style="font-size:11px"></i> 子任務</button>';}
+    // ✏ 編輯
+    html+='<button class="sub-btn" style="background:#f0f0ff;color:#555;border-color:#aaa" data-edit-sub="'+gid+'" data-path="'+ps+'"><i class="ti ti-edit" style="font-size:11px"></i></button>';
+    // ＋子任務
+    if(canAdd)html+='<button class="sub-btn" style="background:#f5f5f3;color:#555;border-color:#ccc" data-add-child="'+gid+'" data-path="'+ps+'"><i class="ti ti-plus" style="font-size:11px"></i></button>';
+    // ✕ 刪除
     html+='<button class="sub-btn" style="background:transparent;color:#E24B4A;border-color:#E24B4A" data-del-sub="'+gid+'" data-path="'+ps+'"><i class="ti ti-x" style="font-size:11px"></i></button>';
     html+='</div>';
-    html+='<div class="add-child-form" id="'+formId+'" style="padding-left:'+(level*22+38)+'px">';
+
+    // 新增子任務表單
+    html+='<div class="sub-form" id="'+addFormId+'" style="margin-left:'+(level*22+20)+'px">';
     html+='<div style="display:flex;gap:6px;align-items:center">';
     html+='<input class="kid-input" type="text" placeholder="輸入子任務名稱..." style="flex:1;padding:5px 8px;font-size:12px">';
     html+='<button class="btn btn-primary btn-sm confirm-kid" data-gid="'+gid+'" data-path="'+ps+'">新增</button>';
     html+='<button class="btn btn-sm cancel-kid" data-gid="'+gid+'" data-path="'+ps+'">取消</button>';
     html+='</div></div>';
+
     // 編輯子任務表單
-    const editFormId='edf_'+gid+'_'+ps.replace(/-/g,'_');
-    html+='<div class="add-child-form" id="'+editFormId+'" style="padding-left:'+(level*22+38)+'px">';
+    html+='<div class="sub-form" id="'+editFormId+'" style="margin-left:'+(level*22+20)+'px">';
     html+='<div style="display:flex;gap:6px;align-items:center">';
     html+='<input class="edit-sub-input" type="text" value="'+esc(s.text)+'" style="flex:1;padding:5px 8px;font-size:12px">';
     html+='<button class="btn btn-primary btn-sm confirm-edit-sub" data-gid="'+gid+'" data-path="'+ps+'">儲存</button>';
     html+='<button class="btn btn-sm cancel-edit-sub" data-gid="'+gid+'" data-path="'+ps+'">取消</button>';
     html+='</div></div>';
-    if(hasKids&&s.expanded){html+='<div>'+renderSubTree(s.children,gid,p,level+1)+'</div>';}
+
+    if(hasKids&&s.expanded)html+='<div>'+renderSubTree(s.children,gid,p,level+1)+'</div>';
     html+='</div>';
   });
   return html;
@@ -538,21 +544,21 @@ function renderSubTree(subs,gid,path,level){
 
 function renderGoals(){
   if(subEditing)return;
-  const el=$('goal-list');if(!el)return;
+  var el=$('goal-list');if(!el)return;
   if(!goals.length){el.innerHTML='<div class="empty"><i class="ti ti-target" style="font-size:32px;display:block;margin-bottom:8px"></i>尚無目標</div>';return;}
-  let html='';
+  var html='';
   goals.forEach(function(g){
-    const subs=normSubs(g.subs);
-    const res=countAll(subs);
-    const pct=res.t?Math.round(res.d/res.t*100):0;
-    const open=goalExpanded[g.id]!==false;
+    var subs=normSubs(g.subs);
+    var res=countAll(subs);
+    var pct=res.t?Math.round(res.d/res.t*100):0;
+    var open=goalExpanded[g.id]!==false;
     html+='<div class="goal-item">';
     html+='<div class="row-between" style="margin-bottom:8px">';
     html+='<div style="display:flex;align-items:center;gap:8px;cursor:pointer" data-toggle-goal="'+g.id+'">';
     html+='<i class="ti ti-chevron-'+(open?'down':'right')+'" style="font-size:13px;color:#aaa"></i>';
     html+='<span style="font-weight:500;font-size:15px">'+esc(g.name)+'</span>';
     html+='</div>';
-    html+='<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">';
+    html+='<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">';
     if(g.created_by)html+='<span style="font-size:11px;color:#aaa">by '+esc(g.created_by)+'</span>';
     if(g.date)html+='<span style="font-size:12px;color:#888">'+g.date+'</span>';
     html+='<span style="font-size:13px;font-weight:600;color:#555">'+pct+'%</span>';
@@ -561,271 +567,260 @@ function renderGoals(){
     html+='<button class="btn btn-sm btn-danger" data-del-goal="'+g.id+'" data-confirm="0"><i class="ti ti-trash" style="font-size:12px"></i></button>';
     html+='</div></div>';
     html+='<div class="progress-bar"><div class="progress-fill" style="width:'+pct+'%"></div></div>';
-    if(open){html+='<div>'+renderSubTree(subs,g.id,[],0)+'</div>';}
-    else{html+='<div style="font-size:12px;color:#aaa;padding:4px 0">'+subs.length+' 項子任務（點標題展開）</div>';}
+    if(open)html+='<div>'+renderSubTree(subs,g.id,[],0)+'</div>';
+    else html+='<div style="font-size:12px;color:#aaa;padding:4px 0">'+subs.length+' 項子任務（點標題展開）</div>';
     html+='</div>';
   });
   el.innerHTML=html;
 }
 
+function closeAllSubForms(){document.querySelectorAll('.sub-form').forEach(function(f){f.style.display='none';});}
+
 $('goal-list').addEventListener('click',async function(e){
-  // ＋ 待辦（單一子任務）
-  const addTodo=e.target.closest('[data-add-todo]');
+  // ＋待辦
+  var addTodo=e.target.closest('[data-add-todo]');
   if(addTodo){
-    const gid=addTodo.dataset.addTodo;
-    const ps=addTodo.dataset.path;
-    const path=ps.split('-').map(Number);
-    const g=goals.find(x=>x.id===gid);if(!g)return;
-    const subs=normSubs(g.subs);
-    const text=g.name+' / '+buildSubPath(subs,path);
+    var gid=addTodo.dataset.addTodo,ps=addTodo.dataset.path,path=ps.split('-').map(Number);
+    var g=goals.find(function(x){return x.id===gid;});if(!g)return;
+    var subs=normSubs(g.subs);
+    var text=g.name+' / '+buildSubPath(subs,path);
     addTodo.textContent='⏳...';addTodo.disabled=true;
-    const ok=await addSubAsTodo(text,g.date||null);
+    var ok=await addSubAsTodo(text,g.date||null);
     addTodo.textContent=ok?'✓ 已加入':'✗ 失敗';
-    addTodo.style.background=ok?'#639922':'#E24B4A';addTodo.style.color='#fff';
-    addTodo.disabled=false;
+    addTodo.style.background=ok?'#639922':'#E24B4A';addTodo.style.color='#fff';addTodo.disabled=false;
     setTimeout(function(){addTodo.textContent='＋ 待辦';addTodo.style.background='#f0f9ea';addTodo.style.color='#639922';},2000);
     return;
   }
   // 批次加入待辦
-  const batchAdd=e.target.closest('[data-batch-add]');
+  var batchAdd=e.target.closest('[data-batch-add]');
   if(batchAdd){
-    const gid=batchAdd.dataset.batchAdd;
-    const g=goals.find(x=>x.id===gid);if(!g)return;
-    const subs=normSubs(g.subs);
-    const items=[];
-    collectUndone(subs,'',g.name,g.date||null,items);
+    var gid=batchAdd.dataset.batchAdd;
+    var g=goals.find(function(x){return x.id===gid;});if(!g)return;
+    var items=[];collectUndone(normSubs(g.subs),'',g.name,g.date||null,items);
     if(!items.length){batchAdd.textContent='無未完成項目';setTimeout(function(){batchAdd.textContent='批次加入待辦';},2000);return;}
     batchAdd.textContent='⏳ 新增中...';batchAdd.disabled=true;
-    const results=await Promise.all(items.map(function(item){return addSubAsTodo(item.text,item.date);}));
-    const count=results.filter(Boolean).length;
-    batchAdd.textContent='✓ 已加入 '+count+' 項';
-    batchAdd.style.background='#639922';batchAdd.style.color='#fff';
-    batchAdd.disabled=false;
+    var results=await Promise.all(items.map(function(item){return addSubAsTodo(item.text,item.date);}));
+    var count=results.filter(Boolean).length;
+    batchAdd.textContent='✓ 已加入 '+count+' 項';batchAdd.style.background='#639922';batchAdd.style.color='#fff';batchAdd.disabled=false;
     setTimeout(function(){batchAdd.textContent='批次加入待辦';batchAdd.style.background='transparent';batchAdd.style.color='#639922';},2500);
     return;
   }
-  // toggle goal
-  const togGoal=e.target.closest('[data-toggle-goal]');
+  // 展開目標
+  var togGoal=e.target.closest('[data-toggle-goal]');
   if(togGoal){goalExpanded[togGoal.dataset.toggleGoal]=goalExpanded[togGoal.dataset.toggleGoal]===false?true:false;renderGoals();return;}
-  // edit goal
-  const edGoal=e.target.closest('[data-edit-goal]');if(edGoal){openGoalForm(edGoal.dataset.editGoal);return;}
-  // delete goal
-  const dlGoal=e.target.closest('[data-del-goal]');
+  // 編輯目標
+  var edGoal=e.target.closest('[data-edit-goal]');if(edGoal){openGoalForm(edGoal.dataset.editGoal);return;}
+  // 刪除目標
+  var dlGoal=e.target.closest('[data-del-goal]');
   if(dlGoal){
-    if(dlGoal.dataset.confirm==='1'){const id=dlGoal.dataset.delGoal;goals=goals.filter(x=>x.id!==id);renderGoals();try{await sbDel('goals',id);setSyncStatus('ok');}catch(err){setSyncStatus('err');loadAll();}}
+    if(dlGoal.dataset.confirm==='1'){var id=dlGoal.dataset.delGoal;goals=goals.filter(function(x){return x.id!==id;});renderGoals();try{await sbDel('goals',id);setSyncStatus('ok');}catch(err){setSyncStatus('err');loadAll();}}
     else{dlGoal.dataset.confirm='1';dlGoal.innerHTML='<i class="ti ti-alert-triangle"></i> 確認？';setTimeout(function(){if(dlGoal){dlGoal.dataset.confirm='0';dlGoal.innerHTML='<i class="ti ti-trash" style="font-size:12px"></i>';}},2500);}
     return;
   }
-  // expand subtask
-  const exp=e.target.closest('[data-exp]');
-  if(exp){
-    const gid=exp.dataset.exp,path=exp.dataset.path.split('-').map(Number);
-    const g=goals.find(x=>x.id===gid);if(!g)return;
-    g.subs=normSubs(g.subs);const node=getNode(g.subs,path);if(!node)return;
+  // 展開/收合子任務
+  var expBtn=e.target.closest('[data-exp]');
+  if(expBtn){
+    var gid=expBtn.dataset.exp,path=expBtn.dataset.path.split('-').map(Number);
+    var g=goals.find(function(x){return x.id===gid;});if(!g)return;
+    g.subs=normSubs(g.subs);var node=getNode(g.subs,path);if(!node)return;
     node.expanded=!node.expanded;saveGoalSubs(gid);renderGoals();return;
   }
-  // toggle subtask
-  const togSub=e.target.closest('[data-sub-toggle]');
+  // 勾選子任務
+  var togSub=e.target.closest('[data-sub-toggle]');
   if(togSub){
-    const gid=togSub.dataset.subToggle,path=togSub.dataset.path.split('-').map(Number);
-    const g=goals.find(x=>x.id===gid);if(!g)return;
-    g.subs=normSubs(g.subs);const node=getNode(g.subs,path);if(!node)return;
+    var gid=togSub.dataset.subToggle,path=togSub.dataset.path.split('-').map(Number);
+    var g=goals.find(function(x){return x.id===gid;});if(!g)return;
+    g.subs=normSubs(g.subs);var node=getNode(g.subs,path);if(!node)return;
     node.done=!node.done;saveGoalSubs(gid);renderGoals();return;
   }
-  // delete subtask
-  const delSub=e.target.closest('[data-del-sub]');
-  if(delSub){
-    const gid=delSub.dataset.delSub,path=delSub.dataset.path.split('-').map(Number);
-    const g=goals.find(x=>x.id===gid);if(!g)return;
-    g.subs=normSubs(g.subs);const par=getParent(g.subs,path);par.arr.splice(par.idx,1);
-    saveGoalSubs(gid);renderGoals();return;
-  }
-  // 編輯子任務
-  const editSub=e.target.closest('[data-edit-sub]');
+  // ✏ 編輯子任務 → 開啟編輯表單
+  var editSub=e.target.closest('[data-edit-sub]');
   if(editSub){
-    const gid=editSub.dataset.editSub,ps=editSub.dataset.path;
-    const editFormId='edf_'+gid+'_'+ps.replace(/-/g,'_');
-    document.querySelectorAll('.add-child-form').forEach(f=>f.style.display='none');
-    const form=document.getElementById(editFormId);if(!form)return;
+    var gid=editSub.dataset.editSub,ps=editSub.dataset.path;
+    var editFormId='edf_'+gid+'_'+ps.replace(/-/g,'_');
+    closeAllSubForms();
+    var form=document.getElementById(editFormId);if(!form)return;
     subEditing=true;form.style.display='block';
-    const inp=form.querySelector('.edit-sub-input');if(inp){inp.focus();inp.select();}
+    var inp=form.querySelector('.edit-sub-input');if(inp){inp.focus();inp.select();}
     return;
   }
   // 確認編輯子任務
-  const confEditSub=e.target.closest('.confirm-edit-sub');
-  if(confEditSub){
-    const gid=confEditSub.dataset.gid,ps=confEditSub.dataset.path,path=ps.split('-').map(Number);
-    const editFormId='edf_'+gid+'_'+ps.replace(/-/g,'_');
-    const form=document.getElementById(editFormId);if(!form)return;
-    const newText=form.querySelector('.edit-sub-input').value.trim();if(!newText)return;
-    const g=goals.find(x=>x.id===gid);if(!g)return;
-    g.subs=normSubs(g.subs);
-    const node=getNode(g.subs,path);if(!node)return;
-    node.text=newText; // 只更新文字，children 完整保留
-    subEditing=false;saveGoalSubs(gid);renderGoals();return;
+  var confEdit=e.target.closest('.confirm-edit-sub');
+  if(confEdit){
+    var gid=confEdit.dataset.gid,ps=confEdit.dataset.path,path=ps.split('-').map(Number);
+    var editFormId='edf_'+gid+'_'+ps.replace(/-/g,'_');
+    var form=document.getElementById(editFormId);if(!form)return;
+    var newText=form.querySelector('.edit-sub-input').value.trim();if(!newText)return;
+    var g=goals.find(function(x){return x.id===gid;});if(!g)return;
+    g.subs=normSubs(g.subs);var node=getNode(g.subs,path);if(!node)return;
+    node.text=newText; // 只改文字，children 完整保留
+    subEditing=false;form.style.display='none';saveGoalSubs(gid);renderGoals();return;
   }
   // 取消編輯子任務
-  const cancEditSub=e.target.closest('.cancel-edit-sub');
-  if(cancEditSub){
-    const gid=cancEditSub.dataset.gid,ps=cancEditSub.dataset.path;
-    const editFormId='edf_'+gid+'_'+ps.replace(/-/g,'_');
-    const form=document.getElementById(editFormId);if(form)form.style.display='none';
+  var cancEdit=e.target.closest('.cancel-edit-sub');
+  if(cancEdit){
+    var gid=cancEdit.dataset.gid,ps=cancEdit.dataset.path;
+    var editFormId='edf_'+gid+'_'+ps.replace(/-/g,'_');
+    var form=document.getElementById(editFormId);if(form)form.style.display='none';
     subEditing=false;return;
   }
-  // 編輯子任務 Enter/Escape
-  const addChild=e.target.closest('[data-add-child]');
+  // 刪除子任務
+  var delSub=e.target.closest('[data-del-sub]');
+  if(delSub){
+    var gid=delSub.dataset.delSub,path=delSub.dataset.path.split('-').map(Number);
+    var g=goals.find(function(x){return x.id===gid;});if(!g)return;
+    g.subs=normSubs(g.subs);var par=getParent(g.subs,path);par.arr.splice(par.idx,1);
+    saveGoalSubs(gid);renderGoals();return;
+  }
+  // 新增子任務按鈕
+  var addChild=e.target.closest('[data-add-child]');
   if(addChild){
-    const gid=addChild.dataset.addChild,ps=addChild.dataset.path;
-    const fid='acf_'+gid+'_'+ps.replace(/-/g,'_');
-    document.querySelectorAll('.add-child-form').forEach(f=>f.style.display='none');
-    const form=document.getElementById(fid);if(!form)return;
+    var gid=addChild.dataset.addChild,ps=addChild.dataset.path;
+    var addFormId='acf_'+gid+'_'+ps.replace(/-/g,'_');
+    closeAllSubForms();
+    var form=document.getElementById(addFormId);if(!form)return;
     subEditing=true;form.style.display='block';form.querySelector('.kid-input').focus();return;
   }
-  // confirm kid
-  const confKid=e.target.closest('.confirm-kid');
+  // 確認新增子任務
+  var confKid=e.target.closest('.confirm-kid');
   if(confKid){
-    const gid=confKid.dataset.gid,ps=confKid.dataset.path,path=ps.split('-').map(Number);
-    const fid='acf_'+gid+'_'+ps.replace(/-/g,'_');
-    const form=document.getElementById(fid);if(!form)return;
-    const text=form.querySelector('.kid-input').value.trim();if(!text)return;
-    const g=goals.find(x=>x.id===gid);if(!g)return;
-    g.subs=normSubs(g.subs);const node=getNode(g.subs,path);if(!node)return;
+    var gid=confKid.dataset.gid,ps=confKid.dataset.path,path=ps.split('-').map(Number);
+    var addFormId='acf_'+gid+'_'+ps.replace(/-/g,'_');
+    var form=document.getElementById(addFormId);if(!form)return;
+    var text=form.querySelector('.kid-input').value.trim();if(!text)return;
+    var g=goals.find(function(x){return x.id===gid;});if(!g)return;
+    g.subs=normSubs(g.subs);var node=getNode(g.subs,path);if(!node)return;
     node.children.push(mkSub(text));node.expanded=true;
     subEditing=false;saveGoalSubs(gid);renderGoals();return;
   }
-  // cancel kid
-  const cancKid=e.target.closest('.cancel-kid');
+  // 取消新增子任務
+  var cancKid=e.target.closest('.cancel-kid');
   if(cancKid){
-    const gid=cancKid.dataset.gid,ps=cancKid.dataset.path;
-    const fid='acf_'+gid+'_'+ps.replace(/-/g,'_');
-    const form=document.getElementById(fid);if(form)form.style.display='none';
+    var gid=cancKid.dataset.gid,ps=cancKid.dataset.path;
+    var addFormId='acf_'+gid+'_'+ps.replace(/-/g,'_');
+    var form=document.getElementById(addFormId);if(form)form.style.display='none';
     subEditing=false;return;
   }
-  // click outside
-  if(subEditing&&!e.target.closest('.add-child-form')&&!e.target.closest('[data-add-child]')){
-    document.querySelectorAll('.add-child-form').forEach(f=>f.style.display='none');
-    subEditing=false;renderGoals();
+  // 點擊表單外部關閉
+  if(subEditing&&!e.target.closest('.sub-form')&&!e.target.closest('[data-add-child]')&&!e.target.closest('[data-edit-sub]')){
+    closeAllSubForms();subEditing=false;renderGoals();
   }
 });
 
-document.addEventListener('keydown',e=>{
+document.addEventListener('keydown',function(e){
   if(e.target.classList.contains('kid-input')){
-    const form=e.target.closest('.add-child-form');if(!form)return;
-    if(e.key==='Enter'){const btn=form.querySelector('.confirm-kid');if(btn)btn.click();}
-    if(e.key==='Escape'){const btn=form.querySelector('.cancel-kid');if(btn)btn.click();}
+    var form=e.target.closest('.sub-form');if(!form)return;
+    if(e.key==='Enter'){var btn=form.querySelector('.confirm-kid');if(btn)btn.click();}
+    if(e.key==='Escape'){var btn=form.querySelector('.cancel-kid');if(btn)btn.click();}
   }
   if(e.target.classList.contains('edit-sub-input')){
-    const form=e.target.closest('.add-child-form');if(!form)return;
-    if(e.key==='Enter'){const btn=form.querySelector('.confirm-edit-sub');if(btn)btn.click();}
-    if(e.key==='Escape'){const btn=form.querySelector('.cancel-edit-sub');if(btn)btn.click();}
+    var form=e.target.closest('.sub-form');if(!form)return;
+    if(e.key==='Enter'){var btn=form.querySelector('.confirm-edit-sub');if(btn)btn.click();}
+    if(e.key==='Escape'){var btn=form.querySelector('.cancel-edit-sub');if(btn)btn.click();}
   }
 });
 
-$('goal-add-btn').addEventListener('click',()=>openGoalForm(null));
-$('goal-cancel-btn').addEventListener('click',()=>{$('goal-form').style.display='none';editGoalId=null;});
-$('goal-save-btn').addEventListener('click',async()=>{
-  const name=$('f-gname').value.trim();if(!name)return;
-  const lines=$('f-gsub').value.split('\n').map(s=>s.trim()).filter(Boolean);
+$('goal-add-btn').addEventListener('click',function(){openGoalForm(null);});
+$('goal-cancel-btn').addEventListener('click',function(){$('goal-form').style.display='none';editGoalId=null;});
+$('goal-save-btn').addEventListener('click',async function(){
+  var name=$('f-gname').value.trim();if(!name)return;
+  var lines=$('f-gsub').value.split('\n').map(function(s){return s.trim();}).filter(Boolean);
   setSyncStatus('syncing');
   try{
     if(editGoalId){
-      const g=goals.find(x=>x.id===editGoalId);
-      const ex=normSubs(g?g.subs:[]);
-      const merged=lines.map(function(txt,idx){
-        // 優先用文字比對（完全一致）
-        const byText=ex.find(function(o){return o.text===txt;});
-        if(byText) return byText;
-        // 文字不同但同位置 → 保留子層，只更新文字
-        if(ex[idx]) return Object.assign({},ex[idx],{text:txt});
-        // 全新項目
+      var g=goals.find(function(x){return x.id===editGoalId;});
+      var ex=normSubs(g?g.subs:[]);
+      var merged=lines.map(function(txt,idx){
+        var byText=ex.find(function(o){return o.text===txt;});if(byText)return byText;
+        if(ex[idx])return Object.assign({},ex[idx],{text:txt});
         return mkSub(txt);
       });
-      await sbPatch('goals',editGoalId,{name,date:$('f-gdate').value||null,subs:merged});
+      await sbPatch('goals',editGoalId,{name:name,date:$('f-gdate').value||null,subs:merged});
       if(g){g.name=name;g.date=$('f-gdate').value;g.subs=merged;}
     }else{
-      const rec=await sbPost('goals',[{id:uid(),workspace:wsKey,name,date:$('f-gdate').value||null,created_by:currentUser,subs:lines.map(mkSub)}]);
+      var rec=await sbPost('goals',[{id:uid(),workspace:wsKey,name:name,date:$('f-gdate').value||null,created_by:currentUser,subs:lines.map(mkSub)}]);
       if(rec&&rec[0])goals.unshift(rec[0]);
     }
-    setSyncStatus('ok');
+    setSyncStatus('ok');autoBackup();
   }catch(e){setSyncStatus('err');}
   $('goal-form').style.display='none';editGoalId=null;renderGoals();
 });
+
 function openGoalForm(id){
   editGoalId=id;$('goal-form-title').textContent=id?'編輯目標':'新增目標';
-  if(id){const g=goals.find(x=>x.id===id)||{};$('f-gname').value=g.name||'';$('f-gdate').value=g.date||'';$('f-gsub').value=normSubs(g.subs).map(s=>s.text).join('\n');}
+  if(id){var g=goals.find(function(x){return x.id===id;})||{};$('f-gname').value=g.name||'';$('f-gdate').value=g.date||'';$('f-gsub').value=normSubs(g.subs).map(function(s){return s.text;}).join('\n');}
   else{$('f-gname').value='';$('f-gdate').value='';$('f-gsub').value='';}
   $('goal-form').style.display='block';$('f-gname').focus();
 }
 
-// ── Calendar ─────────────────────────────────────────────
+// ── Calendar ──────────────────────────────────────────────
 function renderCal(){
-  const y=calDate.getFullYear(),m=calDate.getMonth();
+  var y=calDate.getFullYear(),m=calDate.getMonth();
   $('cal-title').textContent=y+' 年 '+(m+1)+' 月';
-  $('cal-names').innerHTML=['日','一','二','三','四','五','六'].map(n=>'<div class="cal-day-name">'+n+'</div>').join('');
-  const first=new Date(y,m,1).getDay(),days=new Date(y,m+1,0).getDate(),ts=todayStr();
-  let html='';
-  for(let i=0;i<first;i++){const d=new Date(y,m,1-first+i);html+='<div class="cal-day other-month"><div class="cal-num">'+d.getDate()+'</div></div>';}
-  for(let d=1;d<=days;d++){
-    const ds=y+'-'+p2(m+1)+'-'+p2(d);
-    const dt=todos.filter(t=>t.date===ds);
+  $('cal-names').innerHTML=['日','一','二','三','四','五','六'].map(function(n){return '<div class="cal-day-name">'+n+'</div>';}).join('');
+  var first=new Date(y,m,1).getDay(),days=new Date(y,m+1,0).getDate(),ts=todayStr();
+  var html='';
+  for(var i=0;i<first;i++){var d=new Date(y,m,1-first+i);html+='<div class="cal-day other-month"><div class="cal-num">'+d.getDate()+'</div></div>';}
+  for(var d=1;d<=days;d++){
+    var ds=y+'-'+p2(m+1)+'-'+p2(d);
+    var dt=todos.filter(function(t){return t.date===ds;});
     html+='<div class="cal-day'+(ds===ts?' today':'')+'" data-calday="'+ds+'">';
     html+='<div class="cal-num">'+d+'</div>';
-    dt.slice(0,2).forEach(t=>{html+='<div class="cal-dot '+(t.priority||'')+'">'+esc(t.text)+'</div>';});
+    dt.slice(0,2).forEach(function(t){html+='<div class="cal-dot '+(t.priority||'')+'">'+esc(t.text)+'</div>';});
     if(dt.length>2)html+='<div class="cal-dot">+'+( dt.length-2)+'</div>';
     html+='</div>';
   }
   $('cal-days').innerHTML=html;
-  const mc={};
-  todos.filter(t=>t.date&&!t.done).forEach(t=>{const pts=t.date.split('-');if(pts.length<2)return;const k=pts[0]+'-'+pts[1];mc[k]=(mc[k]||0)+1;});
-  const ck=y+'-'+p2(m+1);
-  $('cal-summary').innerHTML=Object.entries(mc).sort((a,b)=>a[0].localeCompare(b[0])).map(function(entry){
-    const key=entry[0],count=entry[1],parts=key.split('-'),act=key===ck;
+  var mc={};
+  todos.filter(function(t){return t.date&&!t.done;}).forEach(function(t){var pts=t.date.split('-');if(pts.length<2)return;var k=pts[0]+'-'+pts[1];mc[k]=(mc[k]||0)+1;});
+  var ck=y+'-'+p2(m+1);
+  $('cal-summary').innerHTML=Object.entries(mc).sort(function(a,b){return a[0].localeCompare(b[0]);}).map(function(entry){
+    var key=entry[0],count=entry[1],parts=key.split('-'),act=key===ck;
     return '<button data-cal-jump="'+key+'" style="padding:3px 10px;border-radius:100px;border:1px solid '+(act?'#555':'#ddd')+';background:'+(act?'#555':'transparent')+';color:'+(act?'#fff':'#888')+';cursor:pointer;font-size:12px;font-family:inherit">'+parseInt(parts[1])+'月 <strong>'+count+'</strong></button>';
   }).join('');
 }
-$('cal-prev').addEventListener('click',()=>{calDate=new Date(calDate.getFullYear(),calDate.getMonth()-1,1);renderCal();});
-$('cal-next').addEventListener('click',()=>{calDate=new Date(calDate.getFullYear(),calDate.getMonth()+1,1);renderCal();});
-$('cal-today-btn').addEventListener('click',()=>{calDate=new Date();renderCal();});
-$('cal-days').addEventListener('click',e=>{const el=e.target.closest('[data-calday]');if(el)showCalDay(el.dataset.calday);});
-$('cal-summary').addEventListener('click',e=>{
-  const el=e.target.closest('[data-cal-jump]');
-  if(el){const parts=el.dataset.calJump.split('-');calDate=new Date(parseInt(parts[0]),parseInt(parts[1])-1,1);renderCal();}
-});
+$('cal-prev').addEventListener('click',function(){calDate=new Date(calDate.getFullYear(),calDate.getMonth()-1,1);renderCal();});
+$('cal-next').addEventListener('click',function(){calDate=new Date(calDate.getFullYear(),calDate.getMonth()+1,1);renderCal();});
+$('cal-today-btn').addEventListener('click',function(){calDate=new Date();renderCal();});
+$('cal-days').addEventListener('click',function(e){var el=e.target.closest('[data-calday]');if(el)showCalDay(el.dataset.calday);});
+$('cal-summary').addEventListener('click',function(e){var el=e.target.closest('[data-cal-jump]');if(el){var parts=el.dataset.calJump.split('-');calDate=new Date(parseInt(parts[0]),parseInt(parts[1])-1,1);renderCal();}});
+
 function showCalDay(ds){
-  const dt=todos.filter(t=>t.date===ds);const det=$('cal-detail');
+  var dt=todos.filter(function(t){return t.date===ds;});
+  var det=$('cal-detail');
   if(!dt.length){det.style.display='none';return;}
   det.style.display='block';
-  let html='<div class="row-between mb12"><div style="font-weight:500">'+ds+'（'+dt.length+' 項）</div><button class="btn btn-primary btn-sm" data-quick-add="'+ds+'"><i class="ti ti-plus"></i> 新增</button></div>';
-  dt.forEach(t=>{html+='<div class="todo-item" style="padding:8px 0"><div class="todo-check'+(t.done?' done':'')+'" style="width:18px;height:18px" data-toggle-todo="'+t.id+'">'+(t.done?'<i class="ti ti-check" style="font-size:11px"></i>':'')+'</div><div class="todo-text'+(t.done?' done':'')+'" style="flex:1">'+esc(t.text)+'</div>'+(t.priority?'<span class="badge badge-'+t.priority+'">'+(t.priority==='high'?'高':t.priority==='mid'?'中':'低')+'</span>':'')+'</div>';});
+  var html='<div class="row-between mb12"><div style="font-weight:500">'+ds+'（'+dt.length+' 項）</div><button class="btn btn-primary btn-sm" data-quick-add="'+ds+'"><i class="ti ti-plus"></i> 新增</button></div>';
+  dt.forEach(function(t){html+='<div class="todo-item" style="padding:8px 0"><div class="todo-check'+(t.done?' done':'')+'" style="width:18px;height:18px" data-toggle-todo="'+t.id+'">'+(t.done?'<i class="ti ti-check" style="font-size:11px"></i>':'')+'</div><div class="todo-text'+(t.done?' done':'')+'" style="flex:1">'+esc(t.text)+'</div>'+(t.priority?'<span class="badge badge-'+t.priority+'">'+(t.priority==='high'?'高':t.priority==='mid'?'中':'低')+'</span>':'')+'</div>';});
   $('cal-detail-content').innerHTML=html;
 }
-$('cal-detail').addEventListener('click',async e=>{
-  const tog=e.target.closest('[data-toggle-todo]');
-  if(tog){const id=tog.dataset.toggleTodo;const t=todos.find(x=>x.id===id);if(!t)return;t.done=!t.done;renderCal();try{await sbPatch('todos',id,{done:t.done});setSyncStatus('ok');}catch(err){t.done=!t.done;renderCal();setSyncStatus('err');}return;}
-  const qa=e.target.closest('[data-quick-add]');
-  if(qa){document.querySelector('[data-tab="todo"]').click();setTimeout(()=>{openTodoForm(null);setTimeout(()=>{$('f-date').value=qa.dataset.quickAdd;},50);},100);}
+$('cal-detail').addEventListener('click',async function(e){
+  var tog=e.target.closest('[data-toggle-todo]');
+  if(tog){var id=tog.dataset.toggleTodo;var t=todos.find(function(x){return x.id===id;});if(!t)return;t.done=!t.done;renderCal();try{await sbPatch('todos',id,{done:t.done});setSyncStatus('ok');}catch(err){t.done=!t.done;renderCal();setSyncStatus('err');}return;}
+  var qa=e.target.closest('[data-quick-add]');
+  if(qa){document.querySelector('[data-tab="todo"]').click();setTimeout(function(){openTodoForm(null);setTimeout(function(){$('f-date').value=qa.dataset.quickAdd;},50);},100);}
 });
 
-// ── Pomodoro ─────────────────────────────────────────────
+// ── Pomodoro ──────────────────────────────────────────────
 function updatePomoDisplay(){
   $('pomo-display').textContent=p2(Math.floor(pomoSec/60))+':'+p2(pomoSec%60);
-  const circ=2*Math.PI*70,pct=(POMO[pomoMode].sec-pomoSec)/POMO[pomoMode].sec;
+  var circ=2*Math.PI*70,pct=(POMO[pomoMode].sec-pomoSec)/POMO[pomoMode].sec;
   $('pomo-arc').setAttribute('stroke-dashoffset',circ*(1-pct));
   $('pomo-status').textContent=POMO[pomoMode].label;
 }
-$('pomo-toggle').addEventListener('click',()=>{
+$('pomo-toggle').addEventListener('click',function(){
   if(pomoRunning){clearInterval(pomoTimer);pomoRunning=false;$('pomo-toggle').innerHTML='<i class="ti ti-player-play"></i> 開始';}
   else{
     pomoRunning=true;$('pomo-toggle').innerHTML='<i class="ti ti-player-pause"></i> 暫停';
-    pomoTimer=setInterval(()=>{
+    pomoTimer=setInterval(function(){
       if(pomoSec<=0){clearInterval(pomoTimer);pomoRunning=false;if(pomoMode==='work'){pomoDone++;pomoTotal+=25;$('pomo-count').textContent=pomoDone;$('pomo-mins').textContent=pomoTotal;}$('pomo-toggle').innerHTML='<i class="ti ti-player-play"></i> 開始';pomoSec=0;updatePomoDisplay();return;}
       pomoSec--;updatePomoDisplay();},1000);
   }
 });
-$('pomo-reset').addEventListener('click',()=>{clearInterval(pomoTimer);pomoRunning=false;pomoSec=POMO[pomoMode].sec;updatePomoDisplay();$('pomo-toggle').innerHTML='<i class="ti ti-player-play"></i> 開始';});
-document.querySelectorAll('[data-pomo]').forEach(btn=>{
-  btn.addEventListener('click',()=>{
-    document.querySelectorAll('[data-pomo]').forEach(b=>b.classList.remove('active'));
+$('pomo-reset').addEventListener('click',function(){clearInterval(pomoTimer);pomoRunning=false;pomoSec=POMO[pomoMode].sec;updatePomoDisplay();$('pomo-toggle').innerHTML='<i class="ti ti-player-play"></i> 開始';});
+document.querySelectorAll('[data-pomo]').forEach(function(btn){
+  btn.addEventListener('click',function(){
+    document.querySelectorAll('[data-pomo]').forEach(function(b){b.classList.remove('active');});
     btn.classList.add('active');pomoMode=btn.dataset.pomo;clearInterval(pomoTimer);pomoRunning=false;pomoSec=POMO[pomoMode].sec;updatePomoDisplay();$('pomo-toggle').innerHTML='<i class="ti ti-player-play"></i> 開始';
   });
 });
