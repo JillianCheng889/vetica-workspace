@@ -72,7 +72,10 @@ input:focus,select:focus,textarea:focus{border-color:#555;box-shadow:0 0 0 2px r
 .sub-check{border-radius:4px;border:1.5px solid #bbb;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;background:#fff}
 .sub-check.done{background:#555;border-color:#555;color:#fff}
 .sub-form{display:none;background:#f5f5f3;border-radius:6px;border:1px dashed #ddd;padding:8px;margin:2px 0 4px}
-.sub-btn{border-radius:6px;cursor:pointer;padding:2px 7px;font-size:11px;font-family:inherit;flex-shrink:0;border-width:1px;border-style:solid;display:inline-flex;align-items:center;gap:3px}
+.drag-over{border-top:3px solid #555 !important;background:#f0f0ee !important}
+.drag-handle{cursor:grab;color:#bbb;padding:0 6px;flex-shrink:0;display:flex;align-items:center;user-select:none}
+.drag-handle:hover{color:#555}
+.drag-handle:active{cursor:grabbing}border-radius:6px;cursor:pointer;padding:2px 7px;font-size:11px;font-family:inherit;flex-shrink:0;border-width:1px;border-style:solid;display:inline-flex;align-items:center;gap:3px}
 .pomo-ring{width:160px;height:160px;margin:0 auto 16px;position:relative;display:flex;align-items:center;justify-content:center}
 .pomo-svg{position:absolute;top:0;left:0;transform:rotate(-90deg)}
 .setup{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:32px}
@@ -344,7 +347,52 @@ async function restoreFromBackup(){
   }catch(e){setSyncStatus('err');alert('還原失敗：'+e.message);}
 }
 
-// ── Sync ─────────────────────────────────────────────────
+// ── 拖拉排序 ──────────────────────────────────────────────
+var dragSrcIdx=null;
+
+function onDragStart(e){
+  dragSrcIdx=parseInt(e.currentTarget.dataset.idx);
+  e.currentTarget.style.opacity='0.4';
+  e.dataTransfer.effectAllowed='move';
+}
+function onDragEnd(e){
+  e.currentTarget.style.opacity='1';
+  document.querySelectorAll('.todo-item').forEach(function(el){
+    el.classList.remove('drag-over');
+  });
+}
+function onDragOver(e){
+  e.preventDefault();
+  e.dataTransfer.dropEffect='move';
+  var item=e.currentTarget;
+  item.classList.add('drag-over');
+  return false;
+}
+function onDragLeave(e){
+  e.currentTarget.classList.remove('drag-over');
+}
+async function onDrop(e){
+  e.stopPropagation();
+  var targetIdx=parseInt(e.currentTarget.dataset.idx);
+  e.currentTarget.classList.remove('drag-over');
+  if(dragSrcIdx===null||dragSrcIdx===targetIdx)return;
+
+  // 取得目前顯示的 list（全部模式才能拖拉）
+  var item=todos.splice(dragSrcIdx,1)[0];
+  todos.splice(targetIdx,0,item);
+  dragSrcIdx=null;
+  renderTodos();
+
+  // 更新 sort_order 到 Supabase
+  setSyncStatus('syncing');
+  try{
+    await Promise.all(todos.map(function(t,i){
+      return sbPatch('todos',t.id,{sort_order:i});
+    }));
+    setSyncStatus('ok');autoBackup();
+  }catch(e){setSyncStatus('err');}
+  return false;
+}
 function setSyncStatus(s){
   var dot=$('sync-dot'),lbl=$('sync-lbl');
   if(s==='ok'){dot.className='sync-dot ok';lbl.textContent='已同步';}
@@ -356,7 +404,7 @@ async function loadAll(){
   setSyncStatus('syncing');
   try{
     var res=await Promise.all([
-      sbGet('todos','workspace=eq.'+encodeURIComponent(wsKey)+'&order=created_at.desc'),
+      sbGet('todos','workspace=eq.'+encodeURIComponent(wsKey)+'&order=sort_order.asc,created_at.desc'),
       sbGet('goals','workspace=eq.'+encodeURIComponent(wsKey)+'&order=created_at.desc')
     ]);
     todos=res[0]||[];goals=res[1]||[];
@@ -450,9 +498,11 @@ function renderTodos(){
   else if(todoFilter==='low')list=todos.filter(function(t){return t.priority==='low';});
   var el=$('todo-list');if(!el)return;
   if(!list.length){el.innerHTML='<div class="empty"><i class="ti ti-inbox" style="font-size:32px;display:block;margin-bottom:8px"></i>沒有符合的任務</div>';updateStats();return;}
-  el.innerHTML=list.map(function(t){
+  var isDraggable=todoFilter==='all';
+  el.innerHTML=list.map(function(t,i){
     var pl=t.priority==='high'?'高優先':t.priority==='mid'?'中優先':t.priority==='low'?'低優先':'';
-    return '<div class="todo-item">'
+    return '<div class="todo-item" '+(isDraggable?'draggable="true" data-idx="'+i+'"':'')+' style="'+(isDraggable?'cursor:default':'')+'">'
+      +(isDraggable?'<div class="drag-handle" title="拖拉調整順序"><i class="ti ti-grip-vertical" style="font-size:16px"></i></div>':'')
       +'<div class="todo-check'+(t.done?' done':'')+'" data-toggle-todo="'+t.id+'">'+(t.done?'<i class="ti ti-check" style="font-size:13px"></i>':'')+'</div>'
       +'<div style="flex:1;min-width:0">'
       +'<div class="todo-text'+(t.done?' done':'')+'" style="margin-bottom:4px">'+esc(t.text)+'</div>'
@@ -467,6 +517,17 @@ function renderTodos(){
       +'<button class="btn btn-sm btn-danger" data-del-todo="'+t.id+'" data-confirm="0"><i class="ti ti-trash" style="font-size:13px"></i></button>'
       +'</div></div>';
   }).join('');
+
+  // 綁定拖拉事件（只在全部模式）
+  if(isDraggable){
+    document.querySelectorAll('#todo-list .todo-item').forEach(function(item){
+      item.addEventListener('dragstart',onDragStart);
+      item.addEventListener('dragend',onDragEnd);
+      item.addEventListener('dragover',onDragOver);
+      item.addEventListener('dragleave',onDragLeave);
+      item.addEventListener('drop',onDrop);
+    });
+  }
   updateStats();
 }
 
